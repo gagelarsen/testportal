@@ -58,3 +58,5 @@ pybuild/*
 build_py/*
 
 db.sqlite3
+
+__pycache__

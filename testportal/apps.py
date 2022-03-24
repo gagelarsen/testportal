@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TestportalAppConfig(AppConfig):
+class TestportalConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'testportal_app'
+    name = 'testportal'

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from testportal_app.models import Suite 
+from testportal.models import Suite 
 
 
 class SuiteSerializer(serializers.ModelSerializer):

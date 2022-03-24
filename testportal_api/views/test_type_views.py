@@ -1,6 +1,6 @@
 from rest_framework import generics
 
-from testportal_app.models import TestType
+from testportal.models import TestType
 
 from testportal_api.serializers import TestTypeSerializer
 

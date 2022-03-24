@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from testportal_app.models import Suite
+from core.models import Suite
 
 
 class Test_Create_Suite(TestCase):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from testportal_app.models import TestStatus
+from testportal.models import TestStatus
 
 
 class TestStatusSerializer(serializers.ModelSerializer):

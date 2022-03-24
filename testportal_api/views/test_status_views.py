@@ -1,6 +1,6 @@
 from rest_framework import generics
 
-from testportal_app.models import TestStatus
+from testportal.models import TestStatus
 
 from testportal_api.serializers import TestStatusSerializer
 

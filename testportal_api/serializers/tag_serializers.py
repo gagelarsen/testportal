@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from testportal_app.models import Tag
+from testportal.models import Tag
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:

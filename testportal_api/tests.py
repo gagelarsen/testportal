@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from testportal_app.models import Suite
+from core.models import Suite
 
 
 class SuiteTests(APITestCase):

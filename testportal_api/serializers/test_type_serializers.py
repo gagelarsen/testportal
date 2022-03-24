@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from testportal_app.models import TestType  
+from testportal.models import TestType  
 
 
 class TestTypeSerializer(serializers.ModelSerializer):

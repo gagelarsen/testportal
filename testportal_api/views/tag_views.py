@@ -1,6 +1,6 @@
 from rest_framework import generics
 
-from testportal_app.models import Tag
+from testportal.models import Tag
 
 from testportal_api.serializers import TagSerializer
 

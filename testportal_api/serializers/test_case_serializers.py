@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from testportal_app.models import TestCase  
+from testportal.models import TestCase  
 
 class TestCaseSerializer(serializers.ModelSerializer):
     class Meta:

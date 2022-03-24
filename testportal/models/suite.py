@@ -4,10 +4,6 @@ from django.utils import timezone
 
 class Suite(models.Model):
 
-    class SuiteObjects(models.Manager):
-        def get_queryset(self):
-            return super().get_queryset().filter(active=True)
-
     class Meta:
         ordering = ('name',)
 
@@ -15,7 +11,6 @@ class Suite(models.Model):
     active = models.BooleanField(default=True)
 
     objects = models.Manager()  # Default Manager
-    suiteobjects = SuiteObjects()  # Custome Manager
 
     def __str__(self):
         return f'{self.name}'

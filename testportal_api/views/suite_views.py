@@ -6,7 +6,7 @@ from testportal_api.serializers import SuiteSerializer
 
 
 class SuiteList(generics.ListCreateAPIView):
-    queryset = Suite.suiteobjects.all()
+    queryset = Suite.objects.all()
     serializer_class = SuiteSerializer
 
 

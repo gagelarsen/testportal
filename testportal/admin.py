@@ -15,13 +15,25 @@ class TagAdmin(admin.ModelAdmin):
 @admin.register(models.TestCase)
 class TestCaseAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'status', 'suite', 'test_type')
+    list_filter = ('status', 'suite', 'test_type')
 
 
-@admin.register(models.TestStatus)
-class TestStatusAdmin(admin.ModelAdmin):
-    list_display = ('status', 'id')
+@admin.register(models.TestCategory)
+class TestCategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'category',)
 
 
-@admin.register(models.TestType)
-class TestTypeAdmin(admin.ModelAdmin):
-    list_display = ('test_type', 'id')
+@admin.register(models.TestSubcategory)
+class TestSubcategoryAdmin(admin.ModelAdmin):
+    list_display = ('id', 'subcategory',)
+
+
+@admin.register(models.TestPlan)
+class TestPlanAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name','suite')
+    list_filter = ('suite',)
+
+
+@admin.register(models.TestResult)
+class TestResultAdmin(admin.ModelAdmin):
+    list_display = ('id', 'result', 'result_date', 'test_case')

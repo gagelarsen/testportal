@@ -1,0 +1,138 @@
+
+{% load static %}
+
+<div class="modal fade" id="update-test-case-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="update-test-case-modal-title">Update Test Case</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id='update-test-case-modal-loading'>
+            <img class="div-centered" id="update-result-modal-loading-gif" src="{% static 'testportal/images/loading.gif' %}">
+        </div>
+        <form id="update-test-case-modal-form" enctype="multipart/form-data" method="post" name="upload-result-form">
+            <div  style="display: none;" class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-id" class="col-form-label">ID</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="test-case-id" class="form-control">
+                </div>
+            </div>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-name" class="col-form-label">Name</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="test-case-name" class="form-control">
+                </div>
+            </div>
+            <br />
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-test-id" class="col-form-label">Test ID</label>
+                </div>
+                <div class="col-auto">
+                    <input type="text" id="test-case-test-id" class="form-control">
+                </div>
+            </div>
+            <br />
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-suite" class="form-lable">Suite</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-case-suite" class="form-select" disabled>
+                        <option value="{{ suite.id }}">{{ suite.name }}</option>
+                    </select>
+                </div>
+            </div>
+            <br />
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-status" class="form-lable">Status</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-case-status" class="form-select"{% if not user.is_authenticated %} disabled{% endif %}>
+                        <option value="active">Active</option>
+                        <option value="depricated">Depricated</option>
+                        <option value="broken">Broken</option>
+                        <option value="under-construction">Under Construction</option>
+                        <option value="design">In Design</option>
+                    </select>
+                </div>
+            </div>
+            <br />
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-type" class="form-lable">Type</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-case-type" class="form-select"{% if not user.is_authenticated %} disabled{% endif %}>
+                        <option value="automated">Automated</option>
+                        <option value="manual">Manual</option>
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-tags" class="form-lable">Tags</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-case-tags" multiple class="form-select">
+                        {% for tag in tags %}<option value="{{ tag.id }}">{{ tag.tag }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-categories" class="form-lable">Category</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-case-categories" class="form-select">
+                        {% for category in categories %}<option value="{{ category.id }}">{{ category.category }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-case-subcategories" class="form-lable">Subcategory</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-case-subcategories" class="form-select">
+                        {% for subcategory in subcategories %}<option value="{{ subcategory.id }}">{{ subcategory.subcategory }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <br />
+            <div class="row g-3 align-items-center">
+                <div class="col-auto">
+                    <label for="test-plan" class="form-lable">Test Plan</label>
+                </div>
+                <div class="col-auto">
+                    <select id="test-plans" class="form-select">
+                        {% for test_plan in test_plans %}<option value="{{ test_plan.id }}">{{ test_plan.name }} - {{ test_plan.suite }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            </br>
+            <div class="mb-3">
+                <label for="test-case-steps" class="form-label">Steps:</label>
+                <textarea class="form-control" id="test-case-steps" rows="10" 
+                            {% if not user.is_authenticated %} disabled{% endif %}></textarea>
+            </div>
+        </form>
+        <div id="update-error" style="display: none;" class="alert alert-danger" role="alert"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="update-test-case-modal-accept">Update</button>
+      </div>
+    </div>
+  </div>
+</div>

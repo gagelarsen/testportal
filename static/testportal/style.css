@@ -1,0 +1,74 @@
+.bg-issue {
+    background-color: rgb(197, 52, 197);
+}
+td.bg-issue {
+    background: rgb(197, 52, 197);
+}
+
+.bg-false-negative {
+    background-color: rgb(231, 231, 166);
+}
+td.bg-false-negative {
+    background: rgb(231, 231, 166);
+}
+
+.bg-fail {
+    background-color: rgb(241, 69, 69);
+}
+td.bg-fail {
+    background: rgb(241, 69, 69);
+}
+
+.bg-bug {
+    background-color: black;
+    color: white;
+}
+td.bg-bug {
+    background: black;
+    color: white;
+}
+
+.bg-pass {
+    background-color: rgb(98, 206, 98);
+}
+td.bg-pass {
+    background: rgb(98, 206, 98);
+}
+
+.bg-skipped {
+    background-color: rgb(133, 133, 133);
+}
+td.bg-skipped {
+    background: rgb(133, 133, 133);
+}
+
+.bg-suite-pill {
+    background-color: rgb(65, 177, 230);
+}
+
+.bg-tag {
+    background-color: rgb(117, 117, 117);
+}
+
+.bg-test-id {
+    background-color: rgb(65, 177, 230);
+}
+
+.status-pill {
+    width: 30px;
+}
+
+.test-result-dashboard-cell {
+    text-align: center;
+}
+
+.div-centered {
+    width: 50%;
+    margin: 0 auto;
+    display: table;
+}
+
+#dashboard-table {
+    display: block;
+    overflow-x: scroll;
+}

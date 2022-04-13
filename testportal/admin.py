@@ -37,3 +37,4 @@ class TestPlanAdmin(admin.ModelAdmin):
 @admin.register(models.TestResult)
 class TestResultAdmin(admin.ModelAdmin):
     list_display = ('id', 'result', 'result_date', 'test_case')
+    list_filter = ('test_case__suite',)

@@ -1,0 +1,78 @@
+
+{% load static %}
+<div class="modal fade" id="update-result-modal" tabindex="-1" aria-labelledby="update-result-modal-label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="update-result-modal-lable">Update Result</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div id="update-result-modal-body" class="modal-body">
+        <div id="update-result-modal-body-content">
+            <div id='update-result-modal-loading'>
+                <img class="div-centered" id="update-result-modal-loading-gif" src="{% static 'testportal/images/loading.gif' %}">
+            </div>
+            <form id='update-result-modal-form'>
+                <input id="test-result-test-case" style="display: none;" type="text" disabled>
+                <input id="test-result-id" style="display: none;" type="text" disabled>
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="result-date" class="form-lable">Date</label>
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control" type="date" id="test-result-date" name="result-date"
+                            value="2022-01-01" min="2022-01-01" max="2122-12-31"{% if not user.is_authenticated %} disabled{% endif %}>
+                    </div>
+                </div>
+                <br />
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="result-status" class="form-lable">Status</label>
+                    </div>
+                    <div class="col-auto">
+                        <select id="test-result-status" class="form-select"{% if not user.is_authenticated %} disabled{% endif %}>
+                            {% for status in statuses %}
+                            <option value={{ status.0 }}>{{ status.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="result-user" class="form-lable">User</label>
+                    </div>
+                    <div class="col-auto">
+                        <select id="test-result-user" class="form-select"{% if not user.is_authenticated %} disabled{% endif %}>
+                            {% for user in users %}
+                            <option value={{ user.id }}>{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <br />
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label for="result-time" class="form-lable">Duration</label>
+                    </div>
+                    <div class="col-auto">
+                        <input id="test-result-duration" type="text" disabled> (seconds)
+                    </div>
+                </div>
+                </br>
+                <label for="test-result-note" class="form-label">Note:</label>
+                <textarea class="form-control" id="test-result-note" rows="5" placeholder="Result note goes here..."
+                            {% if not user.is_authenticated %} disabled{% endif %}></textarea>
+            </form>
+            <div id="update-result-modal-error">
+                <p>Unable to load result...</p>
+            </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" data-test-result-id='undefined' id="update-result-modal-accept" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>

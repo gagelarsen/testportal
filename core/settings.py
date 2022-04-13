@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'testportal',
     'rest_framework',
     'corsheaders',
+    'mathfilters',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

@@ -1,0 +1,152 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+
+<h1>Test Plans</h1>
+
+<table class="table table-hover">
+    <thead>
+        <th style="width: 45%;">Name</th>
+        <th style="width: 45%;">Suite</th>
+        <th style="width: 10%;"></th>
+    </thead>
+    <tbody>
+        {% for test_plan in test_plans %}
+        <tr id="test-plan-row-{{ test_plan.id }}" class="test-plan-row" data-test-plan-id={{ test_plan.id }}>
+            <td>{{ test_plan.name }}</td>
+            <td>{{ test_plan.suite }}</td>
+            <td>
+                <a class="btn btn-success" href="/test-plans/{{ test_plan.id }}" title="edit">
+                    {% if user.is_authenticated %}
+                    <i class="bi-pencil"></i>
+                    {% else %}
+                    <i class="bi-eye"></i>
+                    {% endif %}
+                </a>
+                {% if user.is_authenticated %}
+                <div data-test-plan-id={{ test_plan.id }} class="btn btn-danger btn-delete-test-plan" title="delete">
+                    <i class="bi-trash"></i>
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if user.is_authenticated %}
+<button type="button" data-bs-toggle="modal" data-bs-target="#add-test-plan-modal" id="add-suite-button" class="btn btn-success">
+    <i class="bi-plus-square"> Add Test Plan</i>
+</button>
+
+<div class="modal fade" id="add-test-plan-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="add-test-plan-modal-title">Add Test Plan</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+            <div class="mb-3">
+                <label for="new-suite-name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="new-test-plan-name">
+            </div>
+            <select id="new-test-plan-suite" class="form-select" aria-label="Default select example">
+                {% for suite in suites %}
+                    <option value={{suite.id}}>{{suite.name}}</options>
+                {% endfor %}
+            </select>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="add-test-plan-modal-accept">Add</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+
+
+{% block page_javascript %}
+    {% if user.is_authenticated %}
+        <script>
+        $(document).ready(function() {
+
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        // Does this cookie string begin with the name we want?
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
+                    }
+                }
+                return cookieValue;
+            }
+            const csrftoken = getCookie('csrftoken');
+
+
+            $('.btn-delete-test-plan').click(function() {
+                var result = confirm('Are you sure you want to delete? This cannot be undone.')
+                if (result) {
+                    var test_plan_id = this.dataset.testPlanId;
+
+                    $.ajax({
+                        url: '/api/test-plans/' + test_plan_id + '/',
+                        type: "DELETE",
+                        data: {
+                            "id": test_plan_id
+                        },
+                        headers:{"X-CSRFToken": csrftoken},
+                        dataType:'json',
+                        success: function (response) {
+                            console.log(response);
+                            $("#test-plan-row-" + test_plan_id).remove();
+                        },
+                        error: function(error){
+                            alert("Unable to delete test plan. See system administrator.");
+                            console.log("Something went wrong", error);
+                        }
+                    });
+
+                }
+
+            });
+
+            $('#add-test-plan-modal-accept').click(function() {
+                var test_plan_name = $('#new-test-plan-name').val();
+                var test_plan_suite = $('#new-test-plan-suite').val();
+
+                $.ajax({
+                    url: '/api/test-plans/',
+                    type: "POST",
+                    data: {
+                        "name": test_plan_name,
+                        "suite": test_plan_suite,
+                    },
+                    headers:{"X-CSRFToken": csrftoken},
+                    dataType:'json',
+                    success: function (response) {
+                        location.reload();
+                    },
+                    error: function(error){
+                        alert("Unable to add new test plan. Please see system administrator.");
+                        console.log("Something went wrong", error);
+                    }
+                });
+            });
+
+        });
+        </script>
+    {% endif %}
+{% endblock %}

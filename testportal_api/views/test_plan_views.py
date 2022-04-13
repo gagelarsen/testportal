@@ -10,6 +10,6 @@ class TestPlanList(generics.ListCreateAPIView):
     serializer_class = TestPlanSerializer
 
 
-class TestPlanDetail(generics.RetrieveDestroyAPIView):
+class TestPlanDetail(generics.RetrieveUpdateDestroyAPIView):
    queryset = TestPlan.objects.all()
    serializer_class = TestPlanSerializer

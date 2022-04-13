@@ -1,0 +1,93 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+
+<main>
+
+    <div class="row">
+        <h1>{{ test_case.name }}</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-7 col-lg-8">
+            <p>
+                <span class="badge bg-pass">Pass</span>
+                <span class="badge rounded-pill bg-test-id">{{ test_case.test_case_id }}</span>
+                <span class="badge rounded-pill bg-suite-pill">{{ test_case.suite }}</span>
+                {% for tag in tags %}
+                    <span class="badge rounded-pill bg-secondary">{{ tag }}</span>
+                {% endfor %}
+            </p>
+            <div id="test-info-card" class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <strong>Type: </strong> {{ test_case.test_type }}
+                        </div>
+                        <div class="col">
+                            <strong>Status: </strong> {{ test_case.status }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div id="test-step-card" class="card">
+                <div class="card-header">Steps</div>
+                <div class="card-body">
+                    <p>{{ test_case.steps|linebreaks }}<p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-lg-4 order-md-last">
+            <button id="add-issue-button" style="width: 100%; padding: 10px;" class="btn btn-dark">
+                <i class="bi-plus-circle"> Add Issue</i>
+            </button>
+            <p />
+            <div id="test-issues-card" class="card">
+                <div class="card-header">Issues:</div>
+                <div class="card-body">
+                    <a href='/issues/1'><span style="width: 90px;" class="badge rounded-pill bg-issue">IS-00001</span></a> Problem doing something
+                    <br/>
+                    <a href='/issues/2'><span style="width: 90px;" class="badge rounded-pill bg-bug">BG-34567</span></a> Crash when doing this
+                    <br/>
+                </div>
+            </div>
+            <br/>
+            <button id="add-result-button" style="width: 100%; padding: 10px;" class="btn btn-success">
+                <i class="bi-plus-circle"> Add Result</i>
+            </button>
+            <p />
+            <div id="test-issues-card" class="card">
+                <div class="card-header">Recent Results:</div>
+                <div class="card-body">
+                    {% for result in recent_results %}
+                    <a href='/test-results/{{ result.id }}'><span style="width: 90px;" class="badge rounded-pill bg-{{ result.result|lower }}">{{ result.result }}</span></a> - {{ result.result_date }}
+                    <br/>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+
+
+{% block page_javascript %}
+    {% if user.is_authenticated %}
+        <script>
+        $(document).ready(function() {
+            
+            // Add Issue Handler
+            $('#add-issue-button').click(function() {
+                alert('Add issue functionality not implemented yet...')
+            });
+
+            // Add Result Handler
+            $('#add-result-button').click(function() {
+                alert('Add result functionality not implemented yet...')
+            });
+
+        });
+        </script>
+    {% endif %}
+{% endblock %}

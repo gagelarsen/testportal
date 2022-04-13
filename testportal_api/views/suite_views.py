@@ -10,6 +10,6 @@ class SuiteList(generics.ListCreateAPIView):
     serializer_class = SuiteSerializer
 
 
-class SuiteDetail(generics.RetrieveDestroyAPIView):
+class SuiteDetail(generics.RetrieveUpdateDestroyAPIView):
    queryset = Suite.objects.all()
    serializer_class = SuiteSerializer

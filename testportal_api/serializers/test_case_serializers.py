@@ -4,5 +4,5 @@ from testportal.models import TestCase
 class TestCaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestCase
-        fields = ('id', 'name', 'steps', 'status','suite', 
+        fields = ('id', 'name', 'test_case_id', 'steps', 'status','suite', 
                   'test_type', 'tags', 'category', 'subcategory')

@@ -9,6 +9,7 @@ class Suite(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
     active = models.BooleanField(default=True)
+    description = models.TextField(blank=True, null=True)
 
     objects = models.Manager()  # Default Manager
 

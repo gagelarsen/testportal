@@ -10,6 +10,7 @@ cmake-build-release/
 test_package/build/
 *.egg-info/
 dist/
+testportal/migrations
 
 # Doxygen
 Doxygen/doxy_warn.log
@@ -60,3 +61,5 @@ build_py/*
 db.sqlite3
 
 __pycache__
+
+.env

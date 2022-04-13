@@ -1,0 +1,7 @@
+django
+django-cors-headers
+django-filter
+django-mathfilters
+django-model-utils
+djangorestframework
+python-decouple

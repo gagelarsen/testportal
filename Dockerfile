@@ -10,4 +10,4 @@ ADD manage.py   /app/manage.py
 ADD uwsgi.ini  /app/
 
 RUN python setup.py egg_info \
-    && pip install -i https://aquapi.aquaveo.com/aquaveo/stable/+simple/ $(grep -v '^\[' *.egg-info/requires.txt)
+    && pip install $(grep -v '^\[' *.egg-info/requires.txt)

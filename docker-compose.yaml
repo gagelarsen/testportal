@@ -1,0 +1,25 @@
+version: '3.7'
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: testportal
+      POSTGRES_PASSWORD: testportal
+  server:
+    image: testportal
+    restart: always
+    ports:
+      - target: 8000
+        published: 8080
+        protocol: tcp
+        mode: host
+    environment:
+      ALLOWED_HOSTS: "127.0.0.1,0.0.0.0"
+      DB_USER: testportal
+      DB_PASSWORD: testportal
+      SECRET_KEY: uu%t_4*ee1m=l&cr_cg^qd-)0wfc^#jvia67qo-kd&s=-k1fxn
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: testportal
+      CORS_ALLOWED_ORIGINS: ""

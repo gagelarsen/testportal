@@ -5,3 +5,4 @@ django-mathfilters
 django-model-utils
 djangorestframework
 python-decouple
+psycopg2

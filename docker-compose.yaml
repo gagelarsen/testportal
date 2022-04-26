@@ -6,16 +6,17 @@ services:
     environment:
       POSTGRES_USER: testportal
       POSTGRES_PASSWORD: testportal
+      
   server:
+    build: .
+    depends_on:
+      - db
     image: testportal
     restart: always
     ports:
-      - target: 8000
-        published: 8080
-        protocol: tcp
-        mode: host
+      - "8000:8000"
     environment:
-      ALLOWED_HOSTS: "127.0.0.1,0.0.0.0"
+      ALLOWED_HOSTS: "*"
       DB_USER: testportal
       DB_PASSWORD: testportal
       SECRET_KEY: uu%t_4*ee1m=l&cr_cg^qd-)0wfc^#jvia67qo-kd&s=-k1fxn

@@ -46,7 +46,11 @@
           </li> {% endcomment %}
         </ul>
         <div class="d-flex">
-          <!-- Login will go here... -->
+          {% if user.is_authenticated %}
+            {{ user.username }} [<a href="{% url 'logout' %}">logout</a>]
+          {% else %}
+            <a class="btn btn-primary" href="{% url 'login' %}">Log In</a>
+          {% endif %}
         </div>
       </div>
     </div>

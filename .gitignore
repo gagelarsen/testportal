@@ -10,7 +10,6 @@ cmake-build-release/
 test_package/build/
 *.egg-info/
 dist/
-testportal/migrations
 
 # Doxygen
 Doxygen/doxy_warn.log

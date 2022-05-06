@@ -11,9 +11,11 @@
     <div class="col">
         <div style="float: right;" class="row g-3 align-items-right">
             <div class="col-auto">
+                {% if user.is_authenticated %}
                 <button type="button" data-suite-id="{{ suite.id }}" data-bs-toggle="modal" data-bs-target="#upload-result-modal" id="upload-result-button" class="btn btn-sm btn-success">
                     <i class="bi-cloud-upload"> Upload Results</i>
                 </button>
+                {% endif %}
             </div>
             <div class="col-auto">
                 <label for="result-date" class="form-lable">Search</label>
@@ -28,7 +30,7 @@
 <table class="table table-bordered" id="dashboard-table" data-current-user="{% if user %}{{ user.id }}{% else %}anonymous{% endif %}">
     <thead>
         <tr>
-            <th style="width: 300px;">Test <a id="add-test-button" style="float: right;" class="btn btn-success btn-sm" href='/test-cases/create'><i class="bi-plus"></i></a></th>
+            <th style="width: 300px;">Test {% if user.is_authenticated %}<a id="add-test-button" style="float: right;" class="btn btn-success btn-sm" href='/test-cases/create'><i class="bi-plus"></i></a>{% endif %}</th>
             {% for date in date_list %}
                 <th style="width: 150px;">{{ date }}</th>
             {% endfor %}
@@ -68,4 +70,18 @@
     {% if user.is_authenticated %}
         <script src="{% static 'testportal/js/dashboard_view.js' %}"></script>
     {% endif %}
+    <script>
+    $("#test-search-box").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#dashboard-table tr.test-case-row").filter(function() {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+    
+    $('.test-case-name-dashboard-cell').dblclick(function() {
+        var test_case_id = this.dataset.testCaseId;
+        var test_case_url = `/test-cases/${test_case_id}`;
+        window.location.href = test_case_url;
+    });
+    </script>
 {% endblock %}

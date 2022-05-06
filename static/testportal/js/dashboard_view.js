@@ -22,16 +22,6 @@ $(document).ready(function() {
     $('#add-test-button').click(function() {
         alert('Add test functionality not implemented yet... Use upload test cases instead...');
     });
-
-    
-    /*
-    Double Click Test Name to Edit
-    */
-    $('.test-case-name-dashboard-cell').dblclick(function() {
-        var test_case_id = this.dataset.testCaseId;
-        var test_case_url = `/test-cases/${test_case_id}`;
-        window.location.href = test_case_url;
-    });
     
     // Open Modal for Result
     $('.test-result-dashboard-cell').dblclick(function() {
@@ -131,14 +121,6 @@ $(document).ready(function() {
                 alert("Unable to update result. Please see system administrator.");
                 console.log("Something went wrong", error);
             }
-        });
-    });
-
-
-    $("#test-search-box").on("keyup", function() {
-        var value = $(this).val().toLowerCase();
-        $("#dashboard-table tr.test-case-row").filter(function() {
-            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
 

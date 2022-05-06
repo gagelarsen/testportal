@@ -25,7 +25,7 @@ $(document).ready(function() {
                 note_field.val(`Construction Start Date: ${today}\nProblem: `);
                 break;
             case 'In Documentation':
-                note_field.val(`Documentation Report Date: ${today}\nReported to: \nReported By: ${user}\nProblem: `);
+                note_field.val(`Documentation Report Date: ${today}\nReported To: \nReported By: ${user}\nProblem: `);
                 break;
         }
     });

@@ -45,7 +45,7 @@
             </ul>
           </li> {% endcomment %}
         </ul>
-        <div class="d-flex">
+        <div class="d-flex" style="color: white;">
           {% if user.is_authenticated %}
             {{ user.username }} [<a href="{% url 'logout' %}">logout</a>]
           {% else %}

@@ -62,3 +62,6 @@ class TestCase(models.Model):
             result_date__in=date_list,
         )}
         return results
+
+    def __str__(self):
+        return f'{self.name} - ({self.suite})'

@@ -1,0 +1,12 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+
+<form class="from" method="post"> 
+    {% csrf_token %} 
+    {{ form.as_p }} 
+    <input name="referrer" id="id_referrer" type="hidden" value="{{ referrer }}">
+    <input class="btn btn-success" type="submit" value="Save"> 
+</form> 
+
+{% endblock %}

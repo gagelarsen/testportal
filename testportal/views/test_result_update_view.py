@@ -32,6 +32,8 @@ class TestResultCreateView(CreateView):
     fields = [
         'result',
         'note',
+        'user',
+        'test_case',
         'result_date',
         'duration',
     ]

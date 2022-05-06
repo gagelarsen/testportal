@@ -15,6 +15,8 @@ class TestResult(models.Model):
         ('false-negative', 'False Negative'),
         ('issue', 'Issue'),
         ('skipped', 'Skipped'),
+        ('under-construction', 'Under Construction'),
+        ('in-documentation', 'In Documentation'),
     )
     
     class Meta:
@@ -31,3 +33,4 @@ class TestResult(models.Model):
     test_case = models.ForeignKey(TestCase, on_delete=models.CASCADE, related_name='results')
     result_date = models.DateField(default=datetime.now)
     duration = models.FloatField(null=True, blank=True)
+    bug_id = models.CharField(max_length=32, null=True, blank=True)

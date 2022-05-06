@@ -16,7 +16,7 @@ STATUS = Choices(
     ('depricated', 'Test is depricated'),
     ('broken', 'Test is broken'),
     ('under-construction', 'Test is under construction'),
-    ('design', 'Test is in design')
+    ('design', 'Test is in design'),
 )
 
 TEST_TYPE = Choices(

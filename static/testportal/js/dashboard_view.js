@@ -146,11 +146,13 @@ $(document).ready(function() {
             headers:{"X-CSRFToken": csrftoken},
             dataType:'json',
             success: function (response) {
+                var current_user = $('#dashboard-table').data('current-user');
+
                 $('#test-result-id').val(response.id);
                 $('#test-result-test-case').val(response.test_case);
                 $('#test-result-date').val(response.result_date);
                 $('#test-result-status').val(response.result);
-                $('#test-result-user').val(response.user);
+                $('#test-result-user').val(current_user);
                 $('#test-result-note').val(response.note);
                 $('#test-result-duration').val(response.duration);
                 

@@ -115,6 +115,7 @@ $(document).ready(function() {
                 $(result_cell_id).removeClass('bg-bug');
 
                 $(result_cell_id).html('');
+                $(result_cell_id).prop('title', response.note);
                 
                 if (response.bug_id != '') {
                     $(result_cell_id).addClass('bg-bug');

@@ -112,10 +112,18 @@ $(document).ready(function() {
                 var bg_classes = $("#test-result-status option").map(function() {
                     $(result_cell_id).removeClass('bg-' + this.value);
                 });
-                
-                $(result_cell_id).addClass('bg-' + result_status);
-                $(result_cell_id).text(result_status_text);
+                $(result_cell_id).removeClass('bg-bug');
 
+                $(result_cell_id).html('');
+                
+                if (response.bug_id != '') {
+                    $(result_cell_id).addClass('bg-bug');
+                    var bug_url = `https://bugs.aquaveo.com/view.php?id=${response.bug_id}`;
+                    $(result_cell_id).html(`<a class="bug-link" target="_blank" href="${bug_url}">BUG-${response.bug_id}</a>`);
+                } else {
+                    $(result_cell_id).addClass('bg-' + result_status);
+                    $(result_cell_id).text(result_status_text);
+                }
                 $('#update-result-modal').modal('toggle');
             },
             error: function(error){

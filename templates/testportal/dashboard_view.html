@@ -41,7 +41,11 @@
             {% for date in date_list %}
             {% with result=row.test_results|get_item:date %}
             {% if result %}
+                {% if result.bug_id %}
+                <td id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}' class="test-result-dashboard-cell bg-bug"><a class='bug-link' target='_blank' href='https://bugs.aquaveo.com/view.php?id={{ result.id }}'>BUG-{{ result.bug_id }}</td>
+                {% else %}
                 <td id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}' class="test-result-dashboard-cell bg-{{ result.result}}">{{ result.result|format_result }}</td>
+                {% endif %}
             {% else %}
                 <td class="test-result-dashboard-cell bg-skipped">-</td>
             {% endif %}

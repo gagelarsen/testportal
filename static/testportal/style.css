@@ -28,6 +28,10 @@ td.bg-bug {
     color: white;
 }
 
+a.bug-link {
+    color: white !important;
+}
+
 .bg-pass {
     background-color: rgb(98, 206, 98);
 }

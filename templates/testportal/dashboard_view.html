@@ -25,7 +25,7 @@
     </div>
 </div>
 
-<table class="table table-bordered" id="dashboard-table">
+<table class="table table-bordered" id="dashboard-table" data-current-user="{% if user %}{{ user.id }}{% else %}anonymous{% endif %}">
     <thead>
         <tr>
             <th style="width: 300px;">Test <a id="add-test-button" style="float: right;" class="btn btn-success btn-sm" href='/test-cases/create'><i class="bi-plus"></i></a></th>

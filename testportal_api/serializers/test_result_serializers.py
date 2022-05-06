@@ -4,4 +4,4 @@ from testportal.models import TestResult
 class TestResultSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestResult
-        fields = ('id', 'result', 'test_case', 'result_date', 'user', 'note', 'duration')
+        fields = ('id', 'result', 'test_case', 'result_date', 'user', 'note', 'duration', 'bug_id')

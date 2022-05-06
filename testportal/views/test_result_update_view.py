@@ -13,6 +13,7 @@ class TestResultUpdateView(UpdateView):
         'test_case',
         'result_date',
         'duration',
+        'bug_id',
     ]
 
     def get_context_data(self, **kwargs):
@@ -36,6 +37,7 @@ class TestResultCreateView(CreateView):
         'test_case',
         'result_date',
         'duration',
+        'bug_id',
     ]
 
     def get_context_data(self, **kwargs):

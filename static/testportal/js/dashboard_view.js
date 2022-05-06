@@ -155,6 +155,7 @@ $(document).ready(function() {
                 $('#test-result-user').val(current_user);
                 $('#test-result-note').val(response.note);
                 $('#test-result-duration').val(response.duration);
+                $('#test-result-bug-id').val(response.bug_id);
                 
                 $('#update-result-modal-loading').hide();
                 $('#update-result-modal-form').show();
@@ -177,6 +178,7 @@ $(document).ready(function() {
         var result_date = $('#test-result-date').val();
         var user_id = $('#test-result-user').val();
         var result = $('#test-result-status').val();
+        var bug_id = $('#test-result-bug-id').val();
 
         $.ajax({
             url: '/api/test-results/' + result_id + '/',
@@ -186,7 +188,8 @@ $(document).ready(function() {
                 'note': note,
                 'result_date': result_date,
                 'result': result,
-                'test_case': test_case_id
+                'test_case': test_case_id,
+                'bug_id': bug_id
             },
             headers:{"X-CSRFToken": csrftoken},
             dataType:'json',

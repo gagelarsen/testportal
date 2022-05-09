@@ -167,4 +167,40 @@ $(document).ready(function() {
             }
         });
     });
+
+    $(function() {
+        $.contextMenu({
+            selector: '.dashboard-date-cell', 
+            callback: function(key, options) {
+                if (key == 'delete-results') {
+                    var date = $(this).data('date')
+                    var suite = $('#dashboard-table').data('suite-name');
+                    if (confirm('Are you sure you want to delete these results?') == true) {
+                        $.ajax({
+                            url: '/api/delete/test-results/' + suite + '/' + date,
+                            type: "POST",
+                            headers:{
+                                "X-CSRFToken": csrftoken,
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (response) {
+                                alert('Succesfully deleted results for ' + suite + '(' + date + ')');
+                            },
+                            error: function(error){
+                                alert('An error occured while trying to delete results...');
+                                console.log("Something went wrong", error);
+                            }
+                        });
+                    }
+                }
+                location.reload();
+            },
+            items: {
+                "delete-results": {name: "Delete Results", icon: "delete"},
+            }
+        });
+    });
+
 });

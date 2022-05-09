@@ -26,13 +26,12 @@
         </div>
     </div>
 </div>
-
-<table class="table table-bordered" id="dashboard-table" data-current-user="{% if user %}{{ user.id }}{% else %}anonymous{% endif %}">
+<table class="table table-bordered" id="dashboard-table" data-suite-name='{{ suite.name }}' data-current-user="{% if user %}{{ user.id }}{% else %}anonymous{% endif %}">
     <thead>
         <tr>
             <th style="width: 300px;">Test {% if user.is_authenticated %}<a id="add-test-button" style="float: right;" class="btn btn-success btn-sm" href='/test-cases/create'><i class="bi-plus"></i></a>{% endif %}</th>
             {% for date in date_list %}
-                <th style="width: 150px;">{{ date }}</th>
+                <th class='dashboard-date-cell' data-date='{{ date.month }}-{{ date.day }}-{{ date.year }}' style="width: 150px;">{{ date }}</th>
             {% endfor %}
         </tr>
     </thead>
@@ -80,7 +79,7 @@
     
     $('.test-case-name-dashboard-cell').dblclick(function() {
         var test_case_id = this.dataset.testCaseId;
-        var test_case_url = `/test-cases/${test_case_id}`;
+        var test_case_url = `/test-cases/${test_case_id}/update`;
         window.location.href = test_case_url;
     });
     </script>

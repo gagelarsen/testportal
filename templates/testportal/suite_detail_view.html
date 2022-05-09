@@ -1,4 +1,5 @@
 {% extends "core/layout.html" %}
+{% load static %}
 
 {% block content %}
 
@@ -9,14 +10,12 @@
     </div>
     <div class="row">
         <div class="col-md-5 col-lg-5">
-            <div style="height: 100%" id="suite-info-card" class="card">
+            <div style="height: 100%" id="suite-info-card" data-authenticated='{{ user.is_authenticated }}' class="card">
                 <div class="card-header">
                     Suite Info
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <!-- Suite info goes here...-->
-                         
                         <p><strong>Name: </strong>{{ suite.name }}</p>
                         <p><strong>Active: </strong>{{ suite.active }}</p>
                         <p><strong>Description: </strong>{{ suite.description }}</p>
@@ -29,27 +28,27 @@
                 <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active" id="suite-data-type-tab" data-bs-toggle="tab" data-bs-target="#suite-data-type-content" type="button" role="tab">Type</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="suite-data-status-tab" data-bs-toggle="tab" data-bs-target="#suite-data-status-content" type="button" role="tab">Status</a>
+                            <a class="nav-link active" id="suite-data-status-tab" data-bs-toggle="tab" data-bs-target="#suite-data-status-content" type="button" role="tab">Status</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="suite-data-result-tab" data-bs-toggle="tab" data-bs-target="#suite-data-result-content" type="button" role="tab">Result</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="suite-data-type-tab" data-bs-toggle="tab" data-bs-target="#suite-data-type-content" type="button" role="tab">Type</a>
                         </li>
                     </ul>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="tab-content" id="suite-data-content">
-                            <div class="tab-pane fade show active" id="suite-data-type-content" role="tabpanel" aria-labelledby="suite-data-type-tab">
-                                <div id="suite-data-type-display-div" style="width 100%;"></div>
-                            </div>
                             <div class="tab-pane fade" id="suite-data-status-content" role="tabpanel" aria-labelledby="suite-data-status-tab">
                                 <div id="suite-data-status-display-div" style="width 100%;"></div>
                             </div>
                             <div class="tab-pane fade" id="suite-data-result-content" role="tabpanel" aria-labelledby="suite-data-result-tab">
                                 <div id="suite-data-result-display-div" style="width 100%;"></div>
+                            </div>
+                            <div class="tab-pane fade show active" id="suite-data-type-content" role="tabpanel" aria-labelledby="suite-data-type-tab">
+                                <div id="suite-data-type-display-div" style="width 100%;"></div>
                             </div>
                         </div>
                     </div>
@@ -69,67 +68,69 @@
                     <th style="width: 20%">Last Result</th>
                 </tr>
             </thead>
+            <tbody>
                 {% for test_case in test_cases %}
                 <tr>
                     <td>
-                        <a href="/test-cases/{{ test_case.id }}">{{ test_case.test_case_id }}</a>
+                        <a href="/test-cases/{{ test_case.test_case.id }}">{{test_case.test_case.test_case_id }}</a>
                     </td>
-                    <td>{{ test_case.name }}</td>
-                    <td>{{ test_case.test_type }}</td>
-                    <td>{{ test_case.status }}</td>
-                    <td>-</td>
+                    <td>{{ test_case.test_case.name }}</td>
+                    <td>{{ test_case.test_case.test_type }}</td>
+                    <td>{{ test_case.test_case.status }}</td>
+                    <td>
+                        {% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span style="width: 90px;" class="badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span style="width: 90px;" class="badge rounded-pill bg-skipped">no result</span>{% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
-            <tbody>
             </tbody>
         </table>
     </div>
+    <div style="display: none;">
+    {{ type_counts.keys }}
+    {{ status_counts.values }}
+    {{ result_counts }}
+    </div>
 </main>
+
 {% endblock %}
 
 
 
 {% block page_javascript %}
-    {% if user.is_authenticated %}
-        <script>
-        $(document).ready(function() {
-            var type_plot_div = document.getElementById('suite-data-type-display-div');
-            var status_plot_div = document.getElementById('suite-data-status-display-div');
-            var result_plot_div = document.getElementById('suite-data-result-display-div');
+    <script src="{% static 'testportal/js/suite_detail_view.js' %}"></script>
+    <script>
+var result_plot_div = document.getElementById('suite-data-result-display-div');
+var type_plot_div = document.getElementById('suite-data-type-display-div');
+var status_plot_div = document.getElementById('suite-data-status-display-div');
 
-            // Plot Layout
-            var layout = {
-                height: 300,
-                margin: {"t": 0, "b": 0, "l": 0, "r": 0},
-            }
+// Plot Layout
+var layout = {
+    height: 300,
+    margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+}
 
-            // Type Plot
-            var type_data = [{
-                values: [5, 95],
-                labels: ['manual', 'automated'],
-                type: 'pie'
-            }];
-            Plotly.newPlot('suite-data-type-display-div', type_data, layout)
+// Type Plot
+var type_data = [{
+    values: [{% for v in type_counts_values %}{{ v }},{% endfor %}],
+    labels: [{% for k in type_counts_keys %}"{{ k }}",{% endfor %}],
+    type: 'pie'
+}];
+Plotly.newPlot('suite-data-type-display-div', type_data, layout)
 
-            // Status Plot
-            var status_data = [{
-                values: [87, 1, 5, 2, 5],
-                labels: ['active', 'depricated', 'broken', 'under-construction', 'design'],
-                type: 'pie'
-            }];
-            Plotly.newPlot('suite-data-status-display-div', status_data, layout)
+// Status Plot
+var status_data = [{
+    values: [{% for v in status_counts_values %}{{ v }},{% endfor %}],
+    labels: [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}],
+    type: 'pie'
+}];
+Plotly.newPlot('suite-data-status-display-div', status_data, layout)
 
-            // Result Plot
-            var result_data = [{
-                values: [80, 2, 6, 8, 4],
-                labels: ['pass', 'fail', 'issue', 'false-negative', 'skipped'],
-                type: 'pie'
-            }];
-            Plotly.newPlot('suite-data-result-display-div', result_data, layout)
-
-
-
-        });
-        </script>
-    {% endif %}
+// Result Plot
+var result_data = [{
+    values: [{% for v in result_counts_values %}{{ v }},{% endfor %}],
+    labels: [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}],
+    type: 'pie'
+}];
+Plotly.newPlot('suite-data-result-display-div', result_data, layout)
+    </script>
 {% endblock %}

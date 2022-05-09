@@ -63,5 +63,9 @@ class TestCase(models.Model):
         )}
         return results
 
+    def get_last_result(self):
+        result = self.results.all().order_by('-result_date')[:1]
+        return result[0] if len(result) > 0 else None
+
     def __str__(self):
         return f'{self.name} - ({self.suite})'

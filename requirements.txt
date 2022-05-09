@@ -6,3 +6,4 @@ django-model-utils
 djangorestframework
 python-decouple
 psycopg2
+markdown

@@ -19,38 +19,26 @@
 <div class="tab-content" id="test-plan-tab-content">
     <div class="tab-pane fade show active" id="test-plan-details-content" role="tabpanel" aria-labelledby="test-plan-details-tab">
         <br/>
-        <select id="test-plan-suite" class="form-select"{% if not user.is_authenticated %} disabled{% endif %}>
-            {% for suite in suites %}
-                <option value={{suite.id}}{% if suite.id == test_plan.suite.id %} selected{% endif %}>{{suite.name}}</options>
-            {% endfor %}
-        </select>
         <div class="mb-3">
-        <label for="test-plan-description" class="form-label">Description:</label>
-        <textarea class="form-control" id="test-plan-description" rows="5" 
-                    {% if not user.is_authenticated %} disabled{% endif %}>{{ test_plan.description }}</textarea>
+            <h2>Suite:</h2>
+            <p>{{ test_plan.suite }}</p>
         </div>
         <div class="mb-3">
-        <label for="test-plan-developers" class="form-label">Developers:</label>
-        <textarea class="form-control" id="test-plan-developers" rows="5" 
-                    {% if not user.is_authenticated %} disabled{% endif %}>{{ test_plan.developers }}</textarea>
+            <h2>Description:</h2>
+            <p>{{ test_plan.description | markdown | safe }}
         </div>
         <div class="mb-3">
-        <label for="test-plan-features-to-test" class="form-label">Features to Test:</label>
-        <textarea class="form-control" id="test-plan-features-to-test" rows="20" 
-                    {% if not user.is_authenticated %} disabled{% endif %}>{{ test_plan.features_to_test }}</textarea>
+            <h2>Developers:</h2>
+            <p>{{ test_plan.developers | markdown | safe }}</p>
         </div>
         <div class="mb-3">
-        <label for="test-plan-notes" class="form-label">Notes:</label>
-        <textarea class="form-control" id="test-plan-notes" rows="10" 
-                    {% if not user.is_authenticated %} disabled{% endif %}>{{ test_plan.notes }}</textarea>
+            <h2>Features to Test:</h2>
+            <p>{{ test_plan.features_to_test | markdown | safe }}</p>
         </div>
-
-        {% if user.is_authenticated %}
-        <button type="button" id="save-test-plan-button" class="btn btn-success">
-            <i class="bi-save"> Save Test Plan</i>
-        </button>
-        {% endif %}
-        <br/>
+        <div class="mb-3">
+            <h2>Notes:</h2>
+            <p>{{ test_plan.notes | markdown | safe }}</p>
+        </div>
     </div>
 
     <div class="tab-pane fade" id="test-plan-test-cases-content" role="tabpanel" aria-labelledby="test-plan-test-cases-tab">        
@@ -113,84 +101,42 @@
             }
             const csrftoken = getCookie('csrftoken');
 
-            $('#save-test-plan-button').click(function() {
-                var test_plan_id = {{ test_plan.id }};
-                var suite = $('#test-plan-suite').val();
-                var description = $('#test-plan-description').val();
-                var developers = $('#test-plan-developers').val();
-                var features_to_test = $('#test-plan-features-to-test').val();
-                var notes = $('#test-plan-notes').val();
 
-                $.ajax({
-                    url: '/api/test-plans/' + test_plan_id + '/',
-                    type: "PUT",
-                    data: {
-                        "name": "{{ test_plan.name }}",
-                        "suite": suite,
-                        "description": description,
-                        "developers": developers,
-                        "features_to_test": features_to_test,
-                        "notes": notes,
-                    },
-                    headers:{"X-CSRFToken": csrftoken},
-                    dataType:'json',
-                    success: function (response) {
-                        alert('Sucessfully saved test plan.')
-                        location.reload();
-                    },
-                    error: function(error){
-                        alert("Unable to save test plan. Please see system administrator.");
-                        console.log("Something went wrong", error);
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [4, 5, 3, 5, 2, 3],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
-                });
+                }
             });
-
-
-
-
-
-
-
-const ctx = document.getElementById('myChart').getContext('2d');
-const myChart = new Chart(ctx, {
-    type: 'pie',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [4, 5, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
-});
-
-
-
-
-
 
         });
         </script>

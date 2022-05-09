@@ -1,7 +1,7 @@
 from django.views.generic.edit import UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from testportal.models.test_result import TestCase
+from testportal.models.test_case import TestCase
 
 
 class TestCaseUpdateView(LoginRequiredMixin, UpdateView):

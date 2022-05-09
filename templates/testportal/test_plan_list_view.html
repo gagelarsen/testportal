@@ -17,11 +17,7 @@
             <td>{{ test_plan.suite }}</td>
             <td>
                 <a class="btn btn-success" href="/test-plans/{{ test_plan.id }}" title="edit">
-                    {% if user.is_authenticated %}
-                    <i class="bi-pencil"></i>
-                    {% else %}
                     <i class="bi-eye"></i>
-                    {% endif %}
                 </a>
                 {% if user.is_authenticated %}
                 <div data-test-plan-id={{ test_plan.id }} class="btn btn-danger btn-delete-test-plan" title="delete">

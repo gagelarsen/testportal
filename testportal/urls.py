@@ -5,6 +5,7 @@ from testportal.views import dashboard_view, suite_detail_view, suite_list_view,
     test_plan_list_view, test_plan_detail_view, test_case_detail_view
 from testportal.views.test_result_update_view import TestResultUpdateView, TestResultCreateView
 from testportal.views.test_case_update_view import TestCaseUpdateView, TestCaseCreateView
+from testportal.views.test_plan_update_view import TestPlanUpdateView, TestPlanCreateView
 
 app_name = 'testportal'
 
@@ -15,6 +16,8 @@ urlpatterns = [
     path('test-cases/<int:pk>/update', TestCaseUpdateView.as_view(), name='test_case_update_view'),
     path('test-plans/', test_plan_list_view, name='test_plan_list_view'),
     path('test-plans/<int:test_plan_id>/', test_plan_detail_view, name='test_plan_list_view'),
+    path('test-plans/<int:pk>/update', TestPlanUpdateView.as_view(), name='test_plan_update'),
+    path('test-plans/create', TestPlanCreateView.as_view(), name='test_plan_create'),
     path('test-results/<int:pk>', TestResultUpdateView.as_view(), name='test_result_update'),
     path('test-results/create', TestResultCreateView.as_view(), name='test_result_create'),
     path('suites/', suite_list_view, name='suite_list_view'),

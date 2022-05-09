@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<h1>{{ test_plan.name }}</h1>
+<h1>{{ test_plan.name }}{% if user.is_authenticated %}  <a class="btn btn-sml btn-success" href="/test-plans/{{ test_plan.id }}/update">Edit</a>{% endif %}</h1>
 
 <nav>
 <ul class="nav nav-tabs" id="nav-tab" role="tablist">

@@ -2,7 +2,7 @@ from django.urls import path
 from .views import SuiteList, SuiteDetail, TagDetail, TagList, TestCaseDetail, \
     upload_multiple_test_cases, TestCategoryDetail, TestCategoryList, TestSubcategoryDetail, \
     TestSubcategoryList, TestPlanDetail, TestPlanList, TestResultDetail, TestResultList, \
-    upload_test_results
+    upload_test_results, delete_test_results_for_date_and_suite
 
 app_name = 'testportal_api'
 
@@ -20,6 +20,8 @@ urlpatterns = [
     path('test-plans/', TestPlanList.as_view(), name='test_plans_listcreate'),
     path('test-results/<int:pk>/', TestResultDetail.as_view(), name='test_results_detailcreate'),
     path('test-results/', TestResultList.as_view(), name='test_results_listcreate'),
+    path('delete/test-results/<str:suite>/<int:month>-<int:day>-<int:year>', 
+        delete_test_results_for_date_and_suite, name='delete_test_results_for_date_and_suite'),
     path('upload/test-cases/', upload_multiple_test_cases, name='testcase_upload'),
     path('upload/test-results/<int:pk>', upload_test_results, name='testresult_upload'),
 ]

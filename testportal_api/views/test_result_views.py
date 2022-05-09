@@ -2,7 +2,6 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 
 from django.http import JsonResponse
-from django.core import serializers
 
 from rest_framework import generics
 
@@ -19,6 +18,27 @@ class TestResultDetail(generics.RetrieveUpdateDestroyAPIView):
    queryset = TestResult.objects.all()
    serializer_class = TestResultSerializer
 
+
+def delete_test_results_for_date_and_suite(request, suite, month, day, year):
+    try:
+        suite = Suite.objects.get(name=suite)
+    except Exception as e:
+        return JsonResponse({"error": "Unable to find suite to delete results from..."}, status=404)
+
+    try:
+        dt = datetime.strptime(f'{month}-{day}-{year}', '%m-%d-%Y').date()
+    except Exception as e:
+        return JsonResponse({"error": "Unable to parse date from url..."}, status=400)
+
+    try:
+        TestResult.objects.all().filter(test_case__suite=suite, result_date=dt).delete()
+    except:
+        return JsonResponse({"error": "Unable to process result deletion..."}, status=400)
+
+
+    return JsonResponse({
+        "message": 'Successfully deleted results',
+    }, status=201)
 
 def upload_test_results(request, pk):
     # request should be ajax and method should be POST.

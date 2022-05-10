@@ -78,7 +78,7 @@
             </thead>
             <tbody>
                 {% for test_case in test_cases %}
-                <tr>
+                <tr class="test-plan-test-case-row" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
                     <td>
                         <a href="/test-cases/{{ test_case.test_case.id }}">{{test_case.test_case.test_case_id }}</a>
                     </td>

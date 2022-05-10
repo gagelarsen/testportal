@@ -30,7 +30,10 @@
                 <div class="card-header">
                     <ul class="nav nav-tabs card-header-tabs">
                         <li class="nav-item">
-                            <a class="nav-link active" id="suite-data-status-tab" data-bs-toggle="tab" data-bs-target="#suite-data-status-content" type="button" role="tab">Status</a>
+                            <a class="nav-link active" id="suite-data-category-tab" data-bs-toggle="tab" data-bs-target="#suite-data-category-content" type="button" role="tab">Category</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="suite-data-status-tab" data-bs-toggle="tab" data-bs-target="#suite-data-status-content" type="button" role="tab">Status</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="suite-data-result-tab" data-bs-toggle="tab" data-bs-target="#suite-data-result-content" type="button" role="tab">Result</a>
@@ -43,13 +46,16 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="tab-content" id="suite-data-content">
+                            <div class="tab-pane fade show active" id="suite-data-category-content" role="tabpanel" aria-labelledby="suite-data-category-tab">
+                                <div id="suite-data-category-display-div" style="width 100%;"></div>
+                            </div>
                             <div class="tab-pane fade" id="suite-data-status-content" role="tabpanel" aria-labelledby="suite-data-status-tab">
                                 <div id="suite-data-status-display-div" style="width 100%;"></div>
                             </div>
                             <div class="tab-pane fade" id="suite-data-result-content" role="tabpanel" aria-labelledby="suite-data-result-tab">
                                 <div id="suite-data-result-display-div" style="width 100%;"></div>
                             </div>
-                            <div class="tab-pane fade show active" id="suite-data-type-content" role="tabpanel" aria-labelledby="suite-data-type-tab">
+                            <div class="tab-pane fade show" id="suite-data-type-content" role="tabpanel" aria-labelledby="suite-data-type-tab">
                                 <div id="suite-data-type-display-div" style="width 100%;"></div>
                             </div>
                         </div>
@@ -104,6 +110,7 @@
 var result_plot_div = document.getElementById('suite-data-result-display-div');
 var type_plot_div = document.getElementById('suite-data-type-display-div');
 var status_plot_div = document.getElementById('suite-data-status-display-div');
+var status_plot_div = document.getElementById('suite-data-category-display-div');
 
 // Plot Layout
 var layout = {
@@ -134,5 +141,14 @@ var result_data = [{
     type: 'pie'
 }];
 Plotly.newPlot('suite-data-result-display-div', result_data, layout)
+
+// Category Plot
+var category_data = [{
+    values: [{% for v in category_counts_values %}{{ v }},{% endfor %}],
+    labels: [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}],
+    type: 'pie'
+}];
+Plotly.newPlot('suite-data-category-display-div', category_data, layout)
+
     </script>
 {% endblock %}

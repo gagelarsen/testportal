@@ -21,6 +21,7 @@ def suite_detail_view(request, name):
     type_counts = Counter([x['test_case'].test_type for x in test_cases])
     status_counts = Counter([x['test_case'].status for x in test_cases])
     result_counts = Counter([x['result'].result if x['result'] != None else None for x in test_cases])
+    category_counts = Counter([x['test_case'].category for x in test_cases])
 
     context.update({
         'suite': suite,
@@ -30,9 +31,11 @@ def suite_detail_view(request, name):
         'type_counts_keys': type_counts.keys(),
         'status_counts_keys': status_counts.keys(),
         'result_counts_keys': result_counts.keys(),
+        'category_counts_keys': category_counts.keys(),
         'type_counts_values': type_counts.values(),
         'status_counts_values': status_counts.values(),
         'result_counts_values': result_counts.values(),
+        'category_counts_values': category_counts.values(),
     })
 
     return render(request, 'testportal/suite_detail_view.html', context)

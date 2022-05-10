@@ -49,7 +49,7 @@
                 <td title="{{ result.note }}" id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}' class="test-result-dashboard-cell bg-{{ result.result}}">{{ result.result|format_result }}</td>
                 {% endif %}
             {% else %}
-                <td class="no-result-dashboard-cell bg-skipped"></td>
+                <td class="no-result-dashboard-cell bg-skipped">-</td>
             {% endif %} 
             {% endwith %}
         {% endfor %}

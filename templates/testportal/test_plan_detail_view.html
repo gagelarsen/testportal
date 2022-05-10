@@ -8,17 +8,17 @@
 <nav>
 <ul class="nav nav-tabs" id="nav-tab" role="tablist">
   <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="test-plan-details-tab" data-bs-toggle="tab" data-bs-target="#test-plan-details-content" type="button" role="tab">Details</button>
+    <button class="nav-link active" id="test-plan-test-cases-tab" data-bs-toggle="tab" data-bs-target="#test-plan-test-cases-content" type="button" role="tab">Test Cases</button>
   </li>
   <li class="nav-item" role="presentation">
-    <button class="nav-link" id="test-plan-test-cases-tab" data-bs-toggle="tab" data-bs-target="#test-plan-test-cases-content" type="button" role="tab">Test Cases</button>
+    <button class="nav-link" id="test-plan-details-tab" data-bs-toggle="tab" data-bs-target="#test-plan-details-content" type="button" role="tab">Details</button>
   </li>
 </ul>
 </nav>
 
 
 <div class="tab-content" id="test-plan-tab-content">
-    <div class="tab-pane fade show active" id="test-plan-details-content" role="tabpanel" aria-labelledby="test-plan-details-tab">
+    <div class="tab-pane fade" id="test-plan-details-content" role="tabpanel" aria-labelledby="test-plan-details-tab">
         <br/>
         <div class="mb-3">
             <h2>Suite:</h2>
@@ -42,39 +42,95 @@
         </div>
     </div>
 
-    <div class="tab-pane fade" id="test-plan-test-cases-content" role="tabpanel" aria-labelledby="test-plan-test-cases-tab">   
-        <br/> 
-        <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th style="width: 10%;">ID</th>
-                    <th style="width: 30%;">Name</th>
-                    <th style="width: 30%;">Type</th>
-                    <th style="width: 15%;">Status</th>
-                    <th style="width: 15%;"></th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for test_case in test_cases %}
-                <tr class="test-plan-test-case-row" data-test-case-id="{{ test_case.id }}" data-test-case-name="{{ test_case.name }}">
-                    <td>{{ test_case.test_case_id }}</td>
-                    <td>{{ test_case.name }}</td>
-                    <td>{{ test_case.test_type }}</td>
-                    <td>{{ test_case.status }}</td>
-                    <td>
-                        <a class="btn btn-success" href="/test-cases/{{ test_case.id }}" title="edit">
-                            {% if user.is_authenticated %}
-                            <i class="bi-pencil"></i>
-                            {% else %}
-                            <i class="bi-eye"></i>
-                            {% endif %}
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
+    <div class="tab-pane fade show active" id="test-plan-test-cases-content" role="tabpanel" aria-labelledby="test-plan-test-cases-tab">  
+        <div class="row">
+            <div class="col-md-5 col-lg-5">
+                <div style="height: 100%" id="test-plan-info-card" data-authenticated='{{ user.is_authenticated }}' class="card">
+                    <div class="card-header">
+                        Test Plan Info
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <p><strong>Name: </strong>{{ test_plan.name }}</p>
+                            <p><strong>Description: </strong>{{ test_plan.description }}</p>
+                            <p><strong>Total Cases: </strong>{{ test_cases | length }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-7 col-lg-7 order-md-last">
+                <div style="height: 100%" id="test-plan-data-card" class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="test-plan-data-category-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-category-content" type="button" role="tab">Category</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="test-plan-data-status-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-status-content" type="button" role="tab">Status</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="test-plan-data-result-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-result-content" type="button" role="tab">Result</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="tab-content" id="test-plan-data-content">
+                                <div class="tab-pane fade show active" id="test-plan-data-category-content" role="tabpanel" aria-labelledby="test-plan-data-category-tab">
+                                    <div id="test-plan-data-category-display-div" style="width 100%;"></div>
+                                </div>
+                                <div class="tab-pane fade" id="test-plan-data-status-content" role="tabpanel" aria-labelledby="test-plan-data-status-tab">
+                                    <div id="test-plan-data-status-display-div" style="width 100%;"></div>
+                                </div>
+                                <div class="tab-pane fade" id="test-plan-data-result-content" role="tabpanel" aria-labelledby="test-plan-data-result-tab">
+                                    <div id="test-plan-data-result-display-div" style="width 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-11 col-lg-11">
+                <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">ID</th>
+                            <th style="width: 30%;">Name</th>
+                            <th style="width: 15%;">Type</th>
+                            <th style="width: 15%;">Result</th>
+                            <th style="width: 15%;">Status</th>
+                            <th style="width: 15%;"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for test_case in test_cases %}
+                        <tr class="test-plan-test-case-row" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
+                            <td>{{ test_case.test_case.test_case_id }}</td>
+                            <td>{{ test_case.test_case.name }}</td>
+                            <td>{{ test_case.test_case.test_type }}</td>
+                            <td>
+                                {% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span style="width: 90px;" class="badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span style="width: 90px;" class="badge rounded-pill bg-skipped">no result</span>{% endif %}
+                            </td>
+                            <td>{{ test_case.test_case.status }}</td>
+                            <td>
+                                <a class="btn btn-success" href="/test-cases/{{ test_case.test_case.id }}" title="edit">
+                                    {% if user.is_authenticated %}
+                                    <i class="bi-pencil"></i>
+                                    {% else %}
+                                    <i class="bi-eye"></i>
+                                    {% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -86,4 +142,38 @@
     {% if user.is_authenticated %}
         <script src="{% static 'testportal/js/test_plan_detail_view.js' %}"></script>
     {% endif %}
+        <script>
+var result_plot_div = document.getElementById('test-plan-data-result-display-div');
+var status_plot_div = document.getElementById('test-plan-data-status-display-div');
+var status_plot_div = document.getElementById('test-plan-data-category-display-div');
+
+// Plot Layout
+var layout = {
+    height: 300,
+    margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+    texttemplate: '%{label}: %{value}',
+}
+
+// Status Plot
+var status_layout = Object.create(layout);
+status_layout.values = [{% for v in status_counts_values %}{{ v }},{% endfor %}];
+status_layout.labels = [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}];
+status_layout.type = 'pie';
+Plotly.newPlot('test-plan-data-status-display-div', [status_layout]);
+
+// Result Plot
+var result_layout = Object.create(layout);
+result_layout.values = [{% for v in result_counts_values %}{{ v }},{% endfor %}];
+result_layout.labels = [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}];
+result_layout.type = 'pie';
+Plotly.newPlot('test-plan-data-result-display-div', [result_layout]);
+
+// Category Plot
+var category_layout = Object.create(layout);
+category_layout.values = [{% for v in category_counts_values %}{{ v }},{% endfor %}];
+category_layout.labels = [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}];
+category_layout.type = 'pie';
+Plotly.newPlot('test-plan-data-category-display-div', [category_layout]);
+
+    </script>
 {% endblock %}

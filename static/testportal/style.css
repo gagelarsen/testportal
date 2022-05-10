@@ -74,6 +74,10 @@ td.bg-skipped {
     text-align: center;
 }
 
+.no-result-dashboard-cell {
+    text-align: center;
+}
+
 .div-centered {
     width: 50%;
     margin: 0 auto;

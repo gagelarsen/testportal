@@ -45,7 +45,7 @@ $(document).ready(function() {
             headers:{"X-CSRFToken": csrftoken},
             dataType:'json',
             success: function (response) {
-                var current_user = $('#dashboard-table').data('current-user');
+                var current_user = $('#dashboard-table').data('current-user-id');
 
                 $('#test-result-id').val(response.id);
                 $('#test-result-test-case').val(response.test_case);
@@ -79,9 +79,17 @@ $(document).ready(function() {
         var result = $('#test-result-status').val();
         var bug_id = $('#test-result-bug-id').val();
 
+        var url = `/api/test-results/${result_id}/`;
+        var method = 'PUT';
+
+        if (result_id == '') {
+            url = `/api/test-results/`;
+            method = 'POST';
+        }
+
         $.ajax({
-            url: '/api/test-results/' + result_id + '/',
-            type: "PUT",
+            url: url,
+            type: method,
             data: {
                 'user': user_id,
                 'note': note,
@@ -116,6 +124,9 @@ $(document).ready(function() {
                     $(result_cell_id).text(result_status_text);
                 }
                 $('#update-result-modal').modal('toggle');
+                if (result_id == '') {
+                    location.reload();
+                }
             },
             error: function(error){
                 alert("Unable to update result. Please see system administrator.");
@@ -239,6 +250,36 @@ $(document).ready(function() {
                 "delete-test-case": {name: "Delete Test Case", icon: "delete"},
             }
         });
+    });
+
+    
+    $('.no-result-dashboard-cell').dblclick(function() {        
+        $('#update-result-modal-loading').show();
+        $('#update-result-modal-form').hide();
+        $('#update-result-modal-error').hide();
+
+        var test_case_name = $(this).parent().data('test-case-name');
+        var test_case_name = $(this).parent().data('test-case-id');
+        var today = new Date().toLocaleDateString();
+        var current_user = $('#dashboard-table').data('current-user');
+        
+        $('#update-result-modal').modal('toggle');
+        $('#update-result-modal-lable').text('Update Result for ' + test_case_name);
+        $('#update-result-modal-accept').data('test-result-id', undefined);
+
+        $('#test-result-id').val(undefined);
+        $('#test-result-test-case').val(test_case_name);
+        $('#test-result-date').val(today);
+        $('#test-result-status').val('skipped');
+        $('#test-result-user').val(current_user);
+        $('#test-result-note').val('');
+        $('#test-result-duration').val(0.0);
+        $('#test-result-duration').attr('disabled', false);
+        $('#test-result-bug-id').val('');
+                
+        $('#update-result-modal-loading').hide();
+        $('#update-result-modal-form').show();
+        $('#update-result-modal-error').hide();
     });
 
 });

@@ -14,6 +14,12 @@
                 <span class="badge bg-pass">Pass</span>
                 <span class="badge rounded-pill bg-test-id">{{ test_case.test_case_id }}</span>
                 <span class="badge rounded-pill bg-suite-pill">{{ test_case.suite }}</span>
+                {% if test_case.category.category != "Undefined" %}
+                    <span class="badge rounded-pill bg-category-pill">{{ test_case.category }}</span>
+                {% endif %}
+                {% if test_case.subcategory.subcategory != "Undefined" %}
+                    <span class="badge rounded-pill bg-subcategory-pill">{{ test_case.subcategory }}</span>
+                {% endif %}
                 {% for tag in tags %}
                     <span class="badge rounded-pill bg-secondary">{{ tag }}</span>
                 {% endfor %}

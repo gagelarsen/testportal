@@ -13,6 +13,7 @@ class TestCaseDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = TestCase.objects.all()
     serializer_class = TestCaseSerializer
 
+
 def upload_multiple_test_cases(request):
     # request should be ajax and method should be POST.
     if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' and request.method == "POST":
@@ -45,3 +46,14 @@ def upload_multiple_test_cases(request):
         return JsonResponse({"instances": instances}, status=201) 
     # some error occured
     return JsonResponse({"error": "Unable to process respsone... See system administrator."}, status=400)
+
+
+def delete_test_case(request, pk):
+    try:
+        test_case = TestCase.objects.get(id=pk).delete()
+    except Exception as e:
+        return JsonResponse({"error": "Unable to delete testcase... See system administrator."}, status=400)
+
+    return JsonResponse({
+        "message": 'Successfully delete test case',
+    }, status=200) 

@@ -168,6 +168,7 @@ $(document).ready(function() {
         });
     });
 
+    // Date Context Menu
     $(function() {
         $.contextMenu({
             selector: '.dashboard-date-cell', 
@@ -194,11 +195,48 @@ $(document).ready(function() {
                             }
                         });
                     }
+                    location.reload();
                 }
-                location.reload();
             },
             items: {
                 "delete-results": {name: "Delete Results", icon: "delete"},
+            }
+        });
+    });
+
+    // Test Case Context Menu
+    $(function() {
+        $.contextMenu({
+            selector: '.test-case-name-dashboard-cell', 
+            callback: function(key, options) {
+                if (key == 'delete-test-case') {
+                    var case_id = $(this).data('test-case-id');
+                    var case_name = $(this).text();
+                    var table_row = $(this).closest('tr');
+                    if (confirm(`Are you sure you want to delete this test case? (${case_name})`) == true) {
+                        $.ajax({
+                            url: `/api/delete/test-cases/${case_id}`,
+                            type: "POST",
+                            headers:{
+                                "X-CSRFToken": csrftoken,
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (response) {
+                                alert(`Succesfully deleted test case - ${case_name}`);
+                                table_row.remove();
+                            },
+                            error: function(error){
+                                alert('An error occured while trying to delete results...');
+                                console.log("Something went wrong", error);
+                            }
+                        });
+                    }
+                }
+            },
+            items: {
+                "delete-test-case": {name: "Delete Test Case", icon: "delete"},
             }
         });
     });

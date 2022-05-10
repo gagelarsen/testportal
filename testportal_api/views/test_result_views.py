@@ -60,6 +60,7 @@ def upload_test_results(request, pk):
             '0': 'pass',
             '1': 'pass',
             '2': 'fail',
+            '3': 'skipped',
         }
 
         test_info = _parse_result_file(file_to_upload)
@@ -85,14 +86,14 @@ def upload_test_results(request, pk):
 
         missing_results = list(set(suite_cases.keys()) - set(test_results.keys()))
 
-        for case in missing_results:
-            test_results[case] = TestResult(
-                user=request.user,
-                test_case=suite_cases[case],
-                result_date=result_date,
-                duration=0,
-                result='skipped'
-            )
+        # for case in missing_results:
+        #     test_results[case] = TestResult(
+        #         user=request.user,
+        #         test_case=suite_cases[case],
+        #         result_date=result_date,
+        #         duration=0,
+        #         result='skipped'
+        #     )
 
         TestResult.objects.bulk_create(test_results.values())
 

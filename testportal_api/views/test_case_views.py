@@ -39,7 +39,6 @@ def upload_multiple_test_cases(request):
             ]
             TestCase.objects.bulk_create(test_cases)
         except Exception as e:
-            print(type(e))
             return JsonResponse({"error": str(e)}, status=400)
 
         instances = serializers.serialize('json', test_cases)

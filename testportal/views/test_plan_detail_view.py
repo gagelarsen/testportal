@@ -16,6 +16,4 @@ def test_plan_detail_view(request, test_plan_id):
     context['suites'] = suites
     context['test_cases'] = test_cases
 
-    print(test_cases)
-
     return render(request, 'testportal/test_plan_detail_view.html', context)

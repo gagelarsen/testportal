@@ -35,6 +35,4 @@ def suite_detail_view(request, name):
         'result_counts_values': result_counts.values(),
     })
 
-    print(context)
-
     return render(request, 'testportal/suite_detail_view.html', context)

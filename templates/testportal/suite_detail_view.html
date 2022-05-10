@@ -116,39 +116,36 @@ var status_plot_div = document.getElementById('suite-data-category-display-div')
 var layout = {
     height: 300,
     margin: {"t": 0, "b": 0, "l": 0, "r": 0},
+    texttemplate: '%{label}: %{value}',
 }
 
 // Type Plot
-var type_data = [{
-    values: [{% for v in type_counts_values %}{{ v }},{% endfor %}],
-    labels: [{% for k in type_counts_keys %}"{{ k }}",{% endfor %}],
-    type: 'pie'
-}];
-Plotly.newPlot('suite-data-type-display-div', type_data, layout)
+var type_layout = Object.create(layout);
+type_layout.values = [{% for v in type_counts_values %}{{ v }},{% endfor %}];
+type_layout.labels = [{% for k in type_counts_keys %}"{{ k }}",{% endfor %}];
+type_layout.type = 'pie';
+Plotly.newPlot('suite-data-type-display-div', [type_layout]);
 
 // Status Plot
-var status_data = [{
-    values: [{% for v in status_counts_values %}{{ v }},{% endfor %}],
-    labels: [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}],
-    type: 'pie'
-}];
-Plotly.newPlot('suite-data-status-display-div', status_data, layout)
+var status_layout = Object.create(layout);
+status_layout.values = [{% for v in status_counts_values %}{{ v }},{% endfor %}];
+status_layout.labels = [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}];
+status_layout.type = 'pie';
+Plotly.newPlot('suite-data-status-display-div', [status_layout]);
 
 // Result Plot
-var result_data = [{
-    values: [{% for v in result_counts_values %}{{ v }},{% endfor %}],
-    labels: [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}],
-    type: 'pie'
-}];
-Plotly.newPlot('suite-data-result-display-div', result_data, layout)
+var result_layout = Object.create(layout);
+result_layout.values = [{% for v in result_counts_values %}{{ v }},{% endfor %}];
+result_layout.labels = [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}];
+result_layout.type = 'pie';
+Plotly.newPlot('suite-data-result-display-div', [result_layout]);
 
 // Category Plot
-var category_data = [{
-    values: [{% for v in category_counts_values %}{{ v }},{% endfor %}],
-    labels: [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}],
-    type: 'pie'
-}];
-Plotly.newPlot('suite-data-category-display-div', category_data, layout)
+var category_layout = Object.create(layout);
+category_layout.values = [{% for v in category_counts_values %}{{ v }},{% endfor %}];
+category_layout.labels = [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}];
+category_layout.type = 'pie';
+Plotly.newPlot('suite-data-category-display-div', [category_layout]);
 
     </script>
 {% endblock %}

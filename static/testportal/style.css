@@ -19,6 +19,24 @@ td.bg-fail {
     background: rgb(241, 69, 69);
 }
 
+.bg-under-construction {
+    color: rgb(241, 245, 0);
+    background-color: rgb(231, 133, 36);
+}
+td.bg-under-construction {
+    color: rgb(241, 245, 0);
+    background-color: rgb(231, 133, 36);
+}
+
+.bg-in-documentation {
+    color: white;
+    background-color: rgb(149, 103, 57);
+}
+td.bg-in-documentation {
+    color: white;
+    background-color: rgb(149, 103, 57);
+}
+
 .bg-bug {
     background-color: black;
     color: white;

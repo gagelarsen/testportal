@@ -105,24 +105,16 @@ $(document).ready(function() {
                 result_id = $('#test-result-id').val();
                 result_status = $('#test-result-status').val();
                 result_status_text = $('#test-result-status option:selected').text();
-                result_cell_id = '#result-cell-id-' + result_id
+                result_cell_id = '#result-cell-id-' + result_id;
 
-                var bg_classes = $("#test-result-status option").map(function() {
-                    $(result_cell_id).removeClass('bg-' + this.value);
-                });
-                $(result_cell_id).removeClass('bg-bug');
-
-                $(result_cell_id).html('');
-                $(result_cell_id).prop('title', response.note);
+                update_result_cell(
+                    result_id,
+                    result_status,
+                    result_status_text,
+                    response.note,
+                    response.bug_id,
+                )
                 
-                if (response.bug_id != '') {
-                    $(result_cell_id).addClass('bg-bug');
-                    var bug_url = `https://bugs.aquaveo.com/view.php?id=${response.bug_id}`;
-                    $(result_cell_id).html(`<a class="bug-link" target="_blank" href="${bug_url}">BUG-${response.bug_id}</a>`);
-                } else {
-                    $(result_cell_id).addClass('bg-' + result_status);
-                    $(result_cell_id).text(result_status_text);
-                }
                 $('#update-result-modal').modal('toggle');
                 if (result_id == '') {
                     location.reload();
@@ -252,6 +244,49 @@ $(document).ready(function() {
         });
     });
 
+    // Test Result Context Menu
+    $(function() {
+        $.contextMenu({
+            selector: '.test-result-dashboard-cell', 
+            callback: function(key, options) {
+                if (key == 'copy-result-to-current') {
+                    var result_id = $(this).data('result-id');
+                    var table_row = $(this).closest('tr');
+                    var test_case_name = table_row.data('test-case-name');
+                    var test_case_id = table_row.data('test-case-id');
+                    if (confirm(`Are you sure you want to this result to the most recent result? (${test_case_name})`) == true) {
+                        $.ajax({
+                            url: `/api/copy-result-to-latest/${result_id}`,
+                            type: "POST",
+                            headers:{
+                                "X-CSRFToken": csrftoken,
+                            },
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (response) {                
+                                // Update table
+                                update_result_cell(
+                                    response.updated_result_id,
+                                    response.updated_result_status,
+                                    response.updated_result_status_text,
+                                    response.updated_result_note,
+                                    response.updated_result_bug_id,
+                                )
+                            },
+                            error: function(error){
+                                alert(error.statusText);
+                                console.log("Something went wrong", error);
+                            }
+                        });
+                    }
+                }
+            },
+            items: {
+                "copy-result-to-current": {name: "Copy Result to Current", icon: "copy"},
+            }
+        });
+    });
     
     $('.no-result-dashboard-cell').dblclick(function() {        
         $('#update-result-modal-loading').show();
@@ -283,3 +318,26 @@ $(document).ready(function() {
     });
 
 });
+
+function update_result_cell(result_id, result_status, result_status_text,
+                            result_note, result_bug_id) {
+    // Update table
+    result_cell_id = '#result-cell-id-' + result_id
+
+    $("#test-result-status option").map(function() {
+        $(result_cell_id).removeClass('bg-' + this.value);
+    });
+    $(result_cell_id).removeClass('bg-bug');
+
+    $(result_cell_id).html('');
+    $(result_cell_id).prop('title', result_note);
+    
+    if (result_bug_id != '') {
+        $(result_cell_id).addClass('bg-bug');
+        var bug_url = `https://bugs.aquaveo.com/view.php?id=${result_bug_id}`;
+        $(result_cell_id).html(`<a class="bug-link" target="_blank" href="${bug_url}">BUG-${result_bug_id}</a>`);
+    } else {
+        $(result_cell_id).addClass('bg-' + result_status);
+        $(result_cell_id).text(result_status_text);
+    }
+}

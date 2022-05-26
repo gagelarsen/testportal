@@ -86,15 +86,6 @@ def upload_test_results(request, pk):
 
         missing_results = list(set(suite_cases.keys()) - set(test_results.keys()))
 
-        # for case in missing_results:
-        #     test_results[case] = TestResult(
-        #         user=request.user,
-        #         test_case=suite_cases[case],
-        #         result_date=result_date,
-        #         duration=0,
-        #         result='skipped'
-        #     )
-
         TestResult.objects.bulk_create(test_results.values())
 
         return JsonResponse({
@@ -154,3 +145,44 @@ def _parse_result_file(summary_file):
             test_info[prp_name] = prp_value
     
     return test_info
+
+def copy_result_to_latest(request, result_id):
+    try:
+        result = TestResult.objects.get(id=result_id)
+    except Exception as e:
+        return JsonResponse({"error": f"Unable to find the result with id: {result_id}..."}, status=404)
+
+    test_case = result.test_case
+
+    try:
+        results = TestResult.objects.all().filter(test_case=test_case).order_by('-result_date')
+        latest_result = results[0]
+    except:
+        return JsonResponse({"error": f"No results availabe for this test case: {result.test_case.name} ({len(results)})..."}, status=404)
+
+
+    if result.id == latest_result.id:
+        return JsonResponse({"error": "This is the most recenet result."}, status=418)
+
+    latest_result.note = str(result.note) + "(Copied)"
+    latest_result.user = request.user
+    latest_result.test_case = result.test_case
+    latest_result.duration = result.duration
+    latest_result.bug_id = result.bug_id if result.bug_id else ''
+    latest_result.result = result.result
+    
+
+    try:
+        latest_result.save()
+    except:
+        return JsonResponse({"error": "Unable to save result copy..."}, status=400)
+
+
+    return JsonResponse({
+        "message": f'Successfully copied result {result.id} -> {latest_result.id}',
+        "updated_result_id": latest_result.id,
+        "updated_result_status": latest_result.result,
+        "updated_result_status_text": latest_result.result.replace('-', ' ').title(),
+        "updated_result_bug_id": latest_result.bug_id,
+        "updated_result_note": latest_result.note,
+    }, status=201)

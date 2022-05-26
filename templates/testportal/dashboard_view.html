@@ -82,6 +82,7 @@
         $("#dashboard-table tr.test-case-row").filter(function() {
             $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
+        localStorage.setItem('dashboard-search-value', value);
     });
     
     $('.test-case-name-dashboard-cell').dblclick(function() {
@@ -97,5 +98,14 @@
             $('.test-dashboard-category-column').hide();
         }
     });
+
+    $(document).ready(function() {
+        dashboard_search_value = localStorage.getItem('dashboard-search-value');
+        if (dashboard_search_value != undefined) {
+            $('#test-search-box').val(dashboard_search_value);
+            $('#test-search-box').trigger('keyup');
+        }
+    });
+
     </script>
 {% endblock %}

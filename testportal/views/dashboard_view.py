@@ -30,7 +30,12 @@ def dashboard_view(request, name):
     users = User.objects.all().values('username', 'id')
     statuses = TestResult.STATUS
 
-    number_of_days = 30
+    number_of_days_get = request.GET.get('num_days', 5)
+    try:
+        number_of_days = int(number_of_days_get)
+    except:
+        number_of_days = 30
+
     today = date.today()
     date_list = [today - timedelta(days=i) 
                  for i in range(number_of_days)
@@ -55,7 +60,8 @@ def dashboard_view(request, name):
         'tags': Tag.objects.all(),
         'categories': TestCategory.objects.all(),
         'subcategories': TestSubcategory.objects.all(),
-        'test_plans': TestPlan.objects.all()
+        'test_plans': TestPlan.objects.all(),
+        'number_of_days': number_of_days,
     })
 
     return render(request, 'testportal/dashboard_view.html', context)

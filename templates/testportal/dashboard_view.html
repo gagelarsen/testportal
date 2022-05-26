@@ -5,12 +5,21 @@
 {% load mathfilters %}
 
 <div class="row">
-    <div class="col">
+    <div class="col col-md-3">
         <h1>{{ suite.name }}</h1>
         <a href="/suites/{{ suite.name }}">Details</a>
     </div>
-    <div class="col">
+    <div class="col col-md-9 align-items-right">
         <div style="float: right;" class="row g-3 align-items-right">
+            <div class="col-auto">
+                <label for="result-days" class="form-lable">Days:</label>
+            </div>
+            <div class="col-auto">
+                <input class="form-control" type="number" id="result-days" name="result-days" min="5" max="30" step="1" value="{{ number_of_days }}">
+            </div>
+            <div class="col-auto">
+                <button id="update-shown-days-button" class="btn btn-info">Refresh</button>
+            </div>
             <div class="col-auto form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="show-categories-switch">
                 <label class="form-check-label" for="show-categories-switch">Show Categories(s)</label>
@@ -97,6 +106,10 @@
         } else {
             $('.test-dashboard-category-column').hide();
         }
+    });
+
+    $('#update-shown-days-button').click(function() {
+        window.location.href = '/suites/{{ suite.name }}/dashboard?num_days=' + $('#result-days').val();
     });
 
     $(document).ready(function() {

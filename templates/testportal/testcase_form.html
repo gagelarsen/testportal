@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<form class="from" method="post"> 
+<form id="test-case-form" style="width: 100%;" class="update-model-form from" method="post"> 
     {% csrf_token %} 
     {{ form.as_p }} 
     <input name="referrer" id="id_referrer" type="hidden" value="{{ referrer }}">

@@ -40,7 +40,7 @@
             <div id="test-step-card" class="card">
                 <div class="card-header">Steps</div>
                 <div class="card-body">
-                    <p>{{ test_case.steps|linebreaks }}<p>
+                    <p>{{ test_case.steps| markdown | safe }}<p>
                 </div>
             </div>
         </div>

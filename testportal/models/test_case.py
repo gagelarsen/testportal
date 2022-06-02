@@ -1,3 +1,12 @@
+"""
+TestCase Django Model
+
+Notes:
+  When adding fields you need to update the following locations:
+      - testportal_api/serializers/test_case_serializers.py
+      - templates/testportal/test_case_detail_view.html
+      - testportal/views/test_case_update_view.py
+"""
 from datetime import datetime, timedelta
 import uuid
 
@@ -40,6 +49,8 @@ class TestCase(models.Model):
     category = models.ForeignKey(TestCategory, on_delete=models.PROTECT, related_name='test_cases')
     subcategory = models.ForeignKey(TestSubcategory, on_delete=models.PROTECT)
     test_plan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, null=True, blank=True, related_name='test_cases')
+    under_construction = models.BooleanField(default=False)
+    needs_review = models.BooleanField(default=False)
     status = models.CharField(
         max_length=128, choices=STATUS,
         default=STATUS.design

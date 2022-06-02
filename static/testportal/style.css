@@ -84,6 +84,10 @@ td.bg-skipped {
     background-color: rgb(65, 177, 230);
 }
 
+.bg-needs-review {
+    background-color: rgb(72 147 172);
+}
+
 .status-pill {
     width: 30px;
 }
@@ -111,4 +115,10 @@ td.bg-skipped {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.update-model-form input,
+.update-model-form select,
+.update-model-form textarea {
+    width: 100%;
 }

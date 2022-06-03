@@ -117,11 +117,7 @@
                             <td>{{ test_case.test_case.status }}</td>
                             <td>
                                 <a class="btn btn-success" href="/test-cases/{{ test_case.test_case.id }}" title="edit">
-                                    {% if user.is_authenticated %}
-                                    <i class="bi-pencil"></i>
-                                    {% else %}
                                     <i class="bi-eye"></i>
-                                    {% endif %}
                                 </a>
                             </td>
                         </tr>

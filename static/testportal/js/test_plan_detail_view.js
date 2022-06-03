@@ -22,8 +22,8 @@ $(document).ready(function() {
         $.contextMenu({
             selector: '.test-plan-test-case-row', 
             callback: function(key, options) {
+                var case_id = $(this).data('test-case-id');
                 if (key == 'delete-test-case') {
-                    var case_id = $(this).data('test-case-id');
                     var case_name = $(this).data('test-case-name');
                     var table_row = $(this);
                     if (confirm(`Are you sure you want to delete this test case? (${case_name})`) == true) {
@@ -46,10 +46,16 @@ $(document).ready(function() {
                             }
                         });
                     }
+                } else if (key == 'view-test-case') {
+                    window.location = `/test-cases/${case_id}`;
+                } else if (key == 'edit-test-case') {
+                    window.location = `/test-cases/${case_id}/update`;
                 }
             },
             items: {
-                "delete-test-case": {name: "Delete Test Case", icon: "delete"},
+                "delete-test-case": {name: "Delete Test Case", icon: "fa-thin fa-trash"},
+                "view-test-case": {name: "View Test Case", icon: "fa-thin fa-eye"},
+                "edit-test-case": {name: "Edit Test Case", icon: "fa-thin fa-pen-to-square"},
             }
         });
     });

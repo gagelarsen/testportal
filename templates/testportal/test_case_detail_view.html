@@ -13,7 +13,7 @@
             <p>
                 <span class="badge bg-pass">Pass</span>
                 <span class="badge rounded-pill bg-test-id">{{ test_case.test_case_id }}</span>
-                <span class="badge rounded-pill bg-suite-pill">{{ test_case.suite }}</span>
+                <a href="" class="badge rounded-pill bg-suite-pill">{{ test_case.suite }}</a>
                 {% if test_case.under_construction %}
                     <span class="badge rounded-pill bg-in-documentation">Under Construction</span>
                 {% endif %}
@@ -85,6 +85,9 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="row">
+        {% if referrer %}<a href={{ referrer }}>back</a>{% endif %}
     </div>
 </main>
 {% endblock %}

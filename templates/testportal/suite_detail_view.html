@@ -78,7 +78,7 @@
             </thead>
             <tbody>
                 {% for test_case in test_cases %}
-                <tr class="test-plan-test-case-row" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
+                <tr class="test-plan-test-case-row{% if test_case.test_case.under_construction %} test-case-row-under-construction{% elif test_case.test_case.needs_review %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
                     <td>
                         <a href="/test-cases/{{ test_case.test_case.id }}">{{test_case.test_case.test_case_id }}</a>
                     </td>

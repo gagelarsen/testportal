@@ -100,7 +100,7 @@ $(document).ready(function() {
                 // Update table
                 result_id = $('#test-result-id').val();
                 result_status = $('#test-result-status').val();
-                result_status_text = $('#test-result-status option:selected').text();
+                result_status_text = $('#test-result-status option:selected').text().strip();
                 result_cell_id = '#result-cell-id-' + result_id;
 
                 update_result_cell(
@@ -210,7 +210,7 @@ $(document).ready(function() {
             callback: function(key, options) {
                 var case_id = $(this).data('test-case-id');
                 if (key == 'delete-test-case') {
-                    var case_name = $(this).text();
+                    var case_name = $(this).text().strip();
                     var table_row = $(this).closest('tr');
                     if (confirm(`Are you sure you want to delete this test case? (${case_name})`) == true) {
                         $.ajax({

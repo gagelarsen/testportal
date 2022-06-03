@@ -19,10 +19,6 @@ $(document).ready(function() {
     }
     const csrftoken = getCookie('csrftoken');
     
-    $('#add-test-button').click(function() {
-        alert('Add test functionality not implemented yet... Use upload test cases instead...');
-    });
-    
     // Open Modal for Result
     $('.test-result-dashboard-cell').dblclick(function() {
         var result_id = this.dataset.resultId;

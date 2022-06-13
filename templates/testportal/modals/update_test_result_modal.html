@@ -14,13 +14,14 @@
             </div>
             <form id='update-result-modal-form'>
                 <input id="test-result-test-case" style="display: none;" type="text" disabled>
+                <input id="test-result-test-case-id" style="display: none;" type="text" disabled>
                 <input id="test-result-id" style="display: none;" type="text" disabled>
                 <div class="row g-3 align-items-center">
                     <div class="col-auto">
                         <label for="result-date" class="form-lable">Date</label>
                     </div>
                     <div class="col-auto">
-                        <input class="form-control" type="date" id="test-result-date" name="result-date"
+                        <input readonly class="form-control" type="date" id="test-result-date" name="result-date"
                             value="2022-01-01" min="2022-01-01" max="2122-12-31"{% if not user.is_authenticated %} disabled{% endif %}>
                     </div>
                 </div>

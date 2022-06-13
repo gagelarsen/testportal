@@ -22,6 +22,10 @@ $(document).ready(function() {
     // Open Modal for Result
     $('.test-result-dashboard-cell').dblclick(function() {
         var result_id = this.dataset.resultId;
+
+        if (result_id == undefined) {
+            return;
+        }
         
         $('#update-result-modal-loading').show();
         $('#update-result-modal-form').hide();
@@ -100,9 +104,14 @@ $(document).ready(function() {
                 // Update table
                 result_id = $('#test-result-id').val();
                 result_status = $('#test-result-status').val();
-                result_status_text = $('#test-result-status option:selected').text().strip();
+                result_status_text = $('#test-result-status option:selected').text().trim();
                 result_cell_id = '#result-cell-id-' + result_id;
 
+                $('#update-result-modal').modal('toggle');
+                if (result_id == '') {
+                    location.reload();
+                }
+                
                 update_result_cell(
                     result_id,
                     result_status,
@@ -110,11 +119,6 @@ $(document).ready(function() {
                     response.note,
                     response.bug_id,
                 )
-                
-                $('#update-result-modal').modal('toggle');
-                if (result_id == '') {
-                    location.reload();
-                }
             },
             error: function(error){
                 alert("Unable to update result. Please see system administrator.");
@@ -210,7 +214,7 @@ $(document).ready(function() {
             callback: function(key, options) {
                 var case_id = $(this).data('test-case-id');
                 if (key == 'delete-test-case') {
-                    var case_name = $(this).text().strip();
+                    var case_name = $(this).text().trim();
                     var table_row = $(this).closest('tr');
                     if (confirm(`Are you sure you want to delete this test case? (${case_name})`) == true) {
                         $.ajax({
@@ -296,8 +300,8 @@ $(document).ready(function() {
         $('#update-result-modal-error').hide();
 
         var test_case_name = $(this).parent().data('test-case-name');
-        var test_case_name = $(this).parent().data('test-case-id');
-        var today = new Date().toLocaleDateString();
+        var test_case_id = $(this).parent().data('test-case-id');
+        var today = $(this).data('result-date');
         var current_user = $('#dashboard-table').data('current-user');
         
         $('#update-result-modal').modal('toggle');
@@ -305,7 +309,7 @@ $(document).ready(function() {
         $('#update-result-modal-accept').data('test-result-id', undefined);
 
         $('#test-result-id').val(undefined);
-        $('#test-result-test-case').val(test_case_name);
+        $('#test-result-test-case').val(test_case_id);
         $('#test-result-date').val(today);
         $('#test-result-status').val('skipped');
         $('#test-result-user').val(current_user);

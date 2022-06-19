@@ -92,7 +92,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-11 col-lg-11">
+            <div class="col">
                 <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
                 <table class="table table-hover">
                     <thead>
@@ -107,19 +107,13 @@
                     </thead>
                     <tbody>
                     {% for test_case in test_cases %}
-                        <tr class="test-plan-test-case-row" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
+                        <tr class="test-plan-test-case-row{% if test_case.test_case.under_construction %} test-case-row-under-construction{% elif test_case.test_case.needs_review %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
                             <td>{{ test_case.test_case.test_case_id }}</td>
                             <td>{{ test_case.test_case.name }}</td>
                             <td>{{ test_case.test_case.test_type }}</td>
-                            <td>
-                                {% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span style="width: 90px;" class="badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span style="width: 90px;" class="badge rounded-pill bg-skipped">no result</span>{% endif %}
-                            </td>
+                            <td>{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span style="width: 90px;" class="badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span style="width: 90px;" class="badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
                             <td>{{ test_case.test_case.status }}</td>
-                            <td>
-                                <a class="btn btn-success" href="/test-cases/{{ test_case.test_case.id }}" title="edit">
-                                    <i class="bi-eye"></i>
-                                </a>
-                            </td>
+                            <td>{% if test_case.test_case.under_construction %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.needs_review %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
                         </tr>
                     {% endfor %}
                     </tbody>

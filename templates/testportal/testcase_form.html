@@ -8,5 +8,17 @@
     <input name="referrer" id="id_referrer" type="hidden" value="{{ referrer }}">
     <input class="btn btn-success" type="submit" value="Save"> 
 </form> 
+<br>
+<div style="width: 100%; color: white;" class="btn btn-info" value="Test Message to Clipboard" id="copy-error-to-clipboard-button">Copy message to clipboard...</div>
 
+{% endblock %}
+
+{% block page_javascript %}
+<script>
+    $(document).ready(function() {
+        $('#copy-error-to-clipboard-button').click(function() {
+            navigator.clipboard.writeText('<span style="color:red">**Message goes here**</span>.');
+        });
+    });
+</script>
 {% endblock %}

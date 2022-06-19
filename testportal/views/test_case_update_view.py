@@ -8,7 +8,7 @@ class TestCaseUpdateView(LoginRequiredMixin, UpdateView):
     model = TestCase
 
     fields = [
-        'name', 'test_case_id', 'steps', 'suite',
+        'name', 'test_case_id', 'notes', 'steps', 'suite',
         'tags', 'category', 'subcategory', 'test_plan',
         'status', 'test_type', 'needs_review', 'under_construction'
     ]
@@ -29,7 +29,7 @@ class TestCaseCreateView(CreateView):
     model = TestCase
 
     fields = [
-        'name', 'test_case_id', 'steps', 'suite',
+        'name', 'test_case_id', 'notes', 'steps', 'suite',
         'tags', 'category', 'subcategory', 'test_plan',
         'status', 'test_type', 'needs_review', 'under_construction'
     ]

@@ -43,6 +43,7 @@ class TestCase(models.Model):
 
     name = models.CharField(max_length=128)
     test_case_id = models.CharField(max_length=64, blank=True, null=True)
+    notes = models.TextField(blank=True, null=True)
     steps = models.TextField()
     suite = models.ForeignKey(Suite, on_delete=models.PROTECT, related_name='test_cases')
     tags = models.ManyToManyField(Tag, blank=True)

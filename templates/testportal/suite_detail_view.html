@@ -71,9 +71,10 @@
                 <tr>
                     <th style="width: 10%">ID</th>
                     <th style="width: 30%">Title</th>
-                    <th style="width: 20%">Type</th>
-                    <th style="width: 20%">Status</th>
-                    <th style="width: 20%">Last Result</th>
+                    <th style="width: 15%">Type</th>
+                    <th style="width: 15%">Status</th>
+                    <th style="width: 15%">Last Result</th>
+                    <th style="width: 15%"></th>
                 </tr>
             </thead>
             <tbody>
@@ -85,9 +86,8 @@
                     <td>{{ test_case.test_case.name }}</td>
                     <td>{{ test_case.test_case.test_type }}</td>
                     <td>{{ test_case.test_case.status }}</td>
-                    <td>
-                        {% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span style="width: 90px;" class="badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span style="width: 90px;" class="badge rounded-pill bg-skipped">no result</span>{% endif %}
-                    </td>
+                    <td>{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span style="width: 90px;" class="badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span style="width: 90px;" class="badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
+                    <td>{% if test_case.test_case.under_construction %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.needs_review %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
                 </tr>
                 {% endfor %}
             </tbody>

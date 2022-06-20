@@ -30,7 +30,7 @@ def dashboard_view(request, name):
     users = User.objects.all().values('username', 'id')
     statuses = TestResult.STATUS
 
-    number_of_days_get = request.GET.get('num_days', 5)
+    number_of_days_get = request.GET.get('num_days', 10)
     try:
         number_of_days = int(number_of_days_get)
     except:

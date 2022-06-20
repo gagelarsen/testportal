@@ -97,7 +97,7 @@
             <div class="col">
                 <div class="row">
                     <div class="col col-md-3">
-                    <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
+                        <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
                     </div>
                     <div class="col col-md-6">
                     </div>
@@ -109,36 +109,33 @@
                     </div>
                 </div>
             </div>
-                </div>
-                <div class="row">
-                    <table class="table table-hover" id="test-plan-testcase-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 10%;">ID</th>
-                                <th style="width: 30%;">Name</th>
-                                <th style="width: 15%; text-align: center;">Type</th>
-                                <th style="width: 15%; text-align: center;">Result</th>
-                                <th style="width: 15%; text-align: center;">Status</th>
-                                <th style="width: 15%; text-align: center;"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for test_case in test_cases %}
-                            <tr class="test-plan-test-case-row{% if test_case.test_case.under_construction %} test-case-row-under-construction{% elif test_case.test_case.needs_review %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
-                                <td>{{ test_case.test_case.test_case_id }}</td>
-                                <td>{{ test_case.test_case.name }}</td>
-                                <td style="text-align: center;">{{ test_case.test_case.test_type }}</td>
-                                <td style="text-align: center;">{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span class="badge-pill badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
-                                <td style="text-align: center;">{{ test_case.test_case.status }}</td>
-                                <td style="text-align: center;">{% if test_case.test_case.under_construction %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.needs_review %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </div>
-
+        <div class="row">
+            <table class="table table-hover" id="test-plan-testcase-table">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">ID</th>
+                        <th style="width: 30%;">Name</th>
+                        <th style="width: 15%; text-align: center;">Type</th>
+                        <th style="width: 15%; text-align: center;">Result</th>
+                        <th style="width: 15%; text-align: center;">Status</th>
+                        <th style="width: 15%; text-align: center;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for test_case in test_cases %}
+                    <tr class="test-plan-test-case-row{% if test_case.test_case.under_construction %} test-case-row-under-construction{% elif test_case.test_case.needs_review %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
+                        <td>{{ test_case.test_case.test_case_id }}</td>
+                        <td>{{ test_case.test_case.name }}</td>
+                        <td style="text-align: center;">{{ test_case.test_case.test_type }}</td>
+                        <td style="text-align: center;">{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span class="badge-pill badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
+                        <td style="text-align: center;">{{ test_case.test_case.status }}</td>
+                        <td style="text-align: center;">{% if test_case.test_case.under_construction %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.needs_review %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 

@@ -105,8 +105,10 @@
     $('#show-categories-switch').change(function() {
         if (this.checked) {
             $('.test-dashboard-category-column').show();
+            localStorage.setItem('dashboard-show-categories', true);
         } else {
             $('.test-dashboard-category-column').hide();
+            localStorage.setItem('dashboard-show-categories', false);
         }
     });
 
@@ -120,6 +122,9 @@
             $('#test-search-box').val(dashboard_search_value);
             $('#test-search-box').trigger('keyup');
         }
+
+        $('#show-categories-switch').prop("checked", localStorage.getItem('dashboard-show-categories') =='true');
+        $('#show-categories-switch').trigger('change');
     });
 
     </script>

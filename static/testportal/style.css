@@ -130,3 +130,15 @@ td.bg-skipped {
 .test-case-row-needs-review {
     background-color:rgb(85, 171, 168)
 }
+
+.badge-pill {
+    width: 75%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-pill-small {
+    width: 25%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

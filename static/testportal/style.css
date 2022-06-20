@@ -142,3 +142,7 @@ td.bg-skipped {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
+#testportal-content-div {
+    margin-top: 56px;
+}

@@ -24,6 +24,7 @@ def suite_detail_view(request, name):
     category_counts = Counter([x['test_case'].category for x in test_cases])
 
     context.update({
+        'suites': Suite.objects.all().filter(active=True),
         'suite': suite,
         'test_cases': test_cases,
         'today': date.today(),

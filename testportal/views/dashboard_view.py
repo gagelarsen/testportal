@@ -25,6 +25,7 @@ def dashboard_view(request, name):
 
     User = get_user_model()
 
+    suites = Suite.objects.all().filter(active=True)
     suite = Suite.objects.get(name=name)
     test_cases = suite.test_cases.all().order_by('category', 'subcategory', 'name')
     users = User.objects.all().values('username', 'id')
@@ -51,6 +52,7 @@ def dashboard_view(request, name):
     ]
 
     context.update({
+        'suites': suites,
         'suite': suite,
         'test_cases': test_cases,
         'users': users,

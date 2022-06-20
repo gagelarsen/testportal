@@ -53,7 +53,8 @@
                         <div class="row">
                             <p><strong>Name: </strong>{{ test_plan.name }}</p>
                             <p><strong>Description: </strong>{{ test_plan.description }}</p>
-                            <p><strong>Total Cases: </strong>{{ test_cases | length }}
+                            <p><strong>Total Cases: </strong>{{ test_cases | length }}</p>
+                            <p><strong>Suite: </strong><a href="/suites/{{ test_plan.suite }}">{{ test_plan.suite }}</a></p>
                         </div>
                     </div>
                 </div>

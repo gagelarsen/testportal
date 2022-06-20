@@ -87,7 +87,7 @@
                     <div class="card-header">Recent Results:</div>
                     <div class="card-body">
                         {% for result in recent_results %}
-                        <div {% if result.note %}title="{{ result.note }}"{% endif %}><a href='/test-results/{{ result.id }}'><span style="width: 90px;" class="badge rounded-pill bg-{{ result.result|lower }}">{{ result.result }}</span></a> - {{ result.result_date }}{% if result.note %} - {{ result.note }}{% endif %}</div>
+                        <div {% if result.note %}title="{{ result.note }}"{% endif %}><a href='/test-results/{{ result.id }}'><span class="badge-pill-small badge rounded-pill bg-{{ result.result|lower }}">{{ result.result }}</span></a> - {{ result.result_date }}{% if result.note %} - {{ result.note }}{% endif %}</div>
                         <br/>
                         {% endfor %}
                     </div>

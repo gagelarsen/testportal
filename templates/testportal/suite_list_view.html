@@ -33,6 +33,9 @@
                 <div data-suite-id={{ suite.id }} class="btn btn-danger btn-delete-suite" title="delete">
                     <i class="bi-trash"></i>
                 </div>
+                <div data-suite-id={{ suite.id }} data-suite-name={{ suite.name }} class="btn btn-secondary btn-duplicate-suite", title="duplicate">
+                    <i class="bi-intersect"></i>
+                </div>
                 {% endif %}
             </td>
         </tr>
@@ -231,6 +234,38 @@
                         console.log("Something went wrong", error);
                     }
                 });
+            });
+
+            $('.btn-duplicate-suite').click(function() {
+                var result = prompt('Duplicated Suite Name')
+                if (result) {
+                    var suite_id = this.dataset.suiteId;
+                    var suite_name = result;
+
+                    $.ajax({
+                        url: '/api/duplicate/suites/' + suite_id + '/',
+                        type: "POST",
+                        data: {
+                            "new_name": suite_name,
+                        },
+                        headers:{"X-CSRFToken": csrftoken},
+                        dataType:'json',
+                        success: function (response) {
+                            location.reload();
+                        },
+                        error: function(error){
+                            if (error.responseJSON && error.responseJSON.error) {
+                                alert(error.responseJSON.error);
+                            }
+                            else {
+                                alert("Unable to duplicate suite. See system administrator.");
+                            }
+                            console.log("Something went wrong", error);
+                        }
+                    });
+
+                }
+
             });
 
         });

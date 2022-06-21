@@ -52,9 +52,9 @@
     </thead>
     <tbody>
     {% for row in dashboard_data %}
-        <tr class="test-case-row{% if row.test_case.under_construction %} test-case-row-under-construction{% elif row.test_case.needs_review %} test-case-row-needs-review{% endif %}" data-test-case-id={{ row.test_case.id }} data-test-case-name="{{ row.test_case.name }}">
+        <tr class="test-case-row{% if row.test_case.status == 'under-construction' %} test-case-row-under-construction{% elif row.test_case.status == "needs-review" %} test-case-row-needs-review{% endif %}" data-test-case-id={{ row.test_case.id }} data-test-case-name="{{ row.test_case.name }}">
             <td id="test-case-name-{{ row.test_case.test_case_id }}"data-test-case-id="{{ row.test_case.id}}" class="test-case-name-dashboard-cell">
-            {{ row.test_case.name }}{% if row.test_case.under_construction %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if row.test_case.needs_review %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}
+            {{ row.test_case.name }}{% if row.test_case.status == 'under-construction' %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if row.test_case.status == "needs-review" %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}
             </td>
             <td style="display: none;" class="test-dashboard-category-column"><span class="badge rounded-pill bg-category-pill">{{ row.test_case.category }}</span><span class="badge rounded-pill bg-subcategory-pill">{{ row.test_case.subcategory }}</span></td>
             {% for date in date_list %}
@@ -79,6 +79,7 @@
 <!-- Modal -->
 {% include 'testportal/modals/update_test_result_modal.html' %}
 {% include 'testportal/modals/upload_test_result_modal.html' %}
+{% include 'testportal/modals/duplicate_suite_modal.html' %}
 {% endif %}
 {% endblock %}
 

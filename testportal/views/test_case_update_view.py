@@ -10,7 +10,7 @@ class TestCaseUpdateView(LoginRequiredMixin, UpdateView):
     fields = [
         'name', 'test_case_id', 'notes', 'steps', 'suite',
         'tags', 'category', 'subcategory', 'test_plan',
-        'status', 'test_type', 'needs_review', 'under_construction'
+        'status', 'test_type'
     ]
 
     def get_context_data(self, **kwargs):
@@ -32,7 +32,7 @@ class TestCaseCreateView(CreateView):
     fields = [
         'name', 'test_case_id', 'notes', 'steps', 'suite',
         'tags', 'category', 'subcategory', 'test_plan',
-        'status', 'test_type', 'needs_review', 'under_construction'
+        'status', 'test_type'
     ]
 
     def get_context_data(self, **kwargs):

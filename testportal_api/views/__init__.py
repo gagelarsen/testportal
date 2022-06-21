@@ -1,4 +1,4 @@
-from .suite_views import SuiteDetail, SuiteList  # NOQA: F401
+from .suite_views import duplicate_suite, SuiteDetail, SuiteList  # NOQA: F401
 from .tag_views import TagDetail, TagList  # NOQA: F401
 from .test_case_views import delete_test_case, upload_multiple_test_cases, TestCaseDetail  # NOQA: F401
 from .test_category_views import TestCategoryDetail, TestCategoryList  # NOQA: F401

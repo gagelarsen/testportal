@@ -118,6 +118,7 @@ $(document).ready(function() {
                     result_status_text,
                     response.note,
                     response.bug_id,
+                    response.user,
                 )
             },
             error: function(error){
@@ -278,6 +279,7 @@ $(document).ready(function() {
                                     response.updated_result_status_text,
                                     response.updated_result_note,
                                     response.updated_result_bug_id,
+                                    response.updated_result_user,
                                 )
                             },
                             error: function(error){
@@ -326,7 +328,7 @@ $(document).ready(function() {
 });
 
 function update_result_cell(result_id, result_status, result_status_text,
-                            result_note, result_bug_id) {
+                            result_note, result_bug_id, result_user) {
     // Update table
     result_cell_id = '#result-cell-id-' + result_id
 
@@ -336,7 +338,7 @@ function update_result_cell(result_id, result_status, result_status_text,
     $(result_cell_id).removeClass('bg-bug');
 
     $(result_cell_id).html('');
-    $(result_cell_id).prop('title', result_note);
+    $(result_cell_id).prop('title', result_user + "\n" + result_note);
     
     if (result_bug_id != '') {
         $(result_cell_id).addClass('bg-bug');

@@ -61,9 +61,9 @@
             {% with result=row.test_results|get_item:date %}
             {% if result %}
                 {% if result.bug_id %}
-                <td title="{{ result.note }}" id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}' data-result-date='{{ date.year }}-{{ date.month|stringformat:"02d" }}-{{ date.day|stringformat:"02d" }}' class="test-result-dashboard-cell bg-bug"><a class='bug-link' target='_blank' href='https://bugs.aquaveo.com/view.php?id={{ result.bug_id }}'>BUG-{{ result.bug_id }}</td>
+                <td title="{{ result.user }}&#10;{{ result.note }}" id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}' data-result-date='{{ date.year }}-{{ date.month|stringformat:"02d" }}-{{ date.day|stringformat:"02d" }}' class="test-result-dashboard-cell bg-bug"><a class='bug-link' target='_blank' href='https://bugs.aquaveo.com/view.php?id={{ result.bug_id }}'>BUG-{{ result.bug_id }}</td>
                 {% else %}
-                <td title="{{ result.note }}" id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}'data-result-date='{{ date.year }}-{{ date.month|stringformat:"02d" }}-{{ date.day|stringformat:"02d" }}' class="test-result-dashboard-cell bg-{{ result.result}}">{{ result.result|format_result }}</td>
+                <td title="{{ result.user }}&#10;{{ result.note }}" id="result-cell-id-{{ result.id }}" data-result-id='{{ result.id }}'data-result-date='{{ date.year }}-{{ date.month|stringformat:"02d" }}-{{ date.day|stringformat:"02d" }}' class="test-result-dashboard-cell bg-{{ result.result}}">{{ result.result|format_result }}</td>
                 {% endif %}
             {% else %}
                 <td class="no-result-dashboard-cell bg-skipped" data-result-date='{{ date.year }}-{{ date.month|stringformat:"02d" }}-{{ date.day|stringformat:"02d" }}'>-</td>
@@ -79,7 +79,6 @@
 <!-- Modal -->
 {% include 'testportal/modals/update_test_result_modal.html' %}
 {% include 'testportal/modals/upload_test_result_modal.html' %}
-{% include 'testportal/modals/duplicate_suite_modal.html' %}
 {% endif %}
 {% endblock %}
 

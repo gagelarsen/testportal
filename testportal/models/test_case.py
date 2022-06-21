@@ -26,6 +26,7 @@ STATUS = Choices(
     ('broken', 'Test is broken'),
     ('under-construction', 'Test is under construction'),
     ('design', 'Test is in design'),
+    ('needs-review', 'Test needs to be reviewed'),
 )
 
 TEST_TYPE = Choices(
@@ -45,13 +46,11 @@ class TestCase(models.Model):
     test_case_id = models.CharField(max_length=64, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     steps = models.TextField()
-    suite = models.ForeignKey(Suite, on_delete=models.PROTECT, related_name='test_cases')
+    suite = models.ForeignKey(Suite, on_delete=models.CASCADE, related_name='test_cases')
     tags = models.ManyToManyField(Tag, blank=True)
     category = models.ForeignKey(TestCategory, on_delete=models.PROTECT, related_name='test_cases')
-    subcategory = models.ForeignKey(TestSubcategory, on_delete=models.PROTECT)
+    subcategory = models.ForeignKey(TestSubcategory, on_delete=models.PROTECT, related_name='test_cases')
     test_plan = models.ForeignKey(TestPlan, on_delete=models.CASCADE, null=True, blank=True, related_name='test_cases')
-    under_construction = models.BooleanField(default=False)
-    needs_review = models.BooleanField(default=False)
     status = models.CharField(
         max_length=128, choices=STATUS,
         default=STATUS.design

@@ -6,11 +6,11 @@ from testportal.views import dashboard_view, suite_detail_view, suite_list_view,
 from testportal.views.test_result_update_view import TestResultUpdateView, TestResultCreateView
 from testportal.views.test_case_update_view import TestCaseUpdateView, TestCaseCreateView
 from testportal.views.test_plan_update_view import TestPlanUpdateView, TestPlanCreateView
+from testportal.views.bug_verifications import bug_verifications_general_view
 
 app_name = 'testportal'
 
 urlpatterns = [
-    path('', RedirectView.as_view(url='/suites/')),
     path('test-cases/create', TestCaseCreateView.as_view(), name='test_case_create_view'),
     path('test-cases/<int:test_case_id>/', test_case_detail_view, name='test_case_detail_view'),
     path('test-cases/<int:pk>/update', TestCaseUpdateView.as_view(), name='test_case_update_view'),
@@ -23,4 +23,6 @@ urlpatterns = [
     path('suites/', suite_list_view, name='suite_list_view'),
     path('suites/<str:name>/', suite_detail_view, name='suite_detail_view'),
     path('suites/<str:name>/dashboard/', dashboard_view, name='dashboard_view'),
+    path('bug-verifications', bug_verifications_general_view, name='bug_verifications_general_view'),
+    path('', RedirectView.as_view(url='/suites/')),
 ]

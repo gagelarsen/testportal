@@ -185,5 +185,5 @@ def copy_result_to_latest(request, result_id):
         "updated_result_status_text": latest_result.result.replace('-', ' ').title(),
         "updated_result_bug_id": latest_result.bug_id,
         "updated_result_note": latest_result.note,
-        "updated_result_user": latest_result.user,
+        "updated_result_user": latest_result.user.username,
     }, status=201)

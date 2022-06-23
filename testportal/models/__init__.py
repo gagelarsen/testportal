@@ -1,3 +1,5 @@
+from .bug_verification import BugVerification  # NOQA: F401
+from .product import Product  # NOQA: F401
 from .suite import Suite  # NOQA: F401
 from .tag import Tag  # NOQA: F401
 from .test_case import TestCase  # NOQA: F401

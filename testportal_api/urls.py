@@ -3,7 +3,7 @@ from .views import SuiteList, SuiteDetail, TagDetail, TagList, TestCaseDetail, \
     upload_multiple_test_cases, TestCategoryDetail, TestCategoryList, TestSubcategoryDetail, \
     TestSubcategoryList, TestPlanDetail, TestPlanList, TestResultDetail, TestResultList, \
     upload_test_results, delete_test_results_for_date_and_suite, delete_test_case, copy_result_to_latest, \
-    duplicate_suite
+    duplicate_suite, ProductDetail, ProductList, BugVerificationDetail, BugVerificationList
 
 app_name = 'testportal_api'
 
@@ -28,4 +28,8 @@ urlpatterns = [
     path('delete/test-cases/<int:pk>', delete_test_case, name='delete_test_case'),
     path('copy-result-to-latest/<int:result_id>', copy_result_to_latest, name='copy_result_to_latest'),
     path('duplicate/suites/<int:suite_id>/', duplicate_suite, name='duplicate_suite'),
+    path('products/<int:pk>/', ProductDetail.as_view(), name='product_detailcreate'),
+    path('products/', ProductList.as_view(), name='product_listcreate'),
+    path('bug-verifications/<int:pk>/', BugVerificationDetail.as_view(), name='bug_verification_detailcreate'),
+    path('bug-verifications/', BugVerificationList.as_view(), name='bug_verification_listcreate'),
 ]

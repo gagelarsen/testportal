@@ -25,7 +25,7 @@ class TestPlanUpdateView(LoginRequiredMixin, UpdateView):
         return '/'
 
 
-class TestPlanCreateView(CreateView):
+class TestPlanCreateView(LoginRequiredMixin, CreateView):
     model = TestPlan
 
     fields = [

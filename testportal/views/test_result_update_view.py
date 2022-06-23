@@ -29,7 +29,7 @@ class TestResultUpdateView(LoginRequiredMixin, UpdateView):
             return referrer
         return '/'
 
-class TestResultCreateView(CreateView):
+class TestResultCreateView(LoginRequiredMixin, CreateView):
     model = TestResult
 
     fields = [

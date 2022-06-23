@@ -29,7 +29,7 @@
                 <a class="btn btn-success" href="/suites/{{ suite.name }}" title="edit">
                     <i class="bi-list-ul"></i>
                 </a>
-                {% if user.is_authenticated %}
+                {% if user.is_superuser %}
                 <div data-suite-id={{ suite.id }} class="btn btn-danger btn-delete-suite" title="delete">
                     <i class="bi-trash"></i>
                 </div>

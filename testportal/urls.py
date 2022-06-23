@@ -7,6 +7,8 @@ from testportal.views.test_result_update_view import TestResultUpdateView, TestR
 from testportal.views.test_case_update_view import TestCaseUpdateView, TestCaseCreateView
 from testportal.views.test_plan_update_view import TestPlanUpdateView, TestPlanCreateView
 from testportal.views.bug_verifications import bug_verifications_general_view
+from testportal.views.bug_verification_update_view import BugVerificationCreateView, BugVerificationUpdateView
+from testportal.views.product_update_view import ProductCreateView, ProductUpdateView
 
 app_name = 'testportal'
 
@@ -25,4 +27,8 @@ urlpatterns = [
     path('suites/<str:name>/dashboard/', dashboard_view, name='dashboard_view'),
     path('bug-verifications', bug_verifications_general_view, name='bug_verifications_general_view'),
     path('', RedirectView.as_view(url='/suites/')),
+    path('bug-verifications/<int:pk>/update', BugVerificationUpdateView.as_view(), name='bug_verification_update'),
+    path('bug-verifications/create', BugVerificationCreateView.as_view(), name='bug_verification_create'),
+    path('products/<int:pk>/update', ProductUpdateView.as_view(), name='product_update'),
+    path('products/create', ProductCreateView.as_view(), name='product_create'),
 ]

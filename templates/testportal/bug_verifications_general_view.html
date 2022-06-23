@@ -46,11 +46,17 @@
                 <option value="4">UGrid</option>
             </select>
         </div>
+    </div>
+    <br>
+    <div class="row">
         <div class="col-auto">
             <button id="refresh-view-button" class="btn btn-info">Refresh</button>
         </div>
         <div class="col-auto">
-            <button id="generate-report-button" class="btn btn-success">Generate Report</button>
+            <button id="generate-report-button" class="btn btn-secondary">Generate Report</button>
+        </div>
+        <div class="col-auto">
+            <a href="/bug-verifications/create" id="generate-report-button" class="btn btn-success">Add Verification</a>
         </div>
     </div>
 </div>
@@ -71,7 +77,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
+            <tr date-bug-verification-id="1">
                 <td>000001</td>
                 <td>Unexpected error comes up when closing compare simulation dialog</td>
                 <td>06-11-2022</td>
@@ -83,7 +89,7 @@
                     <span class="badge rounded-pill bg-suite-pill">SMS-13.2</span>
                 </td>
             </tr>
-            <tr>
+            <tr date-bug-verification-id="2">
                 <td>000002</td>
                 <td>MODFLOW Didn't run correctly</td>
                 <td>06-10-2022</td>
@@ -94,7 +100,7 @@
                     <span class="badge rounded-pill bg-suite-pill">GMS-Dev</span>
                 </td>
             </tr>
-            <tr>
+            <tr date-bug-verification-id="3">
                 <td>000003</td>
                 <td>UGrid display is incorrect</td>
                 <td>06-10-2022</td>

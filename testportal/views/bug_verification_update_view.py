@@ -1,20 +1,19 @@
 from django.views.generic.edit import UpdateView, CreateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from testportal.models import Suite, TestCase
+from testportal.models import Suite, BugVerification
 
 
-class TestCaseUpdateView(LoginRequiredMixin, UpdateView):
-    model = TestCase
+class BugVerificationUpdateView(LoginRequiredMixin, UpdateView):
+    model = BugVerification
 
     fields = [
-        'name', 'test_case_id', 'notes', 'steps', 'suite',
-        'tags', 'category', 'subcategory', 'test_plan',
-        'status', 'test_type'
+        'bug_id', 'summary', 'products', 'reported_date', 'fixed_date',
+        'verified_date', 'category', 'test',
     ]
 
     def get_context_data(self, **kwargs):
-        context = super(TestCaseUpdateView, self).get_context_data(**kwargs)
+        context = super(BugVerificationUpdateView, self).get_context_data(**kwargs)
         context['suites'] = Suite.objects.all().filter(active=True)
         context['referrer'] = self.request.META.get('HTTP_REFERER') # pass `next` parameter received from previous page to the context 
         return context
@@ -26,17 +25,16 @@ class TestCaseUpdateView(LoginRequiredMixin, UpdateView):
         return '/'
 
 
-class TestCaseCreateView(LoginRequiredMixin, CreateView):
-    model = TestCase
+class BugVerificationCreateView(LoginRequiredMixin, CreateView):
+    model = BugVerification
 
     fields = [
-        'name', 'test_case_id', 'notes', 'steps', 'suite',
-        'tags', 'category', 'subcategory', 'test_plan',
-        'status', 'test_type'
+        'bug_id', 'summary', 'products', 'reported_date', 'fixed_date',
+        'verified_date', 'category', 'test',
     ]
 
     def get_context_data(self, **kwargs):
-        context = super(TestCaseCreateView, self).get_context_data(**kwargs)
+        context = super(BugVerificationCreateView, self).get_context_data(**kwargs)
         context['suites'] = Suite.objects.all().filter(active=True)
         context['referrer'] = self.request.META.get('HTTP_REFERER') # pass `next` parameter received from previous page to the context 
         return context

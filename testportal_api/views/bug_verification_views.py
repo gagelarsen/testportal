@@ -5,11 +5,11 @@ from testportal.models import BugVerification
 from testportal_api.serializers import BugVerificationSerializer
 
 
-class BugVerificationList(generics.RetrieveUpdateDestroyAPIView):
+class BugVerificationList(generics.ListCreateAPIView):
     queryset = BugVerification.objects.all()
     serializer_class = BugVerificationSerializer
 
 
-class BugVerificationDetail(generics.RetrieveDestroyAPIView):
+class BugVerificationDetail(generics.RetrieveUpdateDestroyAPIView):
    queryset = BugVerification.objects.all()
    serializer_class = BugVerificationSerializer

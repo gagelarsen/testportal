@@ -7,47 +7,44 @@
 <hr>
 
 <div id='bug-verification-filter-row' class="row">
-    <div class="row">
+    <div class="row"style="padding-bottom: 15px;">
         <div class="col-auto">
             <label for="filter-start-date" class="col-form-lable">Start</label>
         </div>
         <div class="col-auto">
             <input class="form-control" type="date" id="filter-start-date" name="filter-start-date"
-                value={% now "Y-m-d" %} min="2022-01-01" max="2122-12-31">
+                value={{ start_day }} min="2022-01-01" max="2122-12-31">
         </div>
         <div class="col-auto">
             <label for="filter-end-date" class="col-form-lable">End</label>
         </div>
         <div class="col-auto">
             <input class="form-control" type="date" id="filter-end-date" name="filter-end-date"
-                value={% now "Y-m-d" %} min="2022-01-01" max="2122-12-31">
+                value={{ end_day }} min="2022-01-01" max="2122-12-31">
         </div>
         <div class="col-auto">
             <label for="filter-product" class="col-form-lable">Product</label>
         </div>
         <div class="col-auto">
             <select class="form-select" id="filter-product" name="filter-product">
-                <option selected value="1">All</option>
-                <option value="2">GMS-Dev</option>
-                <option value="3">GMS 10.6</option>
-                <option value="4">GMS-10.5</option>
-                <option value="5">SMS-Dev</option>
-                <option value="6">SMS-13.2</option>
+                <option{% if not selected_product %} selected{% endif %} value="-1">All</option>
+                {% for product in products %}
+                <option{% if selected_product == product %} selected{% endif %} value="{{ product.id }}">{{ product }}</option>
+                {% endfor %}
             </select>
         </div>
         <div class="col-auto">
-            <label for="filter-tag" class="col-form-lable">Tag</label>
+            <label for="filter-category" class="col-form-lable">Category</label>
         </div>
         <div class="col-auto">
-            <select class="form-select" id="filter-tag" name="filter-tag">
-                <option selected value="1">All</option>
-                <option value="2">MODFLOW</option>
-                <option value="3">SRH-2D</option>
-                <option value="4">UGrid</option>
+            <select class="form-select" id="filter-category" name="filter-category">
+                <option{% if not selected_category %} selected{% endif %} value="-1">All</option>
+                {% for category in categories %}
+                <option{% if selected_category == category %} selected{% endif %} value="{{ category.id }}">{{ category }}</option>
+                {% endfor %}
             </select>
         </div>
     </div>
-    <br>
     <div class="row">
         <div class="col-auto">
             <button id="refresh-view-button" class="btn btn-info">Refresh</button>
@@ -70,51 +67,28 @@
                 <th style="width: 5%;" scope="col">ID</th>
                 <th style="width: 35%;" scope="col">Summary</th>
                 <th style="width: 10%;" scope="col">Reported</th>
-                <th style="width: 10%;" scope="col">Verified</th>
                 <th style="width: 10%;" scope="col">Fixed</th>
+                <th style="width: 10%;" scope="col">Verified</th>
                 <th style="width: 10%;" scope="col">Tag</th>
                 <th style="width: 20%;" scope="col">Product</th>
             </tr>
         </thead>
         <tbody>
-            <tr date-bug-verification-id="1">
-                <td>000001</td>
-                <td>Unexpected error comes up when closing compare simulation dialog</td>
-                <td>06-11-2022</td>
-                <td>06-19-2022</td>
-                <td>06-20-2022</td>
-                <td><span class="badge rounded-pill bg-category-pill">SRH-2D</span></td>
+            {% for bug_verification in bug_verifications %}
+            <tr date-bug-verification-id="{{ bug_verification.id }}">
+                <td>{{ bug_verification.bug_id|stringformat:"05d" }}</td>
+                <td>{{ bug_verification.summary }}</td>
+                <td>{{ bug_verification.reported_date }}</td>
+                <td>{{ bug_verification.fixed_date }}</td>
+                <td>{{ bug_verification.verified_date }}</td>
+                <td><span class="badge rounded-pill bg-category-pill">{{ bug_verification.category }}</span></td>
                 <td>
-                    <span class="badge rounded-pill bg-suite-pill">SMS-Dev</span>
-                    <span class="badge rounded-pill bg-suite-pill">SMS-13.2</span>
+                {% for product in bug_verification.products.all %}
+                    <span class="badge rounded-pill bg-suite-pill">{{ product }}</span>
+                {% endfor %}
                 </td>
             </tr>
-            <tr date-bug-verification-id="2">
-                <td>000002</td>
-                <td>MODFLOW Didn't run correctly</td>
-                <td>06-10-2022</td>
-                <td>06-15-2022</td>
-                <td>06-16-2022</td>
-                <td><span class="badge rounded-pill bg-category-pill">MODFLOW</span></td>
-                <td>
-                    <span class="badge rounded-pill bg-suite-pill">GMS-Dev</span>
-                </td>
-            </tr>
-            <tr date-bug-verification-id="3">
-                <td>000003</td>
-                <td>UGrid display is incorrect</td>
-                <td>06-10-2022</td>
-                <td>06-15-2022</td>
-                <td>06-16-2022</td>
-                <td><span class="badge rounded-pill bg-category-pill">UGrid</span></td>
-                <td>
-                    <span class="badge rounded-pill bg-suite-pill">GMS-Dev</span>
-                    <span class="badge rounded-pill bg-suite-pill">GMS-10.6</span>
-                    <span class="badge rounded-pill bg-suite-pill">GMS-10.5</span>
-                    <span class="badge rounded-pill bg-suite-pill">SMS-Dev</span>
-                    <span class="badge rounded-pill bg-suite-pill">SMS-13.2</span>
-                </td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>
@@ -123,14 +97,35 @@
 
 
 {% block page_javascript %}
-    {% if user.is_authenticated %}
-        <script src="{% static 'testportal/js/bug_verification_general_view.js' %}"></script>
-    {% endif %}
-    
 <script>
     $(document).ready(function() {
         $('#refresh-view-button').click(function() {
-            alert('refreshing view...');
+
+            href = '/bug-verifications?';
+            href += 'start_day=' + $('#filter-start-date').val();
+            href += '&end_day=' + $('#filter-end-date').val();
+
+            if (parseInt($('#filter-category').val()) >= 0) {
+                href += '&category=' + $('#filter-category option:selected').text();
+            }
+            if (parseInt($('#filter-product').val()) >= 0) {
+                href += '&product=' + $('#filter-product option:selected').text();
+            }
+
+            window.location = href;
+        });
+        $('#generate-report-button').click(function() {
+
+            if (parseInt($('#filter-product').val()) < 0) {
+                alert('Please select a product to generate a report.');
+                return;
+            }
+
+            href = '/bug-verifications/report/' + $('#filter-product option:selected').text() + '?';
+            href += 'start_day=' + $('#filter-start-date').val();
+            href += '&end_day=' + $('#filter-end-date').val();
+
+            window.location = href;
         });
     });
 </script>

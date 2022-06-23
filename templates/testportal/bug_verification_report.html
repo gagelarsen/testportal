@@ -1,0 +1,16 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+{% load static %}
+<h1>Bug Verification Report</h1>
+<h3>{{ product }}</h3>
+<p><strong>{{ start_date }} - {{ end_date }}</strong></p>
+<hr>
+<textarea rows=20 cols=120>
+=={{ product.name }} {{ product.version }}.X - MMMMMM DD, YYYY==
+{% for category, verifications in verifications.items %}'''{{ category }}'''
+{% for verification in verifications %}*{{ verification.bug_id|stringformat:"05d" }} {{ verification.summary }}{% endfor %}
+{% endfor %}
+</textarea>
+<hr>
+{% endblock %}

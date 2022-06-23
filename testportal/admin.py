@@ -2,6 +2,16 @@ from django.contrib import admin
 from . import models
 
 
+@admin.register(models.BugVerification)
+class BugVerificationAdmin(admin.ModelAdmin):
+    list_display = ('bug_id', 'id', 'summary')
+
+
+@admin.register(models.Product)
+class ProductAdmin(admin.ModelAdmin):
+    list_display = ('name', 'version', 'id')
+
+
 @admin.register(models.Suite)
 class SuiteAdmin(admin.ModelAdmin):
     list_display = ('name', 'id', 'active')

@@ -41,4 +41,4 @@ class BugVerification(models.Model):
     objects = models.Manager()  # Default Manager
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.bug_id}'

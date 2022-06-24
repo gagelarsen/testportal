@@ -12,7 +12,7 @@ from django.db import models
 from model_utils import Choices
 
 from testportal.models.product import Product
-from testportal.models.test_category import TestCategory
+from testportal.models.test_subcategory import TestSubcategory
 
 
 class BugVerification(models.Model):
@@ -32,7 +32,7 @@ class BugVerification(models.Model):
     reported_date = models.DateField(default=datetime.now)
     fixed_date = models.DateField(default=datetime.now)
     verified_date = models.DateField(default=datetime.now)
-    category = models.ForeignKey(TestCategory, on_delete=models.PROTECT, related_name='bug_verifications')
+    category = models.ForeignKey(TestSubcategory, on_delete=models.PROTECT, related_name='bug_verifications')
     test = models.CharField(
         max_length=128, choices=TEST,
         default=TEST.nongui

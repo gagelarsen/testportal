@@ -47,6 +47,12 @@
     </div>
     <div class="row">
         <div class="col-auto">
+            <label for="verification-search-box" class="form-lable">Search:</label>
+        </div>
+        <div class="col-auto">
+            <input class="form-control" type="text" id="verification-search-box" name="verification-search-box">
+        </div>
+        <div class="col-auto">
             <button id="refresh-view-button" class="btn btn-info">Refresh</button>
         </div>
         <div class="col-auto">
@@ -61,7 +67,7 @@
 <hr>
 
 <div id='bug-verification-table-row' class="row">
-    <table class="table table-hover">
+    <table id="verification-table" class="table table-hover">
         <thead>
             <tr>
                 <th style="width: 5%;" scope="col">ID</th>
@@ -75,8 +81,8 @@
         </thead>
         <tbody>
             {% for bug_verification in bug_verifications %}
-            <tr date-bug-verification-id="{{ bug_verification.id }}">
-                <td>{{ bug_verification.bug_id|stringformat:"05d" }}</td>
+            <tr class="verification-row" data-verification-id="{{ bug_verification.id }}">
+                <td><a href="https://bugs.aquaveo.com/view.php?id={{ bug_verification.bug_id }}">{{ bug_verification.bug_id|stringformat:"05d" }}</a></td>
                 <td>{{ bug_verification.summary }}</td>
                 <td>{{ bug_verification.reported_date }}</td>
                 <td>{{ bug_verification.fixed_date }}</td>
@@ -97,6 +103,7 @@
 
 
 {% block page_javascript %}
+{% if user.is_authenticated %}<script src="{% static 'testportal/js/bug_verifications_general_view.js' %}"></script>{% endif %}
 <script>
     $(document).ready(function() {
         $('#refresh-view-button').click(function() {
@@ -126,7 +133,23 @@
             href += '&end_day=' + $('#filter-end-date').val();
 
             window.location = href;
+        });     
+
+        
+    
+        $("#verification-search-box").on("keyup", function() {
+            var value = $(this).val().toLowerCase();
+            $("#verification-table tr.verification-row").filter(function() {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+            localStorage.setItem('verification-search-value', value);
         });
+         
+        verification_search_value = localStorage.getItem('verification-search-value');
+        if (verification_search_value != undefined) {
+            $('#verification-search-box').val(verification_search_value);
+            $('#verification-search-box').trigger('keyup');
+        }   
     });
 </script>
 

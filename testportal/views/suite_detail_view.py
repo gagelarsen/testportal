@@ -47,7 +47,6 @@ def suite_detail_view(request, name):
         'status_counts_values': status_counts.values(),
         'result_counts_values': result_counts.values(),
         'category_counts_values': category_counts.values(),
-        'total_duration': total_duration,
     })
 
     return render(request, 'testportal/suite_detail_view.html', context)

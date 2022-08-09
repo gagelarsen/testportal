@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.10
 
 RUN apt-get update -qq \
     && apt-get -yqq install git tini   > /dev/null 

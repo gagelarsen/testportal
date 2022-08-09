@@ -118,8 +118,9 @@
                         <th style="width: 30%;">Name</th>
                         <th style="width: 15%; text-align: center;">Type</th>
                         <th style="width: 15%; text-align: center;">Result</th>
+                        <th style="width: 10%; text-align: center;">Duration(Avg)</th>
                         <th style="width: 15%; text-align: center;">Status</th>
-                        <th style="width: 15%; text-align: center;"></th>
+                        <th style="width: 10%; text-align: center;"></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -129,6 +130,7 @@
                         <td>{{ test_case.test_case.name }}</td>
                         <td style="text-align: center;">{{ test_case.test_case.test_type }}</td>
                         <td style="text-align: center;">{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span class="badge-pill badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
+                        <td style="text-align: center;">{{ test_case.duration|stringformat:"0.2f"  }}</td>
                         <td style="text-align: center;">{{ test_case.test_case.status }}</td>
                         <td style="text-align: center;">{% if test_case.test_case.status == "under-construction" %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.status == "needs-review" %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
                     </tr>

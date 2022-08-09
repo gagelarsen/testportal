@@ -7,7 +7,7 @@ class TestSubcategory(models.Model):
         ordering = ('subcategory',)
         verbose_name_plural = 'Test Subcategories'
 
-    subcategory = models.CharField(max_length=128)
+    subcategory = models.CharField(max_length=128, unique=True)
 
     def __str__(self):
         return f'{self.subcategory}'

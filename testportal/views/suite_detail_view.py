@@ -12,11 +12,21 @@ def suite_detail_view(request, name):
     }
 
     suite = Suite.objects.get(name=name)
-    test_cases = [
-        {'test_case': test_case, 'result': test_case.get_last_result()} 
-        for test_case in
-        suite.test_cases.all()
-    ]
+
+    test_cases = []
+    for test_case in suite.test_cases.all():
+        recent_results = test_case.results.all().order_by('-result_date')[:5]
+        valid_times = [r.duration for r in recent_results if r.duration != None and r.result == 'pass']
+        average_time = 0
+        if len(valid_times) > 0:
+            average_time = sum(valid_times) / len(valid_times)
+        test_cases.append(
+            {
+                'test_case': test_case, 
+                'result': test_case.get_last_result(), 
+                'duration': average_time
+            }
+        )
     
     type_counts = Counter([x['test_case'].test_type for x in test_cases])
     status_counts = Counter([x['test_case'].status for x in test_cases])
@@ -37,6 +47,7 @@ def suite_detail_view(request, name):
         'status_counts_values': status_counts.values(),
         'result_counts_values': result_counts.values(),
         'category_counts_values': category_counts.values(),
+        'total_duration': total_duration,
     })
 
     return render(request, 'testportal/suite_detail_view.html', context)

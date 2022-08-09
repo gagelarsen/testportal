@@ -11,11 +11,20 @@ def test_plan_detail_view(request, test_plan_id):
 
     test_plan = TestPlan.objects.get(id=test_plan_id)
     suites = Suite.objects.all().values('name', 'id')
-    test_cases = [
-        {'test_case': test_case, 'result': test_case.get_last_result()} 
-        for test_case in
-        test_plan.test_cases.all()
-    ]
+    test_cases = []
+    for test_case in test_plan.test_cases.all():
+        recent_results = test_case.results.all().order_by('-result_date')[:5]
+        valid_times = [r.duration for r in recent_results if r.duration != None and r.result == 'pass']
+        average_time = 0
+        if len(valid_times) > 0:
+            average_time = sum(valid_times) / len(valid_times)
+        test_cases.append(
+            {
+                'test_case': test_case, 
+                'result': test_case.get_last_result(), 
+                'duration': average_time
+            }
+        )
 
     context['test_plan'] = test_plan
     context['suites'] = suites

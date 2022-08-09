@@ -7,7 +7,7 @@ class TestCategory(models.Model):
         ordering = ('category',)
         verbose_name_plural = 'Test Categories'
 
-    category = models.CharField(max_length=128)
+    category = models.CharField(max_length=128, unique=True)
 
     def __str__(self):
         return f'{self.category}'

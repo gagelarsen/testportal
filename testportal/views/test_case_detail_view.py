@@ -13,6 +13,8 @@ def test_case_detail_view(request, test_case_id):
     recent_results = test_case.results.all().order_by('-result_date')[:5]  # Most recent 5
     context['referrer'] = request.META.get('HTTP_REFERER', None) # pass `next` parameter received from previous page to the context 
 
+    context['average_test_time'] = sum(r.duration for r in recent_results if r.duration != None) / len(recent_results)
+
     context['test_case'] = test_case
     context['tags'] = tags
     context['recent_results'] = recent_results

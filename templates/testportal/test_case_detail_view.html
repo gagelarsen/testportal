@@ -92,6 +92,13 @@
                         {% endfor %}
                     </div>
                 </div>
+                <br/>
+                <div id="test-timing-card" class="card">
+                    <div class="card-header">Timing</div>
+                    <div class="card-body">
+                        <div id="test-timing-plot"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -107,4 +114,35 @@
     {% if user.is_authenticated %}
         <script src="{% static 'testportal/js/test_case_detail_view.js' %}"></script>
     {% endif %}
+    <script>
+var trace1 = {
+  x: [{% for result in recent_results %}{% if result %}'{{ result.result_date }}', {% endif %}{% endfor %}],
+y: [{% for result in recent_results %}{% if result.duration == None %}0, {% else %}{{ result.duration }}, {% endif %}{% endfor %}],
+  type: 'scatter',
+  name: 'Test Time',
+};
+
+var layout = {
+    shapes: [
+    {
+        type: 'line',
+        xref: 'paper',
+        x0: 0,
+        y0: {{ average_test_time }},
+        x1: 1,
+        y1: {{ average_test_time }},
+        line:{
+            color: 'rgb(255, 0, 0)',
+            width: 4,
+            dash:'dot'
+        }
+    }
+    ]
+}
+
+
+var data = [trace1];
+
+Plotly.newPlot('test-timing-plot', data, layout);
+    </script>
 {% endblock %}

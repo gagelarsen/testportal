@@ -2,9 +2,18 @@ import re
 from datetime import date, timedelta
 
 from django.shortcuts import render
-from django.core.exceptions import ObjectDoesNotExist
 
-from testportal.models import BugVerification, TestCategory, Product, Suite
+from testportal.models import BugVerification, Product, Suite, TestSubcategory
+
+
+def _parse_or_default_date(value, default_date, errors, label):
+    if value is None:
+        return default_date
+    try:
+        return date.fromisoformat(value)
+    except ValueError:
+        errors.append(f'Invalid {label} date specified: {value}. Using default value instead.')
+        return default_date
 
 
 def bug_verifications_general_view(request):
@@ -13,13 +22,11 @@ def bug_verifications_general_view(request):
     }
     errors = []
 
-    start_day = request.GET.get('start_day', None)
-    if start_day is None:
-        start_day = (date.today() - timedelta(days=30*5)).strftime('%Y-%m-%d')
+    default_start = date.today() - timedelta(days=30 * 5)
+    default_end = date.today()
 
-    end_day = request.GET.get('end_day', None)
-    if end_day is None:
-        end_day = date.today().strftime('%Y-%m-%d')
+    start_day_date = _parse_or_default_date(request.GET.get('start_day', None), default_start, errors, 'start')
+    end_day_date = _parse_or_default_date(request.GET.get('end_day', None), default_end, errors, 'end')
 
     product = request.GET.get('product', None)
     category = request.GET.get('category', None)
@@ -27,36 +34,36 @@ def bug_verifications_general_view(request):
     context['selected_product'] = None
     context['selected_category'] = None
 
-    bug_verifications = BugVerification.objects.all().filter(
-        fixed_date__gte=start_day, fixed_date__lte=end_day
+    bug_verifications = BugVerification.objects.filter(
+        fixed_date__gte=start_day_date, fixed_date__lte=end_day_date
     )
 
     if product is not None:
-        p = re.match('(.+)-(.+)', product)
+        p = re.match(r'(.+)-([^-]+)$', product)
         if p:
+            product_name, product_version = p.groups()
             try:
-                errors.append(p.groups())
-                prod = Product.objects.get(name=p.groups()[0], version=p.groups()[1])
+                prod = Product.objects.get(name=product_name, version=product_version)
                 context['selected_product'] = prod
                 bug_verifications = bug_verifications.filter(products=prod)
-            except ObjectDoesNotExist:
+            except Product.DoesNotExist:
                 errors.append(f'No matching product exists for {product}')
         else:
             errors.append(f'Invalid product specified: {product}')
     
     if category is not None:
         try:
-            c = TestCategory.objects.get(category=category)
+            c = TestSubcategory.objects.get(subcategory=category)
             context['selected_category'] = c
             bug_verifications = bug_verifications.filter(category=c)
-        except ObjectDoesNotExist:
+        except TestSubcategory.DoesNotExist:
             errors.append(f'No matching category exists for {category}')
 
     context['bug_verifications'] = bug_verifications
     context['products'] = Product.objects.all()
-    context['categories'] = TestCategory.objects.all()
-    context['start_day'] = start_day
-    context['end_day'] = end_day
+    context['categories'] = TestSubcategory.objects.all()
+    context['start_day'] = start_day_date.strftime('%Y-%m-%d')
+    context['end_day'] = end_day_date.strftime('%Y-%m-%d')
     context['errors'] = errors
 
     return render(request, 'testportal/bug_verifications_general_view.html', context)
@@ -69,35 +76,36 @@ def bug_verification_report(request, name, version):
         'suites': Suite.objects.filter(active=True)
     }
     errors = []
-    verifcation_dict = {}
+    verification_dict = {}
 
-    start_day = request.GET.get('start_day', None)
-    if start_day is None:
-        start_day = (date.today() - timedelta(days=30*5)).strftime('%Y-%m-%d')
-    context['start_date'] = start_day
+    default_start = date.today() - timedelta(days=30 * 5)
+    default_end = date.today()
 
-    end_day = request.GET.get('end_day', None)
-    if end_day is None:
-        end_day = date.today().strftime('%Y-%m-%d')
-    context['end_date'] = end_day
+    start_day_date = _parse_or_default_date(request.GET.get('start_day', None), default_start, errors, 'start')
+    context['start_date'] = start_day_date.strftime('%Y-%m-%d')
 
+    end_day_date = _parse_or_default_date(request.GET.get('end_day', None), default_end, errors, 'end')
+    context['end_date'] = end_day_date.strftime('%Y-%m-%d')
+
+    context['product'] = None
 
     try:
         product = Product.objects.get(name=name, version=version)
         context['product'] = product
-    except ObjectDoesNotExist as e:
+    except Product.DoesNotExist:
         errors.append(f'Product ({name}-{version}) does not exist...')
 
-    if len(errors) <= 0:
+    if not errors:
         verifications = BugVerification.objects.filter(
-            products=product, fixed_date__gte=start_day, fixed_date__lte=end_day
+            products=product, fixed_date__gte=start_day_date, fixed_date__lte=end_day_date
         )
 
         for verification in verifications:
-            if verification.category not in verifcation_dict:
-                verifcation_dict[verification.category] = []
-            verifcation_dict[verification.category].append(verification)
+            if verification.category not in verification_dict:
+                verification_dict[verification.category] = []
+            verification_dict[verification.category].append(verification)
 
-    context['verifications'] = verifcation_dict
+    context['verifications'] = verification_dict
+    context['errors'] = errors
 
     return render(request, 'testportal/bug_verification_report.html', context)

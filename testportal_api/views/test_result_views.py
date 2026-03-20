@@ -23,7 +23,7 @@ class TestResultDetail(generics.RetrieveUpdateDestroyAPIView):
 def delete_test_results_for_date_and_suite(request, suite, month, day, year):
     try:
         suite = Suite.objects.get(name=suite)
-    except Exception as e:
+    except Suite.DoesNotExist:
         return JsonResponse({"error": "Unable to find suite to delete results from..."}, status=404)
 
     try:
@@ -155,10 +155,9 @@ def copy_result_to_latest(request, result_id):
 
     test_case = result.test_case
 
-    try:
-        results = TestResult.objects.all().filter(test_case=test_case).order_by('-result_date')
-        latest_result = results[0]
-    except:
+    results = TestResult.objects.all().filter(test_case=test_case).order_by('-result_date')
+    latest_result = results.first()
+    if latest_result is None:
         return JsonResponse({"error": f"No results availabe for this test case: {result.test_case.name} ({len(results)})..."}, status=404)
 
 
@@ -175,7 +174,7 @@ def copy_result_to_latest(request, result_id):
 
     try:
         latest_result.save()
-    except:
+    except DatabaseError:
         return JsonResponse({"error": "Unable to save result copy..."}, status=400)
 
 

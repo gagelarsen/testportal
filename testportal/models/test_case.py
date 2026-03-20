@@ -8,7 +8,6 @@ Notes:
       - testportal/views/test_case_update_view.py
 """
 from datetime import datetime, timedelta
-import uuid
 
 from django.db import models
 from model_utils import Choices

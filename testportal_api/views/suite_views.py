@@ -1,5 +1,4 @@
-import json
-
+from django.db import DatabaseError, IntegrityError, transaction
 from django.http import JsonResponse
 from rest_framework import generics
 
@@ -19,50 +18,57 @@ class SuiteDetail(generics.RetrieveUpdateDestroyAPIView):
 
    
 def duplicate_suite(request, suite_id):
-    # request should be ajax and method should be POST.
-    if request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest' and request.method == "POST":
-        new_name = request.POST.get('new_name', None)
-        if new_name is None:
-            return JsonResponse({"error": "No name specified for duplciated suite."}, status=400)
-        try:
-            old_suite = Suite.objects.get(id=suite_id)
-        except Exception as e:
-            return JsonResponse({"error": "Specified suite not found...",
-                                 "exception": e}, status=404)
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST is supported for this endpoint."}, status=405)
 
-        if Suite.objects.filter(name=new_name).exists():
-            return JsonResponse({"error": "Suite with specified name already exists."}, status=400); 
+    if not request.user.is_authenticated:
+        return JsonResponse({"error": "Authentication is required to duplicate a suite."}, status=401)
 
-        try:
-            new_suite = Suite(
+    new_name = request.POST.get('new_name', '')
+    new_name = new_name.strip()
+    if not new_name:
+        return JsonResponse({"error": "No name specified for duplicated suite."}, status=400)
+
+    try:
+        old_suite = Suite.objects.get(id=suite_id)
+    except Suite.DoesNotExist:
+        return JsonResponse({"error": "Specified suite not found..."}, status=404)
+
+    if Suite.objects.filter(name=new_name).exists():
+        return JsonResponse({"error": "Suite with specified name already exists."}, status=400)
+
+    try:
+        with transaction.atomic():
+            new_suite = Suite.objects.create(
                 name=new_name,
                 active=old_suite.active,
                 description=old_suite.description,
+                product=old_suite.product,
             )
-            new_suite.save()
-        except Exception as e:
-            return JsonResponse({"error": "Unable to duplicate suite... See system administrator.",
-                                 "exception": e}, status=400);
-        try:
+
             test_cases = [
                 TestCase(
                     name=case.name,
                     test_case_id=case.test_case_id,
+                    notes=case.notes,
                     steps=case.steps,
-                    status=case.status,
                     suite=new_suite,
-                    test_type=case.test_type,
                     category=case.category,
                     subcategory=case.subcategory,
+                    test_plan=None,
+                    status=case.status,
+                    test_type=case.test_type,
                 )
-                for case in TestCase.objects.all().filter(suite=old_suite)
+                for case in TestCase.objects.filter(suite=old_suite)
             ]
             TestCase.objects.bulk_create(test_cases)
-            return JsonResponse({"message": "suite duplicated successfully!"}, status=201)
+    except IntegrityError:
+        return JsonResponse({
+            "error": "Unable to duplicate suite due to conflicting values."
+        }, status=409)
+    except DatabaseError:
+        return JsonResponse({
+            "error": "Unable to duplicate suite... See system administrator."
+        }, status=400)
 
-        except Exception as e:
-            new_suite.delete()
-            return JsonResponse({"error": "Unable to duplicate tests for new suite... aborting duplication. See system administrator.",
-                                 "exception": e}, status=400)
-
-    return JsonResponse({"error": "Unable to process respsone... See system administrator."}, status=400)
+    return JsonResponse({"message": "Suite duplicated successfully!"}, status=201)

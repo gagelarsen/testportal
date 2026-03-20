@@ -2,6 +2,7 @@ from datetime import datetime
 import xml.etree.ElementTree as ET
 
 from django.http import JsonResponse
+from django.db import DatabaseError
 
 from rest_framework import generics
 
@@ -32,7 +33,7 @@ def delete_test_results_for_date_and_suite(request, suite, month, day, year):
 
     try:
         TestResult.objects.all().filter(test_case__suite=suite, result_date=dt).delete()
-    except:
+    except DatabaseError:
         return JsonResponse({"error": "Unable to process result deletion..."}, status=400)
 
 

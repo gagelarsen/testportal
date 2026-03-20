@@ -86,7 +86,7 @@ def bug_verification_report(request, name, version):
         product = Product.objects.get(name=name, version=version)
         context['product'] = product
     except ObjectDoesNotExist as e:
-        errors.append(f'Product ({product}) does not exist...')
+        errors.append(f'Product ({name}-{version}) does not exist...')
 
     if len(errors) <= 0:
         verifications = BugVerification.objects.filter(

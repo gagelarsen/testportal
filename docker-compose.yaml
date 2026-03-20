@@ -4,8 +4,9 @@ services:
     image: postgres:latest
     restart: always
     environment:
-      POSTGRES_USER: testportal
-      POSTGRES_PASSWORD: testportal
+      POSTGRES_DB: ${DB_NAME:-testportal}
+      POSTGRES_USER: ${DB_USER:-testportal}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-testportal}
       
   server:
     build: .
@@ -16,12 +17,12 @@ services:
     ports:
       - "8000:8000"
     environment:
-      ALLOWED_HOSTS: "*"
-      DB_USER: testportal
-      DB_PASSWORD: testportal
-      SECRET_KEY: uu%t_4*ee1m=l&cr_cg^qd-)0wfc^#jvia67qo-kd&s=-k1fxn
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: testportal
-      CORS_ALLOWED_ORIGINS: ""
-      CSRF_TRUSTED_ORIGINS: "http://*"
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1}
+      DB_USER: ${DB_USER:-testportal}
+      DB_PASSWORD: ${DB_PASSWORD:-testportal}
+      SECRET_KEY: ${SECRET_KEY:-change-me-in-env}
+      DB_HOST: ${DB_HOST:-db}
+      DB_PORT: ${DB_PORT:-5432}
+      DB_NAME: ${DB_NAME:-testportal}
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:8000}
+      CSRF_TRUSTED_ORIGINS: ${CSRF_TRUSTED_ORIGINS:-http://localhost:8000}

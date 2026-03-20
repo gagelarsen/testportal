@@ -4,43 +4,31 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from testportal.models import Suite, TestPlan
 
 
-class TestPlanUpdateView(LoginRequiredMixin, UpdateView):
-    model = TestPlan
+TEST_PLAN_FIELDS = [
+    'name', 'suite', 'description', 'developers',
+    'features_to_test', 'notes',
+]
 
-    fields = [
-        'name', 'suite', 'description', 'developers', 
-        'features_to_test', 'notes',
-    ]
+
+class TestPlanFormContextMixin:
+    fields = TEST_PLAN_FIELDS
 
     def get_context_data(self, **kwargs):
-        context = super(TestPlanUpdateView, self).get_context_data(**kwargs)
-        context['suites'] = Suite.objects.all().filter(active=True)
-        context['referrer'] = self.request.META.get('HTTP_REFERER') # pass `next` parameter received from previous page to the context 
+        context = super().get_context_data(**kwargs)
+        context['suites'] = Suite.objects.filter(active=True)
+        context['referrer'] = self.request.META.get('HTTP_REFERER')
         return context
 
     def get_success_url(self):
-        referrer = self.request.POST['referrer']
+        referrer = self.request.POST.get('referrer')
         if str(referrer) not in ['', 'None']:
             return referrer
         return '/'
 
 
-class TestPlanCreateView(LoginRequiredMixin, CreateView):
+class TestPlanUpdateView(LoginRequiredMixin, TestPlanFormContextMixin, UpdateView):
     model = TestPlan
 
-    fields = [
-        'name', 'suite', 'description', 'developers', 
-        'features_to_test', 'notes',
-    ]
 
-    def get_context_data(self, **kwargs):
-        context = super(TestPlanCreateView, self).get_context_data(**kwargs)
-        context['suites'] = Suite.objects.all().filter(active=True)
-        context['referrer'] = self.request.META.get('HTTP_REFERER') # pass `next` parameter received from previous page to the context 
-        return context
-
-    def get_success_url(self):
-        referrer = self.request.POST['referrer']
-        if str(referrer) not in ['', 'None']:
-            return referrer
-        return '/'
+class TestPlanCreateView(LoginRequiredMixin, TestPlanFormContextMixin, CreateView):
+    model = TestPlan

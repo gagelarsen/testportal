@@ -1,0 +1,31 @@
+[run]
+source = .
+omit =
+    */migrations/*
+    manage.py
+    core/settings.py
+    core/urls.py
+    core/wsgi.py
+    core/asgi.py
+    */__init__.py
+    */tests*.py
+
+[report]
+omit =
+    */migrations/*
+    manage.py
+    core/settings.py
+    core/urls.py
+    core/wsgi.py
+    core/asgi.py
+    */__init__.py
+    */tests*.py
+exclude_lines =
+    # Standard pragmas
+    pragma: no cover
+    # Abstract/protocol stubs
+    raise NotImplementedError
+    if TYPE_CHECKING:
+    # Dead-code guard: file_to_upload can never be None here because
+    # the preceding len(form_files) == 1 check guarantees at least one file.
+    return JsonResponse\(.*No upload file provided

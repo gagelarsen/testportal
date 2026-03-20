@@ -6,8 +6,8 @@ from testportal.models import Suite, TestPlan
 def test_plan_list_view(request):
     context = {}
 
-    test_plans = TestPlan.objects.all().order_by('suite')
-    suites = Suite.objects.all().values('name', 'id')
+    test_plans = TestPlan.objects.select_related('suite').order_by('suite')
+    suites = Suite.objects.values('name', 'id')
 
     context['test_plans'] = test_plans
     context['suites'] = suites

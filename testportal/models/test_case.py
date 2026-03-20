@@ -22,7 +22,7 @@ from .test_subcategory import TestSubcategory
 
 STATUS = Choices(
     ('active', 'Test is active'),
-    ('depricated', 'Test is depricated'),
+    ('depricated', 'Test is deprecated'),
     ('broken', 'Test is broken'),
     ('under-construction', 'Test is under construction'),
     ('design', 'Test is in design'),

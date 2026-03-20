@@ -11,7 +11,7 @@ class Test_Create_Suite(TestCase):
         test_suite = Suite.objects.create(name='Test1', active=True)
 
     def test_suite_content(self):
-        suite = Suite.suiteobjects.get(id=1)
+        suite = Suite.objects.get(id=1)
         name = f'{suite.name}'
         active = suite.active
 

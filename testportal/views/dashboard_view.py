@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
 
 from django.contrib.auth import get_user_model
 from django.shortcuts import render
@@ -34,7 +34,7 @@ def dashboard_view(request, name):
     number_of_days_get = request.GET.get('num_days', 10)
     try:
         number_of_days = int(number_of_days_get)
-    except:
+    except (TypeError, ValueError):
         number_of_days = 30
 
     today = date.today()

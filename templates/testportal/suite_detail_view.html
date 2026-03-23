@@ -8,9 +8,14 @@
             <h1 class="mb-1">{{ suite.name }}</h1>
             <p class="text-secondary mb-0">Keep the test list front and center, with analytics tucked into a compact summary rail.</p>
         </div>
-        <a href="/suites/{{ suite.name }}/dashboard/" class="btn btn-outline-primary">
-            <i class="bi bi-speedometer2 me-1"></i>Open Dashboard
-        </a>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/suites/{{ suite.name }}/dashboard/" class="btn btn-outline-primary">
+                <i class="bi bi-speedometer2 me-1"></i>Open Dashboard
+            </a>
+            <a href="/suites/{{ suite.name }}/report/" class="btn btn-outline-secondary">
+                <i class="bi bi-file-earmark-bar-graph me-1"></i>Open Report
+            </a>
+        </div>
     </div>
 
     <div class="row g-4 align-items-start">

@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, timedelta
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -40,6 +40,33 @@ class DashboardAndListViewTests(TestCase):
             duration=3.0,
         )
 
+        cls.untested_case = PortalTestCase.objects.create(
+            name='Untested Case',
+            test_case_id='D-2',
+            steps='Step',
+            suite=cls.suite,
+            category=cls.category,
+            subcategory=cls.subcategory,
+            test_plan=cls.plan,
+            status='needs-review',
+            test_type='automated',
+        )
+
+        TestResult.objects.create(
+            result='issue',
+            user=cls.user,
+            test_case=cls.test_case,
+            result_date=date.today() - timedelta(days=1),
+            bug_id='123',
+        )
+
+        TestResult.objects.create(
+            result='false-negative',
+            user=cls.user,
+            test_case=cls.test_case,
+            result_date=date.today() - timedelta(days=2),
+        )
+
     def test_get_item_filter_returns_value_or_none(self):
         data = {'a': 1}
 
@@ -58,7 +85,7 @@ class DashboardAndListViewTests(TestCase):
         self.assertEqual(response.context['suite'].id, self.suite.id)
         self.assertTrue(response.context['date_list'])
         self.assertEqual(response.context['number_of_days'], 10)
-        self.assertEqual(len(response.context['dashboard_data']), 1)
+        self.assertEqual(len(response.context['dashboard_data']), 2)
 
     def test_dashboard_view_invalid_num_days_falls_back_to_30(self):
         url = reverse('testportal:dashboard_view', kwargs={'name': self.suite.name})
@@ -78,6 +105,36 @@ class DashboardAndListViewTests(TestCase):
 
     def test_dashboard_view_missing_suite_returns_404(self):
         url = reverse('testportal:dashboard_view', kwargs={'name': 'missing-suite'})
+
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_suite_report_view_renders_with_metrics(self):
+        url = reverse('testportal:suite_report_view', kwargs={'name': self.suite.name})
+
+        response = self.client.get(url, {'num_days': 30})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['suite'].id, self.suite.id)
+        self.assertEqual(response.context['total_cases'], 2)
+        self.assertEqual(response.context['tested_cases'], 1)
+        self.assertEqual(response.context['untested_cases'], 1)
+        self.assertEqual(response.context['issue_count'], 1)
+        self.assertEqual(response.context['false_negative_count'], 1)
+        self.assertEqual(response.context['bug_linked_runs'], 1)
+        self.assertContains(response, 'Highest-Risk Test Cases')
+
+    def test_suite_report_view_invalid_num_days_falls_back_to_30(self):
+        url = reverse('testportal:suite_report_view', kwargs={'name': self.suite.name})
+
+        response = self.client.get(url, {'num_days': 'invalid'})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context['number_of_days'], 30)
+
+    def test_suite_report_view_missing_suite_returns_404(self):
+        url = reverse('testportal:suite_report_view', kwargs={'name': 'missing-suite'})
 
         response = self.client.get(url)
 

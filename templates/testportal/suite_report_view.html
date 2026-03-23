@@ -1,0 +1,147 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+<section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">{{ suite.name }} Report</h1>
+            <p class="text-secondary mb-0">Manager summary for execution quality, risk, and coverage.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/suites/{{ suite.name }}/" class="btn btn-outline-secondary">
+                <i class="bi bi-layout-text-sidebar-reverse me-1"></i>Details
+            </a>
+            <a href="/suites/{{ suite.name }}/dashboard/" class="btn btn-outline-primary">
+                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <form class="row g-3 align-items-end" method="get">
+                <div class="col-12 col-sm-4 col-md-3">
+                    <label for="num-days" class="form-label mb-0">Reporting window (days)</label>
+                    <input id="num-days" name="num_days" type="number" min="1" max="365" class="form-control" value="{{ number_of_days }}">
+                </div>
+                <div class="col-12 col-sm-4 col-md-3">
+                    <button type="submit" class="btn btn-outline-primary w-100">Update Report</button>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="text-secondary small">Range: {{ start_day }} → {{ end_day }}</div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-header">Execution</div>
+                <div class="card-body">
+                    <div class="h4 mb-1">{{ total_runs }}</div>
+                    <div class="text-secondary">Total runs</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-header">Pass Rate</div>
+                <div class="card-body">
+                    <div class="h4 mb-1">{{ pass_rate }}%</div>
+                    <div class="text-secondary">{{ pass_count }} pass / {{ fail_count }} fail</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-header">Escapes / Investigation</div>
+                <div class="card-body">
+                    <div class="h4 mb-1">{{ action_rate }}%</div>
+                    <div class="text-secondary">{{ issue_count }} issues, {{ false_negative_count }} false negatives</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xl-3">
+            <div class="card h-100">
+                <div class="card-header">Coverage</div>
+                <div class="card-body">
+                    <div class="h4 mb-1">{{ tested_cases }} / {{ total_cases }}</div>
+                    <div class="text-secondary">{{ untested_cases }} cases without runs in period</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 align-items-start mb-4">
+        <div class="col-12 col-xl-8">
+            <div class="card">
+                <div class="card-header">Result Breakdown</div>
+                <div class="card-body">
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <span class="badge rounded-pill bg-pass">Pass: {{ pass_count }}</span>
+                        <span class="badge rounded-pill bg-fail">Fail: {{ fail_count }}</span>
+                        <span class="badge rounded-pill bg-issue">Issue: {{ issue_count }}</span>
+                        <span class="badge rounded-pill bg-false-negative">False Negative: {{ false_negative_count }}</span>
+                        <span class="badge rounded-pill bg-skipped">Skipped: {{ skipped_count }}</span>
+                        <span class="badge rounded-pill bg-under-construction">Under Construction: {{ under_construction_result_count }}</span>
+                        <span class="badge rounded-pill bg-in-documentation">In Documentation: {{ in_documentation_result_count }}</span>
+                    </div>
+                    <div class="text-secondary">Bug-linked runs: <span class="fw-semibold text-dark">{{ bug_linked_runs }}</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-xl-4">
+            <div class="card">
+                <div class="card-header">Suite Composition</div>
+                <div class="card-body">
+                    <div class="d-flex justify-content-between mb-2"><span class="text-secondary">Active</span><span class="fw-semibold">{{ active_status_count }}</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span class="text-secondary">Needs Review</span><span class="fw-semibold">{{ needs_review_status_count }}</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span class="text-secondary">Under Construction</span><span class="fw-semibold">{{ under_construction_status_count }}</span></div>
+                    <div class="d-flex justify-content-between mb-2"><span class="text-secondary">Broken</span><span class="fw-semibold">{{ broken_status_count }}</span></div>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-2"><span class="text-secondary">Automated</span><span class="fw-semibold">{{ automated_type_count }}</span></div>
+                    <div class="d-flex justify-content-between"><span class="text-secondary">Manual</span><span class="fw-semibold">{{ manual_type_count }}</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">Highest-Risk Test Cases (latest result only)</div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Test Case</th>
+                            <th class="text-center">Latest Result</th>
+                            <th class="text-center">Bug ID</th>
+                            <th class="text-center">Latest Run</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test_case in attention_cases %}
+                        <tr>
+                            <td>
+                                <a href="/test-cases/{{ test_case.id }}/" class="fw-semibold">{{ test_case.name }}</a>
+                                <div class="small text-secondary">{{ test_case.test_case_id|default:"No ID" }}</div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill bg-{{ test_case.latest_result|lower }}">{{ test_case.latest_result|title }}</span>
+                            </td>
+                            <td class="text-center">{{ test_case.latest_bug_id|default:"-" }}</td>
+                            <td class="text-center">{{ test_case.latest_result_date }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-secondary py-4">No issue or bug items based on latest results in this window.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

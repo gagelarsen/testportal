@@ -7,6 +7,19 @@
     text-align: left;
 }
 
+.tp-checkbox-list {
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.tp-checkbox-list .form-check {
+    margin-bottom: 0.35rem;
+}
+
+.tp-checkbox-list .form-check:last-child {
+    margin-bottom: 0;
+}
+
 /* ─── Design Tokens ─── */
 :root {
     --tp-sidebar-w: 220px;

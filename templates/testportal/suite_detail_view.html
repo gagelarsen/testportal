@@ -55,6 +55,12 @@
                                 <option value="automated">Automated</option>
                             </select>
                         </div>
+                        <div class="tp-filter-group justify-content-center">
+                            <div class="form-check form-switch mb-0">
+                                <input class="form-check-input" type="checkbox" id="show-deprecated-toggle" role="switch">
+                                <label class="form-check-label text-secondary" for="show-deprecated-toggle">Show deprecated</label>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="table-responsive">
@@ -317,6 +323,7 @@ function applySuiteDetailFilters() {
     var searchValue = $('#test-search-box').val().toLowerCase();
     var statusValue = $('#status-filter').val();
     var typeValue = $('#type-filter').val();
+    var showDeprecated = $('#show-deprecated-toggle').prop('checked');
 
     $('#suite-detail-testcase-table tr.suite-detail-test-case-row').each(function() {
         var rowText = $(this).text().toLowerCase();
@@ -326,13 +333,16 @@ function applySuiteDetailFilters() {
         var matchesSearch = rowText.indexOf(searchValue) > -1;
         var matchesStatus = statusValue === 'all' || rowStatus === statusValue;
         var matchesType = typeValue === 'all' || rowType === typeValue;
+        // Hide deprecated rows unless the toggle is on OR the user explicitly filtered to deprecated
+        var matchesDeprecated = showDeprecated || rowStatus !== 'depricated' || statusValue === 'depricated';
 
-        $(this).toggle(matchesSearch && matchesStatus && matchesType);
+        $(this).toggle(matchesSearch && matchesStatus && matchesType && matchesDeprecated);
     });
 
     localStorage.setItem('suite-detail-search-value', searchValue);
     localStorage.setItem('suite-detail-status-filter', statusValue);
     localStorage.setItem('suite-detail-type-filter', typeValue);
+    localStorage.setItem('suite-detail-show-deprecated', showDeprecated ? '1' : '0');
 }
 
 function updateSortIndicators(activeHeader, direction) {
@@ -383,6 +393,7 @@ function sortSuiteDetailTable(sortKey, sortType, direction) {
 $('#test-search-box').on('keyup', applySuiteDetailFilters);
 $('#status-filter').on('change', applySuiteDetailFilters);
 $('#type-filter').on('change', applySuiteDetailFilters);
+$('#show-deprecated-toggle').on('change', applySuiteDetailFilters);
 
 $('.tp-sortable-col').on('click', function() {
     var sortKey = this.dataset.sortKey;
@@ -402,6 +413,8 @@ $(document).ready(function() {
     suite_detail_type_filter = localStorage.getItem('suite-detail-type-filter');
     suite_detail_sort_key = localStorage.getItem('suite-detail-sort-key');
     suite_detail_sort_direction = localStorage.getItem('suite-detail-sort-direction') || 'asc';
+    // Default: hide deprecated (only show if explicitly saved as '1')
+    var suite_detail_show_deprecated = localStorage.getItem('suite-detail-show-deprecated') === '1';
 
     if (suite_detail_search_value != undefined) {
         $('#test-search-box').val(suite_detail_search_value);
@@ -414,6 +427,8 @@ $(document).ready(function() {
     if (suite_detail_type_filter != undefined) {
         $('#type-filter').val(suite_detail_type_filter);
     }
+
+    $('#show-deprecated-toggle').prop('checked', suite_detail_show_deprecated);
 
     if (suite_detail_sort_key != undefined) {
         var activeHeader = document.querySelector('.tp-sortable-col[data-sort-key="' + suite_detail_sort_key + '"]');

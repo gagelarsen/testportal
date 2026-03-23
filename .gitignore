@@ -64,4 +64,6 @@ build_py/*
 
 __pycache__
 
+staticfiles/
+
 .env

@@ -1,10 +1,26 @@
-{% extends "core/layout.html" %}
+{% extends "core/auth_layout.html" %}
 
 {% block content %}
-<h2>Log In</h2>
+<h1 class="h4 mb-4">Sign in</h1>
 <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-success" type="submit">Log In</button>
+    {% for field in form %}
+    <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        <input class="form-control"
+               type="{{ field.field.widget.input_type }}"
+               name="{{ field.html_name }}"
+               id="{{ field.id_for_label }}"
+               {% if field.value %}value="{{ field.value }}"{% endif %}
+               autocomplete="{{ field.html_name }}">
+        {% if field.errors %}
+        <div class="text-danger mt-1 small">{{ field.errors|join:", " }}</div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger py-2 small">{{ form.non_field_errors|join:" " }}</div>
+    {% endif %}
+    <button class="btn btn-primary w-100 mt-2" type="submit">Sign in</button>
 </form>
 {% endblock %}

@@ -18,6 +18,88 @@ $(document).ready(function() {
     }
     const csrftoken = getCookie('csrftoken');
 
+    function openTestCaseModal(caseId) {
+        if ($('#update-test-case-modal').length === 0) {
+            window.location = `/test-cases/${caseId}/update`;
+            return;
+        }
+
+        $('#update-error').hide().text('');
+        $('#update-test-case-modal-loading').show();
+        $('#update-test-case-modal-form').hide();
+        $('#update-test-case-modal').modal('show');
+
+        $.ajax({
+            url: '/api/test-cases/' + caseId + '/',
+            type: 'GET',
+            headers: { 'X-CSRFToken': csrftoken },
+            dataType: 'json',
+            success: function(response) {
+                $('#test-case-id').val(response.id);
+                $('#test-case-name').val(response.name || '');
+                $('#test-case-test-id').val(response.test_case_id || '');
+                $('#test-case-suite').val(response.suite);
+                $('#test-case-status').val(response.status || 'active');
+                $('#test-case-type').val(response.test_type || 'automated');
+                $('#test-case-tags').val((response.tags || []).map(String));
+                $('#test-case-categories').val(String(response.category));
+                $('#test-case-subcategories').val(String(response.subcategory));
+                $('#test-case-steps').val(response.steps || '');
+                $('#view-test-case-button').attr('href', '/test-cases/' + response.id);
+
+                $('#update-test-case-modal-loading').hide();
+                $('#update-test-case-modal-form').show();
+            },
+            error: function() {
+                $('#update-test-case-modal-loading').hide();
+                $('#update-error').text('Unable to load test case details.').show();
+            }
+        });
+    }
+
+    window.openTestCaseModal = openTestCaseModal;
+
+    $('#update-test-case-modal-accept').off('click.suiteDetail').on('click.suiteDetail', function() {
+        var testCaseId = $('#test-case-id').val();
+        if (!testCaseId) {
+            $('#update-error').text('Missing test case id.').show();
+            return;
+        }
+
+        var payload = {
+            name: $('#test-case-name').val(),
+            test_case_id: $('#test-case-test-id').val(),
+            suite: Number($('#test-case-suite').val()),
+            status: $('#test-case-status').val(),
+            test_type: $('#test-case-type').val(),
+            tags: ($('#test-case-tags').val() || []).map(Number),
+            category: Number($('#test-case-categories').val()),
+            subcategory: Number($('#test-case-subcategories').val()),
+            steps: $('#test-case-steps').val(),
+        };
+
+        $.ajax({
+            url: '/api/test-cases/' + testCaseId + '/',
+            type: 'PUT',
+            data: JSON.stringify(payload),
+            contentType: 'application/json',
+            processData: false,
+            headers: { 'X-CSRFToken': csrftoken },
+            dataType: 'json',
+            success: function() {
+                $('#update-test-case-modal').modal('hide');
+                location.reload();
+            },
+            error: function(error) {
+                var message = 'Unable to update test case.';
+                if (error.responseJSON) {
+                    message = JSON.stringify(error.responseJSON);
+                }
+                $('#update-error').text(message).show();
+            }
+        });
+    });
+
      // Test Case Row Context Menu
      $(function() {
         $.contextMenu({
@@ -50,7 +132,7 @@ $(document).ready(function() {
                 } else if (key == 'view-test-case') {
                     window.location = `/test-cases/${case_id}`;
                 } else if (key == 'edit-test-case') {
-                    window.location = `/test-cases/${case_id}/update`;
+                    openTestCaseModal(case_id);
                 }
             },
             items: {

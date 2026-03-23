@@ -3,89 +3,142 @@
 {% load markdown_extras %}
 
 {% block content %}
-
-<h1>{{ test_plan.name }}{% if user.is_authenticated %}  <a class="btn btn-sml btn-success" href="/test-plans/{{ test_plan.id }}/update">Edit</a>{% endif %}</h1>
-
-<nav>
-<ul class="nav nav-tabs" id="nav-tab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="test-plan-test-cases-tab" data-bs-toggle="tab" data-bs-target="#test-plan-test-cases-content" type="button" role="tab">Test Cases</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="test-plan-details-tab" data-bs-toggle="tab" data-bs-target="#test-plan-details-content" type="button" role="tab">Details</button>
-  </li>
-</ul>
-</nav>
-
-
-<div class="tab-content" id="test-plan-tab-content">
-    <div class="tab-pane fade" id="test-plan-details-content" role="tabpanel" aria-labelledby="test-plan-details-tab">
-        <br/>
-        <div class="mb-3">
-            <h2>Suite:</h2>
-            <p>{{ test_plan.suite }}</p>
+<section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">{{ test_plan.name }}</h1>
+            <p class="text-secondary mb-0">Plan details, coverage snapshot, and test-case list in one place.</p>
         </div>
-        <div class="mb-3">
-            <h2>Description:</h2>
-            <p>{{ test_plan.description | markdown | safe }}
-        </div>
-        <div class="mb-3">
-            <h2>Developers:</h2>
-            <p>{{ test_plan.developers | markdown | safe }}</p>
-        </div>
-        <div class="mb-3">
-            <h2>Features to Test:</h2>
-            <p>{{ test_plan.features_to_test | markdown | safe }}</p>
-        </div>
-        <div class="mb-3">
-            <h2>Notes:</h2>
-            <p>{{ test_plan.notes | markdown | safe }}</p>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="/suites/{{ test_plan.suite }}/" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left me-1"></i>Back to Suite
+            </a>
+            {% if user.is_authenticated %}
+            <a class="btn btn-primary" href="/test-plans/{{ test_plan.id }}/update">
+                <i class="bi bi-pencil-square me-1"></i>Edit Plan
+            </a>
+            {% endif %}
         </div>
     </div>
 
-    <div class="tab-pane fade show active" id="test-plan-test-cases-content" role="tabpanel" aria-labelledby="test-plan-test-cases-tab">  
-        <div class="row">
-            <div class="col-md-5 col-lg-5">
-                <div style="height: 100%" id="test-plan-info-card" data-authenticated='{{ user.is_authenticated }}' class="card">
-                    <div class="card-header">
-                        Test Plan Info
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <p><strong>Name: </strong>{{ test_plan.name }}</p>
-                            <p><strong>Description: </strong>{{ test_plan.description }}</p>
-                            <p><strong>Total Cases: </strong>{{ test_cases | length }}</p>
-                            <p><strong>Suite: </strong><a href="/suites/{{ test_plan.suite }}">{{ test_plan.suite }}</a></p>
+    <ul class="nav nav-tabs mb-4" id="nav-tab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="test-plan-test-cases-tab" data-bs-toggle="tab" data-bs-target="#test-plan-test-cases-content" type="button" role="tab">Test Cases</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="test-plan-details-tab" data-bs-toggle="tab" data-bs-target="#test-plan-details-content" type="button" role="tab">Details</button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="test-plan-tab-content">
+        <div class="tab-pane fade show active" id="test-plan-test-cases-content" role="tabpanel" aria-labelledby="test-plan-test-cases-tab">
+            <div class="row g-4 align-items-start">
+                <div class="col-12 col-xl-8 order-2 order-xl-1">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+                                <a href="/test-cases/create" class="btn btn-primary" id="add-test-case-to-test-plan-button">
+                                    <i class="bi bi-plus-lg me-1"></i>Add Test Case
+                                </a>
+                                <div class="d-flex align-items-center gap-2 w-100 w-lg-auto">
+                                    <label for="test-search-box" class="form-label mb-0 text-nowrap">Search</label>
+                                    <input class="form-control" type="text" id="test-search-box" name="test-search-box" placeholder="Find by id, name, status...">
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0" id="test-plan-testcase-table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 12%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset tp-sort-header" data-sort-key="id" data-sort-type="text">ID <i class="bi bi-arrow-down-up"></i></button></th>
+                                            <th style="width: 34%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset tp-sort-header" data-sort-key="name" data-sort-type="text">Name <i class="bi bi-arrow-down-up"></i></button></th>
+                                            <th class="text-center" style="width: 14%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset tp-sort-header" data-sort-key="type" data-sort-type="text">Type <i class="bi bi-arrow-down-up"></i></button></th>
+                                            <th class="text-center" style="width: 18%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset tp-sort-header" data-sort-key="result" data-sort-type="text">Result <i class="bi bi-arrow-down-up"></i></button></th>
+                                            <th class="text-center" style="width: 12%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset tp-sort-header" data-sort-key="duration" data-sort-type="number">Avg Duration <i class="bi bi-arrow-down-up"></i></button></th>
+                                            <th class="text-center" style="width: 10%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset tp-sort-header" data-sort-key="status" data-sort-type="text">Status <i class="bi bi-arrow-down-up"></i></button></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for test_case in test_cases %}
+                                        <tr class="test-plan-test-case-row{% if test_case.test_case.status == "under-construction" %} test-case-row-under-construction{% elif test_case.test_case.status == "needs-review" %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}" data-sort-id="{{ test_case.test_case.test_case_id|lower }}" data-sort-name="{{ test_case.test_case.name|lower }}" data-sort-type="{{ test_case.test_case.test_type|lower }}" data-sort-result="{% if test_case.result %}{{ test_case.result.result|lower }}{% else %}no result{% endif %}" data-sort-duration="{{ test_case.duration|default_if_none:0 }}" data-sort-status="{{ test_case.test_case.status|lower }}">
+                                            <td class="text-nowrap">{{ test_case.test_case.test_case_id }}</td>
+                                            <td class="fw-medium">{{ test_case.test_case.name }}</td>
+                                            <td class="text-center text-capitalize">{{ test_case.test_case.test_type }}</td>
+                                            <td class="text-center">
+                                                {% if test_case.result %}
+                                                <div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}>
+                                                    <span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span>
+                                                </div>
+                                                {% else %}
+                                                <div><span class="badge-pill badge rounded-pill bg-skipped">no result</span></div>
+                                                {% endif %}
+                                            </td>
+                                            <td class="text-center">{{ test_case.duration|stringformat:"0.2f" }}</td>
+                                            <td class="text-center text-capitalize">{{ test_case.test_case.status }}</td>
+                                        </tr>
+                                    {% empty %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-secondary py-4">No test cases assigned to this plan yet.</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-7 col-lg-7 order-md-last">
-                <div style="height: 100%" id="test-plan-data-card" class="card">
-                    <div class="card-header">
-                        <ul class="nav nav-tabs card-header-tabs">
-                            <li class="nav-item">
-                                <a class="nav-link" id="test-plan-data-category-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-category-content" type="button" role="tab">Category</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link active" id="test-plan-data-status-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-status-content" type="button" role="tab">Status</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="test-plan-data-result-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-result-content" type="button" role="tab">Result</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="tab-content" id="test-plan-data-content">
-                                <div class="tab-pane fade" id="test-plan-data-category-content" role="tabpanel" aria-labelledby="test-plan-data-category-tab">
-                                    <div id="test-plan-data-category-display-div" style="width 100%;"></div>
+
+                <div class="col-12 col-xl-4 order-1 order-xl-2">
+                    <div class="tp-suite-sidebar">
+                        <div id="test-plan-info-card" data-authenticated='{{ user.is_authenticated }}' class="card mb-3">
+                            <div class="card-header">Plan Summary</div>
+                            <div class="card-body">
+                                <div class="tp-meta-list">
+                                    <div class="tp-meta-item">
+                                        <span class="tp-meta-label">Name</span>
+                                        <span class="tp-meta-value">{{ test_plan.name }}</span>
+                                    </div>
+                                    <div class="tp-meta-item">
+                                        <span class="tp-meta-label">Suite</span>
+                                        <span class="tp-meta-value"><a href="/suites/{{ test_plan.suite }}/">{{ test_plan.suite }}</a></span>
+                                    </div>
+                                    <div class="tp-meta-item">
+                                        <span class="tp-meta-label">Total Cases</span>
+                                        <span class="tp-meta-value">{{ test_cases|length }}</span>
+                                    </div>
+                                    <div class="tp-meta-item tp-meta-item-column">
+                                        <span class="tp-meta-label">Description</span>
+                                        <span class="tp-meta-value">{{ test_plan.description|default:"No description provided." }}</span>
+                                    </div>
                                 </div>
-                                <div class="tab-pane fade show active" id="test-plan-data-status-content" role="tabpanel" aria-labelledby="test-plan-data-status-tab">
-                                    <div id="test-plan-data-status-display-div" style="width 100%;"></div>
-                                </div>
-                                <div class="tab-pane fade" id="test-plan-data-result-content" role="tabpanel" aria-labelledby="test-plan-data-result-tab">
-                                    <div id="test-plan-data-result-display-div" style="width 100%;"></div>
+                            </div>
+                        </div>
+
+                        <div id="test-plan-data-card" class="card">
+                            <div class="card-header">
+                                <ul class="nav nav-tabs card-header-tabs flex-nowrap overflow-auto">
+                                    <li class="nav-item">
+                                        <button class="nav-link" id="test-plan-data-category-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-category-content" type="button" role="tab">Category</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link active" id="test-plan-data-status-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-status-content" type="button" role="tab">Status</button>
+                                    </li>
+                                    <li class="nav-item">
+                                        <button class="nav-link" id="test-plan-data-result-tab" data-bs-toggle="tab" data-bs-target="#test-plan-data-result-content" type="button" role="tab">Result</button>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="card-body">
+                                <div class="tab-content" id="test-plan-data-content">
+                                    <div class="tab-pane fade" id="test-plan-data-category-content" role="tabpanel" aria-labelledby="test-plan-data-category-tab">
+                                        <div id="test-plan-data-category-display-div" class="tp-compact-plot"></div>
+                                    </div>
+                                    <div class="tab-pane fade show active" id="test-plan-data-status-content" role="tabpanel" aria-labelledby="test-plan-data-status-tab">
+                                        <div id="test-plan-data-status-display-div" class="tp-compact-plot"></div>
+                                    </div>
+                                    <div class="tab-pane fade" id="test-plan-data-result-content" role="tabpanel" aria-labelledby="test-plan-data-result-tab">
+                                        <div id="test-plan-data-result-display-div" class="tp-compact-plot"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -93,54 +146,35 @@
                 </div>
             </div>
         </div>
-        <br>
-        <div class="row">
-            <div class="col">
-                <div class="row">
-                    <div class="col col-md-3">
-                        <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
+
+        <div class="tab-pane fade" id="test-plan-details-content" role="tabpanel" aria-labelledby="test-plan-details-tab">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h2 class="h6 text-uppercase text-secondary">Suite</h2>
+                        <p class="mb-0">{{ test_plan.suite }}</p>
                     </div>
-                    <div class="col col-md-6">
+                    <div class="mb-4">
+                        <h2 class="h6 text-uppercase text-secondary">Description</h2>
+                        <div>{{ test_plan.description | markdown | safe }}</div>
                     </div>
-                    <div class="col-auto">
-                        <label for="result-date" class="form-lable">Search</label>
+                    <div class="mb-4">
+                        <h2 class="h6 text-uppercase text-secondary">Developers</h2>
+                        <div>{{ test_plan.developers | markdown | safe }}</div>
                     </div>
-                    <div class="col-auto">
-                        <input class="form-control" type="text" id="test-search-box" name="test-search-box" placeholder="Test Name..">
+                    <div class="mb-4">
+                        <h2 class="h6 text-uppercase text-secondary">Features to Test</h2>
+                        <div>{{ test_plan.features_to_test | markdown | safe }}</div>
+                    </div>
+                    <div>
+                        <h2 class="h6 text-uppercase text-secondary">Notes</h2>
+                        <div>{{ test_plan.notes | markdown | safe }}</div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row">
-            <table class="table table-hover" id="test-plan-testcase-table">
-                <thead>
-                    <tr>
-                        <th style="width: 10%;">ID</th>
-                        <th style="width: 30%;">Name</th>
-                        <th style="width: 15%; text-align: center;">Type</th>
-                        <th style="width: 15%; text-align: center;">Result</th>
-                        <th style="width: 10%; text-align: center;">Duration(Avg)</th>
-                        <th style="width: 15%; text-align: center;">Status</th>
-                        <th style="width: 10%; text-align: center;"></th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for test_case in test_cases %}
-                    <tr class="test-plan-test-case-row{% if test_case.test_case.status == "under-construction" %} test-case-row-under-construction{% elif test_case.test_case.status == "needs-review" %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
-                        <td>{{ test_case.test_case.test_case_id }}</td>
-                        <td>{{ test_case.test_case.name }}</td>
-                        <td style="text-align: center;">{{ test_case.test_case.test_type }}</td>
-                        <td style="text-align: center;">{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span class="badge-pill badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
-                        <td style="text-align: center;">{{ test_case.duration|stringformat:"0.2f"  }}</td>
-                        <td style="text-align: center;">{{ test_case.test_case.status }}</td>
-                        <td style="text-align: center;">{% if test_case.test_case.status == "under-construction" %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.status == "needs-review" %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </div>
     </div>
-</div>
+</section>
 
 {% endblock %}
 
@@ -153,35 +187,106 @@
         <script>
 var result_plot_div = document.getElementById('test-plan-data-result-display-div');
 var status_plot_div = document.getElementById('test-plan-data-status-display-div');
-var status_plot_div = document.getElementById('test-plan-data-category-display-div');
+var category_plot_div = document.getElementById('test-plan-data-category-display-div');
 
-// Plot Layout
-var layout = {
-    height: 300,
-    margin: {"t": 0, "b": 0, "l": 0, "r": 0},
-    texttemplate: '%{label}: %{value}',
+var plotConfig = {
+    displayModeBar: false,
+    responsive: true,
+};
+
+var plotLayout = {
+    height: 260,
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { t: 4, b: 36, l: 4, r: 4 },
+    legend: {
+        orientation: 'h',
+        x: 0,
+        y: -0.12,
+        font: { size: 11 },
+    },
+    font: {
+        family: 'Inter, system-ui, sans-serif',
+        size: 12,
+        color: '#111827',
+    },
+};
+
+function buildDonut(values, labels, colors) {
+    return {
+        values: values,
+        labels: labels,
+        type: 'pie',
+        hole: 0.55,
+        sort: false,
+        direction: 'clockwise',
+        marker: {
+            colors: colors,
+            line: {
+                color: '#ffffff',
+                width: 2,
+            },
+        },
+        textinfo: 'label+percent',
+        textposition: 'outside',
+        hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Share: %{percent}<extra></extra>',
+        automargin: true,
+    };
 }
 
-// Status Plot
-var status_layout = Object.create(layout);
-status_layout.values = [{% for v in status_counts_values %}{{ v }},{% endfor %}];
-status_layout.labels = [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}];
-status_layout.type = 'pie';
-Plotly.newPlot('test-plan-data-status-display-div', [status_layout]);
+function applyTableSort(sortKey, direction, sortType) {
+    var tbody = $('#test-plan-testcase-table tbody');
+    var rows = tbody.find('tr.test-plan-test-case-row').get();
 
-// Result Plot
-var result_layout = Object.create(layout);
-result_layout.values = [{% for v in result_counts_values %}{{ v }},{% endfor %}];
-result_layout.labels = [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}];
-result_layout.type = 'pie';
-Plotly.newPlot('test-plan-data-result-display-div', [result_layout]);
+    rows.sort(function(a, b) {
+        var aVal = ($(a).attr('data-sort-' + sortKey) || '').toString();
+        var bVal = ($(b).attr('data-sort-' + sortKey) || '').toString();
 
-// Category Plot
-var category_layout = Object.create(layout);
-category_layout.values = [{% for v in category_counts_values %}{{ v }},{% endfor %}];
-category_layout.labels = [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}];
-category_layout.type = 'pie';
-Plotly.newPlot('test-plan-data-category-display-div', [category_layout]);
+        if (sortType === 'number') {
+            var aNum = Number(aVal);
+            var bNum = Number(bVal);
+            if (Number.isNaN(aNum)) { aNum = 0; }
+            if (Number.isNaN(bNum)) { bNum = 0; }
+            return direction === 'asc' ? aNum - bNum : bNum - aNum;
+        }
+
+        var textCompare = aVal.localeCompare(bVal, undefined, { numeric: true, sensitivity: 'base' });
+        return direction === 'asc' ? textCompare : -textCompare;
+    });
+
+    $.each(rows, function(_, row) {
+        tbody.append(row);
+    });
+}
+
+var statusValues = [{% for v in status_counts_values %}{{ v }},{% endfor %}];
+var statusLabels = [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}];
+var statusTrace = buildDonut(statusValues, statusLabels, ['#22c55e', '#f59e0b', '#ef4444', '#f97316', '#0ea5e9', '#8b5cf6']);
+Plotly.newPlot('test-plan-data-status-display-div', [statusTrace], plotLayout, plotConfig);
+
+var resultValues = [{% for v in result_counts_values %}{{ v }},{% endfor %}];
+var resultLabels = [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}];
+var resultTrace = buildDonut(resultValues, resultLabels, ['#22c55e', '#ef4444', '#facc15', '#a855f7', '#64748b', '#f59e0b', '#a8a29e']);
+Plotly.newPlot('test-plan-data-result-display-div', [resultTrace], plotLayout, plotConfig);
+
+var categoryValues = [{% for v in category_counts_values %}{{ v }},{% endfor %}];
+var categoryLabels = [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}];
+var categoryTrace = buildDonut(categoryValues, categoryLabels, ['#6366f1', '#0891b2', '#0ea5e9', '#10b981', '#f59e0b', '#f97316', '#64748b']);
+Plotly.newPlot('test-plan-data-category-display-div', [categoryTrace], plotLayout, plotConfig);
+
+document.querySelectorAll('[data-bs-toggle="tab"]').forEach(function (tabTrigger) {
+    tabTrigger.addEventListener('shown.bs.tab', function () {
+        Plotly.Plots.resize(status_plot_div);
+        Plotly.Plots.resize(result_plot_div);
+        Plotly.Plots.resize(category_plot_div);
+    });
+});
+
+window.addEventListener('resize', function () {
+    Plotly.Plots.resize(status_plot_div);
+    Plotly.Plots.resize(result_plot_div);
+    Plotly.Plots.resize(category_plot_div);
+});
 
 
 $("#test-search-box").on("keyup", function() {
@@ -198,6 +303,25 @@ $(document).ready(function() {
         $('#test-search-box').val(testplan_search_value);
         $('#test-search-box').trigger('keyup');
     }
+
+    var savedSortKey = localStorage.getItem('testplan-sort-key') || 'id';
+    var savedSortDirection = localStorage.getItem('testplan-sort-direction') || 'asc';
+    var initialSortHeader = $('.tp-sort-header[data-sort-key="' + savedSortKey + '"]');
+    var initialSortType = initialSortHeader.data('sort-type') || 'text';
+    applyTableSort(savedSortKey, savedSortDirection, initialSortType);
+
+    $('.tp-sort-header').on('click', function() {
+        var sortKey = $(this).data('sort-key');
+        var sortType = $(this).data('sort-type') || 'text';
+        var currentSortKey = localStorage.getItem('testplan-sort-key');
+        var currentSortDirection = localStorage.getItem('testplan-sort-direction') || 'asc';
+        var nextDirection = (currentSortKey === sortKey && currentSortDirection === 'asc') ? 'desc' : 'asc';
+
+        localStorage.setItem('testplan-sort-key', sortKey);
+        localStorage.setItem('testplan-sort-direction', nextDirection);
+        applyTableSort(sortKey, nextDirection, sortType);
+        $('#test-search-box').trigger('keyup');
+    });
 });
 
 

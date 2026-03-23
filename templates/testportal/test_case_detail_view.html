@@ -3,99 +3,111 @@
 {% load markdown_extras %}
 
 {% block content %}
-
-<main>
-
-    <div class="row">
-        <h1>{{ test_case.name }}{% if user.is_authenticated %}  <a class="btn btn-sml btn-success" href="/test-cases/{{ test_case.id }}/update">Edit</a>{% endif %}</h1>
+<section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+        <div>
+            <h1 class="mb-1">{{ test_case.name }}</h1>
+            <p class="text-secondary mb-0">Test case details, recent outcomes, and timing trend.</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-outline-secondary" href="/suites/{{ test_case.suite.name }}">
+                <i class="bi bi-arrow-left me-1"></i>Back to Suite
+            </a>
+            {% if user.is_authenticated %}
+            <button id="test-case-edit-button" type="button" class="btn btn-primary">
+                <i class="bi bi-pencil-square me-1"></i>Edit
+            </button>
+            {% endif %}
+        </div>
     </div>
-    <div class="row">
-        <div class="col-md-7 col-lg-8">
-            <p>
-                <span class="badge bg-pass">Pass</span>
-                <span class="badge rounded-pill bg-test-id">{{ test_case.test_case_id }}</span>
-                <a href="/suites/{{ test_case.suite.name }}" class="badge rounded-pill bg-suite-pill">{{ test_case.suite }}</a>
-                {% if test_case.status == 'under-construction' %}
-                    <span class="badge rounded-pill bg-in-documentation">Under Construction</span>
-                {% endif %}
-                {% if test_case.status == 'needs-review' %}
-                    <span class="badge rounded-pill bg-needs-review">Needs Review</span>
-                {% endif %}
-                {% if test_case.category.category != "Undefined" %}
-                    <span class="badge rounded-pill bg-category-pill">{{ test_case.category }}</span>
-                {% endif %}
-                {% if test_case.subcategory.subcategory != "Undefined" %}
-                    <span class="badge rounded-pill bg-subcategory-pill">{{ test_case.subcategory }}</span>
-                {% endif %}
-                {% for tag in tags %}
-                    <span class="badge rounded-pill bg-secondary">{{ tag }}</span>
-                {% endfor %}
-            </p>
-            <div id="test-info-card" class="card">
+
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <span class="badge rounded-pill bg-test-id">{{ test_case.test_case_id }}</span>
+        <a href="/suites/{{ test_case.suite.name }}" class="badge rounded-pill bg-suite-pill">{{ test_case.suite }}</a>
+        <span class="badge rounded-pill bg-category-pill">{{ test_case.category }}</span>
+        <span class="badge rounded-pill bg-subcategory-pill">{{ test_case.subcategory }}</span>
+        {% if test_case.status == 'under-construction' %}
+            <span class="badge rounded-pill bg-under-construction">Under Construction</span>
+        {% elif test_case.status == 'needs-review' %}
+            <span class="badge rounded-pill bg-needs-review">Needs Review</span>
+        {% elif test_case.status == 'broken' %}
+            <span class="badge rounded-pill bg-fail">Broken</span>
+        {% elif test_case.status == 'design' %}
+            <span class="badge rounded-pill bg-category-pill">In Design</span>
+        {% elif test_case.status == 'depricated' %}
+            <span class="badge rounded-pill bg-skipped">Deprecated</span>
+        {% endif %}
+        {% for tag in selected_tags %}
+            <span class="badge rounded-pill bg-secondary">{{ tag }}</span>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-xl-8">
+            <div id="test-info-card" class="card mb-4">
+                <div class="card-header">Overview</div>
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <strong>Type: </strong> {{ test_case.test_type }}
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <div class="text-secondary small">Type</div>
+                            <div class="fw-semibold text-capitalize">{{ test_case.test_type }}</div>
                         </div>
-                        <div class="col">
-                            <strong>Status: </strong> {{ test_case.status }}
+                        <div class="col-12 col-md-4">
+                            <div class="text-secondary small">Status</div>
+                            <div class="fw-semibold text-capitalize">{{ test_case.status }}</div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="text-secondary small">Suite</div>
+                            <div class="fw-semibold">{{ test_case.suite }}</div>
                         </div>
                     </div>
                 </div>
             </div>
-            <br />
+
             {% if test_case.notes %}
-            <div id="test-notes-card" class="card">
+            <div id="test-notes-card" class="card mb-4">
                 <div class="card-header">Notes</div>
                 <div class="card-body">
-                    <p>{{ test_case.notes | markdown | safe }}</p>
+                    <div>{{ test_case.notes | markdown | safe }}</div>
                 </div>
             </div>
-            <br />
             {% endif %}
+
             <div id="test-step-card" class="card">
                 <div class="card-header">Steps</div>
                 <div class="card-body">
-                    <p>{{ test_case.steps| markdown | safe }}<p>
+                    <div>{{ test_case.steps | markdown | safe }}</div>
                 </div>
             </div>
         </div>
-        <div class="col-md-5 col-lg-4 order-md-last">
-            <div id="issue-section" style="display: none;">
-                <button id="add-issue-button" style="width: 100%; padding: 10px;" class="btn btn-dark">
-                    <i class="bi-plus-circle"> Add Issue</i>
-                </button>
-                <p />
-                <div id="test-issues-card" class="card">
-                    <div class="card-header">Issues:</div>
-                    <div class="card-body">
-                        <a href='/issues/1'><span style="width: 90px;" class="badge rounded-pill bg-issue">IS-00001</span></a> Problem doing something
-                        <br/>
-                        <a href='/issues/2'><span style="width: 90px;" class="badge rounded-pill bg-bug">BG-34567</span></a> Crash when doing this
-                        <br/>
-                    </div>
-                </div>
-            </div>
-            <br/>
-            <div id="result-section">
+
+        <div class="col-12 col-xl-4">
+            <div id="result-section" class="tp-suite-sidebar">
                 {% if user.is_authenticated %}
-                <a style="width: 100%; padding: 10px;" class="btn btn-success" href='/test-results/create'>
-                    <i class="bi-plus-circle"> Add Result</i>
+                <a class="btn btn-success w-100 mb-3" href="/test-results/create">
+                    <i class="bi bi-plus-circle me-1"></i>Add Result
                 </a>
                 {% endif %}
-                <p />
-                <div id="test-issues-card" class="card">
-                    <div class="card-header">Recent Results:</div>
+
+                <div class="card mb-4" id="test-results-card">
+                    <div class="card-header">Recent Results</div>
                     <div class="card-body">
                         {% for result in recent_results %}
-                        <div {% if result.note %}title="{{ result.note }}"{% endif %}><a href='/test-results/{{ result.id }}'><span class="badge-pill-small badge rounded-pill bg-{{ result.result|lower }}">{{ result.result }}</span></a> - {{ result.result_date }}{% if result.note %} - {{ result.note }}{% endif %}</div>
-                        <br/>
+                        <div class="mb-2" {% if result.note %}title="{{ result.note }}"{% endif %}>
+                            <a href="/test-results/{{ result.id }}">
+                                <span class="badge-pill-small badge rounded-pill bg-{{ result.result|lower }}">{{ result.result }}</span>
+                            </a>
+                            <span class="text-secondary">{{ result.result_date }}</span>
+                            {% if result.note %}<div class="small text-secondary">{{ result.note }}</div>{% endif %}
+                        </div>
+                        {% empty %}
+                        <div class="text-secondary">No recent results.</div>
                         {% endfor %}
                     </div>
                 </div>
-                <br/>
+
                 <div id="test-timing-card" class="card">
-                    <div class="card-header">Timing</div>
+                    <div class="card-header">Timing Trend</div>
                     <div class="card-body">
                         <div id="test-timing-plot"></div>
                     </div>
@@ -103,10 +115,17 @@
             </div>
         </div>
     </div>
-    <div class="row">
-        {% if referrer %}<a href={{ referrer }}>back</a>{% endif %}
+
+    {% if referrer %}
+    <div class="mt-3">
+        <a href="{{ referrer }}" class="text-secondary">Back</a>
     </div>
-</main>
+    {% endif %}
+</section>
+
+{% if user.is_authenticated %}
+{% include 'testportal/modals/update_test_case_modal.html' %}
+{% endif %}
 {% endblock %}
 
 
@@ -117,13 +136,35 @@
     {% endif %}
     <script>
 var trace1 = {
-  x: [{% for result in recent_results %}{% if result %}'{{ result.result_date }}', {% endif %}{% endfor %}],
-y: [{% for result in recent_results %}{% if result.duration == None %}0, {% else %}{{ result.duration }}, {% endif %}{% endfor %}],
-  type: 'scatter',
-  name: 'Test Time',
+    x: [{% for result in timing_results %}'{{ result.result_date }}', {% endfor %}],
+    y: [{% for result in timing_results %}{{ result.duration }}, {% endfor %}],
+    type: 'scatter',
+    mode: 'lines+markers',
+    name: 'Test Time',
+    line: {
+        color: '#4f46e5',
+        width: 3,
+        shape: 'spline'
+    },
+    marker: {
+        color: '#4f46e5',
+        size: 6,
+    },
+    hovertemplate: '<b>%{x}</b><br>Duration: %{y:.2f}s<extra></extra>'
 };
 
 var layout = {
+    height: 280,
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { t: 10, b: 35, l: 35, r: 10 },
+    xaxis: {
+        showgrid: false,
+    },
+    yaxis: {
+        title: 'Seconds',
+        gridcolor: '#e5e7eb',
+    },
     shapes: [
     {
         type: 'line',
@@ -133,17 +174,112 @@ var layout = {
         x1: 1,
         y1: {{ average_test_time }},
         line:{
-            color: 'rgb(255, 0, 0)',
-            width: 4,
+            color: '#ef4444',
+            width: 2,
             dash:'dot'
         }
     }
     ]
-}
+};
 
 
 var data = [trace1];
+var config = {
+    displayModeBar: false,
+    responsive: true,
+};
 
-Plotly.newPlot('test-timing-plot', data, layout);
+Plotly.newPlot('test-timing-plot', data, layout, config);
+
+{% if user.is_authenticated %}
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var index = 0; index < cookies.length; index++) {
+            var cookie = cookies[index].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+window.openTestCaseModal = function(testCaseId) {
+    $('#update-error').hide().text('');
+    $('#update-test-case-modal-loading').show();
+    $('#update-test-case-modal-form').hide();
+    $('#update-test-case-modal').modal('show');
+
+    $.ajax({
+        url: '/api/test-cases/' + testCaseId + '/',
+        type: 'GET',
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        dataType: 'json',
+        success: function(response) {
+            $('#test-case-id').val(response.id);
+            $('#test-case-name').val(response.name || '');
+            $('#test-case-test-id').val(response.test_case_id || '');
+            $('#test-case-suite').val(response.suite);
+            $('#test-case-status').val(response.status || 'active');
+            $('#test-case-type').val(response.test_type || 'automated');
+            $('#test-case-tags').val((response.tags || []).map(String));
+            $('#test-case-categories').val(String(response.category));
+            $('#test-case-subcategories').val(String(response.subcategory));
+            $('#test-case-steps').val(response.steps || '');
+            $('#view-test-case-button').attr('href', '/test-cases/' + response.id);
+
+            $('#update-test-case-modal-loading').hide();
+            $('#update-test-case-modal-form').show();
+        },
+        error: function() {
+            $('#update-test-case-modal-loading').hide();
+            $('#update-error').text('Unable to load test case details.').show();
+        }
+    });
+};
+
+$('#test-case-edit-button').on('click', function() {
+    window.openTestCaseModal('{{ test_case.id }}');
+});
+
+$('#update-test-case-modal-accept').off('click.testCaseDetail').on('click.testCaseDetail', function() {
+    var testCaseId = $('#test-case-id').val();
+    var payload = {
+        name: $('#test-case-name').val(),
+        test_case_id: $('#test-case-test-id').val(),
+        suite: Number($('#test-case-suite').val()),
+        status: $('#test-case-status').val(),
+        test_type: $('#test-case-type').val(),
+        tags: ($('#test-case-tags').val() || []).map(Number),
+        category: Number($('#test-case-categories').val()),
+        subcategory: Number($('#test-case-subcategories').val()),
+        steps: $('#test-case-steps').val(),
+    };
+
+    $.ajax({
+        url: '/api/test-cases/' + testCaseId + '/',
+        type: 'PUT',
+        data: JSON.stringify(payload),
+        contentType: 'application/json',
+        processData: false,
+        headers: { 'X-CSRFToken': getCookie('csrftoken') },
+        dataType: 'json',
+        success: function() {
+            $('#update-test-case-modal').modal('hide');
+            location.reload();
+        },
+        error: function(error) {
+            var message = 'Unable to update test case.';
+            if (error.responseJSON) {
+                message = JSON.stringify(error.responseJSON);
+            }
+            $('#update-error').text(message).show();
+        }
+    });
+});
+{% endif %}
     </script>
 {% endblock %}

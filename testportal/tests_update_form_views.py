@@ -7,7 +7,6 @@ from django.test import TestCase
 from django.urls import reverse
 
 from testportal.models import (
-    BugVerification,
     Product,
     Suite,
     TestCase as TestCaseModel,
@@ -16,67 +15,6 @@ from testportal.models import (
     TestResult,
     TestSubcategory,
 )
-
-
-class BugVerificationFormViewTest(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        user_model = get_user_model()
-        cls.user = user_model.objects.create_user(username='bv-form-user', password='password123')
-        cls.subcategory = TestSubcategory.objects.create(subcategory='BV Form SC')
-        cls.bv = BugVerification.objects.create(
-            bug_id=77770,
-            summary='Form view test BV',
-            category=cls.subcategory,
-            reported_date='2026-01-01',
-            fixed_date='2026-01-02',
-            verified_date='2026-01-03',
-        )
-
-    def setUp(self):
-        self.client.login(username='bv-form-user', password='password123')
-
-    def test_get_context_data_includes_suites_and_referrer(self):
-        url = reverse('testportal:bug_verification_update', kwargs={'pk': self.bv.pk})
-        response = self.client.get(url, HTTP_REFERER='/from-here/')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertIn('suites', response.context)
-        self.assertIn('referrer', response.context)
-
-    def test_get_success_url_redirects_to_referrer(self):
-        url = reverse('testportal:bug_verification_create')
-        data = {
-            'bug_id': 77771,
-            'summary': 'New BV for redirect test',
-            'reported_date': '2026-01-01',
-            'fixed_date': '2026-01-02',
-            'verified_date': '2026-01-03',
-            'category': self.subcategory.pk,
-            'test': 'nongui',
-            'referrer': '/suites/',
-        }
-        response = self.client.post(url, data)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/suites/')
-
-    def test_get_success_url_defaults_to_slash_when_no_referrer(self):
-        url = reverse('testportal:bug_verification_create')
-        data = {
-            'bug_id': 77772,
-            'summary': 'Another BV for default redirect',
-            'reported_date': '2026-01-01',
-            'fixed_date': '2026-01-02',
-            'verified_date': '2026-01-03',
-            'category': self.subcategory.pk,
-            'test': 'nongui',
-        }
-        response = self.client.post(url, data)
-
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['Location'], '/')
 
 
 class ProductFormViewTest(TestCase):

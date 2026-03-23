@@ -2,55 +2,85 @@
 
 {% block content %}
 
-<h1>Suites</h1>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h1 class="mb-1">Suites</h1>
+        <p class="text-secondary mb-0">Manage suite activity and jump into dashboards quickly.</p>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="d-flex flex-wrap gap-2">
+        <button type="button" data-bs-toggle="modal" data-bs-target="#add-suite-modal" id="add-suite-button" class="btn btn-success">
+            <i class="bi bi-plus-square me-1"></i>Add Suite
+        </button>
+        <button type="button" data-bs-toggle="modal" data-bs-target="#upload-test-cases-modal" id="upload-test-cases-button" class="btn btn-outline-primary">
+            <i class="bi bi-cloud-upload me-1"></i>Upload Test Cases
+        </button>
+    </div>
+    {% endif %}
+</div>
 
-<table class="table table-hover">
-    <thead>
-        <th style="width: 10%;">Active</th>
-        <th style="width: 70%;">Name</th>
-        <th style="width: 20%;"></th>
-    </thead>
-    <tbody>
-        {% for suite in suites %}
-        <tr id="suite-row-{{ suite.id }}" class="suite-row" data-suite-id={{ suite.id }}>
-            <td>
-                <div class="form-check form-switch">
-                    <input data-suite-id={{ suite.id }} data-suite-name={{ suite.name }} 
-                           class="form-check-input suite-active-switch" type="checkbox" 
-                           role="switch" id="flexSwitchCheckDefault"{% if suite.active %} checked{% endif %}
-                           {% if not user.is_authenticated %} disabled{% endif %}>
-                </div>
-            </td>
-            <td>{{ suite.name }}</td>
-            <td>
-                <a class="btn btn-primary" href="/suites/{{ suite.name }}/dashboard" title="dashboard">
-                    <i class="bi-table"></i>
-                </a>
-                <a class="btn btn-success" href="/suites/{{ suite.name }}" title="edit">
-                    <i class="bi-list-ul"></i>
-                </a>
-                {% if user.is_superuser %}
-                <div data-suite-id={{ suite.id }} class="btn btn-danger btn-delete-suite" title="delete">
-                    <i class="bi-trash"></i>
-                </div>
-                <div data-suite-id={{ suite.id }} data-suite-name={{ suite.name }} class="btn btn-secondary btn-duplicate-suite", title="duplicate">
-                    <i class="bi-intersect"></i>
-                </div>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th style="width: 12%;">Active</th>
+                        <th style="width: 58%;">Name</th>
+                        <th style="width: 30%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for suite in suites %}
+                    <tr id="suite-row-{{ suite.id }}" class="suite-row" data-suite-id="{{ suite.id }}">
+                        <td>
+                            <div class="form-check form-switch mb-0">
+                                <input
+                                    data-suite-id="{{ suite.id }}"
+                                    data-suite-name="{{ suite.name }}"
+                                    class="form-check-input suite-active-switch"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="suite-active-{{ suite.id }}"
+                                    {% if suite.active %} checked{% endif %}
+                                    {% if not user.is_authenticated %} disabled{% endif %}
+                                >
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-semibold">{{ suite.name }}</div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a class="btn btn-primary btn-sm" href="/suites/{{ suite.name }}/dashboard/" title="Dashboard">
+                                    <i class="bi bi-table me-1"></i><span class="d-none d-lg-inline">Dashboard</span>
+                                </a>
+                                <a class="btn btn-success btn-sm" href="/suites/{{ suite.name }}/" title="View suite">
+                                    <i class="bi bi-list-ul me-1"></i><span class="d-none d-lg-inline">Open</span>
+                                </a>
+                                {% if user.is_superuser %}
+                                <button type="button" data-suite-id="{{ suite.id }}" class="btn btn-secondary btn-sm btn-duplicate-suite" title="Duplicate">
+                                    <i class="bi bi-intersect me-1"></i><span class="d-none d-lg-inline">Duplicate</span>
+                                </button>
+                                <button type="button" data-suite-id="{{ suite.id }}" class="btn btn-danger btn-sm btn-delete-suite" title="Delete">
+                                    <i class="bi bi-trash me-1"></i><span class="d-none d-lg-inline">Delete</span>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-secondary py-4">No suites found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 
 {% if user.is_authenticated %}
-<button type="button" data-bs-toggle="modal" data-bs-target="#add-suite-modal" id="add-suite-button" class="btn btn-success">
-    <i class="bi-plus-square"> Add Suite</i>
-</button>
-<button type="button" data-bs-toggle="modal" data-bs-target="#upload-test-cases-modal" id="upload-test-cases-button" class="btn btn-success">
-    <i class="bi-cloud-upload"> Upload Test Cases</i>
-</button>
-
 <div class="modal fade" id="add-suite-modal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

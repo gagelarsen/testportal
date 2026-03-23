@@ -100,6 +100,13 @@ if config('USE_SQLITE_FOR_TESTS', default=False, cast=bool) and 'test' in sys.ar
         'NAME': BASE_DIR / 'test_db.sqlite3',
     }
 
+# Local dev without PostgreSQL: USE_SQLITE=true python manage.py runserver
+if config('USE_SQLITE', default=False, cast=bool):
+    DATABASES['default'] = {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'local_dev.sqlite3',
+    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators

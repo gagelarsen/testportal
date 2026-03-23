@@ -2,102 +2,196 @@
 
 {% block content %}
 {% load static %}
-<h1>Bug Verifications</h1>
-
-<hr>
-
-<div id='bug-verification-filter-row' class="row">
-    <div class="row"style="padding-bottom: 15px;">
-        <div class="col-auto">
-            <label for="filter-start-date" class="col-form-lable">Start</label>
+<section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">Bug Verifications</h1>
+            <p class="text-secondary mb-0">Track verified fixes by date, product, and category.</p>
         </div>
-        <div class="col-auto">
-            <input class="form-control" type="date" id="filter-start-date" name="filter-start-date"
-                value={{ start_day }} min="2022-01-01" max="2122-12-31">
-        </div>
-        <div class="col-auto">
-            <label for="filter-end-date" class="col-form-lable">End</label>
-        </div>
-        <div class="col-auto">
-            <input class="form-control" type="date" id="filter-end-date" name="filter-end-date"
-                value={{ end_day }} min="2022-01-01" max="2122-12-31">
-        </div>
-        <div class="col-auto">
-            <label for="filter-product" class="col-form-lable">Product</label>
-        </div>
-        <div class="col-auto">
-            <select class="form-select" id="filter-product" name="filter-product">
-                <option{% if not selected_product %} selected{% endif %} value="-1">All</option>
-                {% for product in products %}
-                <option{% if selected_product == product %} selected{% endif %} value="{{ product.id }}">{{ product }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-auto">
-            <label for="filter-category" class="col-form-lable">Category</label>
-        </div>
-        <div class="col-auto">
-            <select class="form-select" id="filter-category" name="filter-category">
-                <option{% if not selected_category %} selected{% endif %} value="-1">All</option>
-                {% for category in categories %}
-                <option{% if selected_category == category %} selected{% endif %} value="{{ category.id }}">{{ category }}</option>
-                {% endfor %}
-            </select>
+        <div class="d-flex flex-wrap gap-2">
+            <button id="generate-report-button" class="btn btn-outline-primary">
+                <i class="bi bi-file-earmark-text me-1"></i>Generate Report
+            </button>
+            {% if user.is_authenticated %}
+            <button id="add-verification-button" type="button" class="btn btn-success">
+                <i class="bi bi-plus-lg me-1"></i>Add Verification
+            </button>
+            {% endif %}
         </div>
     </div>
-    <div class="row">
-        <div class="col-auto">
-            <label for="verification-search-box" class="form-lable">Search:</label>
-        </div>
-        <div class="col-auto">
-            <input class="form-control" type="text" id="verification-search-box" name="verification-search-box">
-        </div>
-        <div class="col-auto">
-            <button id="refresh-view-button" class="btn btn-info">Refresh</button>
-        </div>
-        <div class="col-auto">
-            <button id="generate-report-button" class="btn btn-secondary">Generate Report</button>
-        </div>
-        <div class="col-auto">
-            <a href="/bug-verifications/create" id="generate-report-button" class="btn btn-success">Add Verification</a>
-        </div>
-    </div>
-</div>
 
-<hr>
-
-<div id='bug-verification-table-row' class="row">
-    <table id="verification-table" class="table table-hover">
-        <thead>
-            <tr>
-                <th style="width: 5%;" scope="col">ID</th>
-                <th style="width: 35%;" scope="col">Summary</th>
-                <th style="width: 10%;" scope="col">Reported</th>
-                <th style="width: 10%;" scope="col">Fixed</th>
-                <th style="width: 10%;" scope="col">Verified</th>
-                <th style="width: 10%;" scope="col">Tag</th>
-                <th style="width: 20%;" scope="col">Product</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for bug_verification in bug_verifications %}
-            <tr class="verification-row" data-verification-id="{{ bug_verification.id }}">
-                <td><a href="https://bugs.aquaveo.com/view.php?id={{ bug_verification.bug_id }}">{{ bug_verification.bug_id|stringformat:"05d" }}</a></td>
-                <td>{{ bug_verification.summary }}</td>
-                <td>{{ bug_verification.reported_date }}</td>
-                <td>{{ bug_verification.fixed_date }}</td>
-                <td>{{ bug_verification.verified_date }}</td>
-                <td><span class="badge rounded-pill bg-category-pill">{{ bug_verification.category }}</span></td>
-                <td>
-                {% for product in bug_verification.products.all %}
-                    <span class="badge rounded-pill bg-suite-pill">{{ product }}</span>
-                {% endfor %}
-                </td>
-            </tr>
+    {% if errors %}
+    <div class="alert alert-warning" role="alert">
+        <ul class="mb-0 ps-3">
+            {% for error in errors %}
+            <li>{{ error }}</li>
             {% endfor %}
-        </tbody>
-    </table>
+        </ul>
+    </div>
+    {% endif %}
+
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row g-3 align-items-end">
+                <div class="col-12 col-sm-6 col-lg-2">
+                    <label for="filter-start-date" class="form-label">Start</label>
+                    <input class="form-control" type="date" id="filter-start-date" name="filter-start-date" value="{{ start_day }}" min="2022-01-01" max="2122-12-31">
+                </div>
+                <div class="col-12 col-sm-6 col-lg-2">
+                    <label for="filter-end-date" class="form-label">End</label>
+                    <input class="form-control" type="date" id="filter-end-date" name="filter-end-date" value="{{ end_day }}" min="2022-01-01" max="2122-12-31">
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="filter-product" class="form-label">Product</label>
+                    <select class="form-select" id="filter-product" name="filter-product">
+                        <option{% if not selected_product %} selected{% endif %} value="-1">All</option>
+                        {% for product in products %}
+                        <option{% if selected_product == product %} selected{% endif %} value="{{ product.id }}">{{ product }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <label for="filter-category" class="form-label">Category</label>
+                    <select class="form-select" id="filter-category" name="filter-category">
+                        <option{% if not selected_category %} selected{% endif %} value="-1">All</option>
+                        {% for category in categories %}
+                        <option{% if selected_category == category %} selected{% endif %} value="{{ category.id }}">{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12 col-lg-2 d-grid">
+                    <button id="refresh-view-button" class="btn btn-primary">
+                        <i class="bi bi-arrow-clockwise me-1"></i>Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-3 mt-1 align-items-end">
+                <div class="col-12 col-lg-6">
+                    <label for="verification-search-box" class="form-label">Search</label>
+                    <input class="form-control" type="text" id="verification-search-box" name="verification-search-box" placeholder="Find by id, summary, tag, or product...">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table id="verification-table" class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th style="width: 8%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="id" data-sort-type="number">ID <i class="bi bi-arrow-down-up"></i></button></th>
+                            <th style="width: 36%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="summary" data-sort-type="text">Summary <i class="bi bi-arrow-down-up"></i></button></th>
+                            <th style="width: 11%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="reported" data-sort-type="text">Reported <i class="bi bi-arrow-down-up"></i></button></th>
+                            <th style="width: 11%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="fixed" data-sort-type="text">Fixed <i class="bi bi-arrow-down-up"></i></button></th>
+                            <th style="width: 11%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="verified" data-sort-type="text">Verified <i class="bi bi-arrow-down-up"></i></button></th>
+                            <th style="width: 10%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="category" data-sort-type="text">Tag <i class="bi bi-arrow-down-up"></i></button></th>
+                            <th style="width: 23%;"><button type="button" class="btn btn-link p-0 text-decoration-none text-reset verification-sort" data-sort-key="products" data-sort-type="text">Product <i class="bi bi-arrow-down-up"></i></button></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bug_verification in bug_verifications %}
+                        <tr class="verification-row" data-verification-id="{{ bug_verification.id }}" data-sort-id="{{ bug_verification.bug_id }}" data-sort-summary="{{ bug_verification.summary|lower }}" data-sort-reported="{{ bug_verification.reported_date }}" data-sort-fixed="{{ bug_verification.fixed_date }}" data-sort-verified="{{ bug_verification.verified_date }}" data-sort-category="{{ bug_verification.category|lower }}" data-sort-products="{% for product in bug_verification.products.all %}{{ product|lower }} {% endfor %}">
+                            <td><a target="_blank" rel="noopener" href="https://bugs.aquaveo.com/view.php?id={{ bug_verification.bug_id }}">{{ bug_verification.bug_id|stringformat:"05d" }}</a></td>
+                            <td class="fw-medium">{{ bug_verification.summary }}</td>
+                            <td>{{ bug_verification.reported_date }}</td>
+                            <td>{{ bug_verification.fixed_date }}</td>
+                            <td>{{ bug_verification.verified_date }}</td>
+                            <td><span class="badge rounded-pill bg-category-pill">{{ bug_verification.category }}</span></td>
+                            <td>
+                            {% for product in bug_verification.products.all %}
+                                <span class="badge rounded-pill bg-suite-pill">{{ product }}</span>
+                            {% endfor %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center text-secondary py-4">No bug verifications found for the selected filters.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if user.is_authenticated %}
+<div class="modal fade" id="bug-verification-modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bug-verification-modal-title">Add Bug Verification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="bug-verification-modal-error" class="alert alert-danger py-2" style="display:none;"></div>
+
+                <input type="hidden" id="bug-verification-id">
+
+                <div class="row g-3">
+                    <div class="col-12 col-md-4">
+                        <label for="bug-verification-bug-id" class="form-label">Bug ID</label>
+                        <input type="number" min="1" id="bug-verification-bug-id" class="form-control">
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <label for="bug-verification-test" class="form-label">Test</label>
+                        <select id="bug-verification-test" class="form-select">
+                            <option value="gui">GUI Test</option>
+                            <option value="nongui">Non-GUI Test</option>
+                            <option value="none">No Test</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label for="bug-verification-summary" class="form-label">Summary</label>
+                    <textarea id="bug-verification-summary" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="row g-3 mt-0">
+                    <div class="col-12 col-md-4">
+                        <label for="bug-verification-reported" class="form-label">Reported</label>
+                        <input type="date" id="bug-verification-reported" class="form-control">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="bug-verification-fixed" class="form-label">Fixed</label>
+                        <input type="date" id="bug-verification-fixed" class="form-control">
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <label for="bug-verification-verified" class="form-label">Verified</label>
+                        <input type="date" id="bug-verification-verified" class="form-control">
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-0">
+                    <div class="col-12 col-md-6">
+                        <label for="bug-verification-category" class="form-label">Category</label>
+                        <select id="bug-verification-category" class="form-select">
+                            {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label for="bug-verification-products" class="form-label">Products</label>
+                        <select id="bug-verification-products" class="form-select" multiple>
+                            {% for product in products %}
+                            <option value="{{ product.id }}">{{ product }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="bug-verification-modal-save">Save</button>
+            </div>
+        </div>
+    </div>
 </div>
+{% endif %}
 
 {% endblock %}
 
@@ -106,6 +200,31 @@
 {% if user.is_authenticated %}<script src="{% static 'testportal/js/bug_verifications_general_view.js' %}"></script>{% endif %}
 <script>
     $(document).ready(function() {
+        function sortVerificationTable(sortKey, direction, sortType) {
+            var tbody = $('#verification-table tbody');
+            var rows = tbody.find('tr.verification-row').get();
+
+            rows.sort(function(a, b) {
+                var aVal = ($(a).attr('data-sort-' + sortKey) || '').toString();
+                var bVal = ($(b).attr('data-sort-' + sortKey) || '').toString();
+
+                if (sortType === 'number') {
+                    var aNum = Number(aVal);
+                    var bNum = Number(bVal);
+                    if (Number.isNaN(aNum)) { aNum = 0; }
+                    if (Number.isNaN(bNum)) { bNum = 0; }
+                    return direction === 'asc' ? aNum - bNum : bNum - aNum;
+                }
+
+                var textCompare = aVal.localeCompare(bVal, undefined, { numeric: true, sensitivity: 'base' });
+                return direction === 'asc' ? textCompare : -textCompare;
+            });
+
+            $.each(rows, function(_, row) {
+                tbody.append(row);
+            });
+        }
+
         $('#refresh-view-button').click(function() {
 
             href = '/bug-verifications?';
@@ -149,7 +268,34 @@
         if (verification_search_value != undefined) {
             $('#verification-search-box').val(verification_search_value);
             $('#verification-search-box').trigger('keyup');
-        }   
+        }
+
+        var savedSortKey = localStorage.getItem('verification-sort-key') || 'fixed';
+        var savedSortDirection = localStorage.getItem('verification-sort-direction') || 'desc';
+        var initialSortHeader = $('.verification-sort[data-sort-key="' + savedSortKey + '"]');
+        var initialSortType = initialSortHeader.data('sort-type') || 'text';
+        sortVerificationTable(savedSortKey, savedSortDirection, initialSortType);
+
+        $('.verification-sort').on('click', function() {
+            var sortKey = $(this).data('sort-key');
+            var sortType = $(this).data('sort-type') || 'text';
+            var currentSortKey = localStorage.getItem('verification-sort-key');
+            var currentSortDirection = localStorage.getItem('verification-sort-direction') || 'asc';
+            var nextDirection = (currentSortKey === sortKey && currentSortDirection === 'asc') ? 'desc' : 'asc';
+
+            localStorage.setItem('verification-sort-key', sortKey);
+            localStorage.setItem('verification-sort-direction', nextDirection);
+            sortVerificationTable(sortKey, nextDirection, sortType);
+            $('#verification-search-box').trigger('keyup');
+        });
+
+        {% if user.is_authenticated %}
+        $('#add-verification-button').on('click', function() {
+            if (typeof window.openBugVerificationModal === 'function') {
+                window.openBugVerificationModal(null);
+            }
+        });
+        {% endif %}
     });
 </script>
 

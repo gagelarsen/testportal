@@ -2,61 +2,199 @@
 {% load static %}
 
 {% block content %}
-
-<main>
-
-    <div class="row">
-        <h1>{{ suite.name }}</h1>
-        <a href="/suites/{{ suite.name }}/dashboard">Dashboard</a>
+<section class="mb-4">
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+        <div>
+            <h1 class="mb-1">{{ suite.name }}</h1>
+            <p class="text-secondary mb-0">Keep the test list front and center, with analytics tucked into a compact summary rail.</p>
+        </div>
+        <a href="/suites/{{ suite.name }}/dashboard/" class="btn btn-outline-primary">
+            <i class="bi bi-speedometer2 me-1"></i>Open Dashboard
+        </a>
     </div>
-    <div class="row">
-        <div class="col-md-5 col-lg-5">
-            <div style="height: 100%" id="suite-info-card" data-authenticated='{{ user.is_authenticated }}' class="card">
-                <div class="card-header">
-                    Suite Info
-                </div>
+
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-xl-8 order-2 order-xl-1">
+            <div class="card">
                 <div class="card-body">
-                    <div class="row">
-                        <p><strong>Name: </strong>{{ suite.name }}</p>
-                        <p><strong>Active: </strong>{{ suite.active }}</p>
-                        <p><strong>Description: </strong>{{ suite.description }}</p>
-                        <p><strong>Total Cases: </strong>{{ test_cases | length }}</p>
+                    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-3">
+                        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 w-100 w-lg-auto">
+                            <a href="/test-cases/create" class="btn btn-primary" id="add-test-case-to-test-plan-button">
+                                <i class="bi bi-plus-lg me-1"></i>Add Test Case
+                            </a>
+                            <div class="d-flex align-items-center gap-2 flex-grow-1">
+                                <label for="test-search-box" class="form-label mb-0 text-nowrap">Search</label>
+                                <input class="form-control" type="text" id="test-search-box" name="test-search-box" placeholder="Find by id, name, status...">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tp-filter-toolbar mb-3">
+                        <div class="tp-filter-group">
+                            <label for="status-filter" class="form-label mb-0">Status</label>
+                            <select id="status-filter" class="form-select">
+                                <option value="all">All statuses</option>
+                                <option value="active">Active</option>
+                                <option value="design">In design</option>
+                                <option value="under-construction">Under construction</option>
+                                <option value="needs-review">Needs review</option>
+                                <option value="broken">Broken</option>
+                                <option value="depricated">Deprecated</option>
+                            </select>
+                        </div>
+                        <div class="tp-filter-group">
+                            <label for="type-filter" class="form-label mb-0">Type</label>
+                            <select id="type-filter" class="form-select">
+                                <option value="all">All types</option>
+                                <option value="manual">Manual</option>
+                                <option value="automated">Automated</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table id="suite-detail-testcase-table" class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-nowrap tp-sortable-col" style="width: 14%; min-width: 140px;" data-sort-key="id" data-sort-type="text">
+                                <button type="button" class="tp-sort-button text-nowrap">
+                                    <span>ID</span>
+                                    <i class="bi bi-arrow-down-up tp-sort-icon"></i>
+                                </button>
+                            </th>
+                            <th class="tp-sortable-col" style="width: 46%;" data-sort-key="title" data-sort-type="text">
+                                <button type="button" class="tp-sort-button">
+                                    <span>Title</span>
+                                    <i class="bi bi-arrow-down-up tp-sort-icon"></i>
+                                </button>
+                            </th>
+                            <th class="text-center tp-sortable-col" style="width: 24%;" data-sort-key="result" data-sort-type="text">
+                                <button type="button" class="tp-sort-button tp-sort-button-center">
+                                    <span>Last Result</span>
+                                    <i class="bi bi-arrow-down-up tp-sort-icon"></i>
+                                </button>
+                            </th>
+                            <th class="text-center tp-sortable-col" style="width: 16%;" data-sort-key="duration" data-sort-type="number">
+                                <button type="button" class="tp-sort-button tp-sort-button-center">
+                                    <span>Avg Duration</span>
+                                    <i class="bi bi-arrow-down-up tp-sort-icon"></i>
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test_case in test_cases %}
+                        <tr class="suite-detail-test-case-row test-plan-test-case-row{% if test_case.test_case.status == "under-construction" %} test-case-row-under-construction{% elif test_case.test_case.status == "needs-review" %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}" data-test-status="{{ test_case.test_case.status }}" data-test-type="{{ test_case.test_case.test_type }}" data-sort-id="{{ test_case.test_case.test_case_id|default:'' }}" data-sort-title="{{ test_case.test_case.name|lower }}" data-sort-result="{% if test_case.result %}{{ test_case.result.result|lower }}{% else %}no result{% endif %}" data-sort-duration="{{ test_case.duration|default:0 }}">
+                            <td class="text-nowrap">
+                                <div class="d-inline-flex align-items-center gap-2">
+                                    <a href="/test-cases/{{ test_case.test_case.id }}">{{ test_case.test_case.test_case_id }}</a>
+                                    {% if test_case.test_case.test_type == "manual" %}
+                                    <i title="Manual test" class="bi bi-hand-index-thumb tp-manual-test-icon"></i>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="fw-medium">
+                                <div class="d-flex align-items-center gap-2 flex-wrap">
+                                    <span>{{ test_case.test_case.name }}</span>
+                                    {% if test_case.test_case.status == "under-construction" %}
+                                    <i title="Under Construction" class="bi bi-cone-striped text-warning"></i>
+                                    {% elif test_case.test_case.status == "needs-review" %}
+                                    <i title="Needs Review" class="bi bi-exclamation-triangle text-info"></i>
+                                    {% elif test_case.test_case.status == "broken" %}
+                                    <i title="Broken" class="bi bi-x-octagon text-danger"></i>
+                                    {% elif test_case.test_case.status == "design" %}
+                                    <i title="In Design" class="bi bi-pencil-square text-primary"></i>
+                                    {% elif test_case.test_case.status == "depricated" %}
+                                    <i title="Deprecated" class="bi bi-archive text-secondary"></i>
+                                    {% endif %}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                {% if test_case.result %}
+                                <div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}>
+                                    <span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span>
+                                </div>
+                                {% else %}
+                                <div><span class="badge-pill badge rounded-pill bg-skipped">no result</span></div>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">{{ test_case.duration|stringformat:"0.2f" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-secondary py-4">No test cases in this suite yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-7 col-lg-7 order-md-last">
-            <div style="height: 100%" id="suite-data-card" class="card">
-                <div class="card-header">
-                    <ul class="nav nav-tabs card-header-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="suite-data-category-tab" data-bs-toggle="tab" data-bs-target="#suite-data-category-content" type="button" role="tab">Category</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="suite-data-status-tab" data-bs-toggle="tab" data-bs-target="#suite-data-status-content" type="button" role="tab">Status</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="suite-data-result-tab" data-bs-toggle="tab" data-bs-target="#suite-data-result-content" type="button" role="tab">Result</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="suite-data-type-tab" data-bs-toggle="tab" data-bs-target="#suite-data-type-content" type="button" role="tab">Type</a>
-                        </li>
-                    </ul>
+        <div class="col-12 col-xl-4 order-1 order-xl-2">
+            <div class="tp-suite-sidebar">
+                <div class="card mb-3" id="suite-info-card" data-authenticated='{{ user.is_authenticated }}'>
+                    <div class="card-header">Suite Summary</div>
+                    <div class="card-body">
+                        <div class="tp-meta-list">
+                            <div class="tp-meta-item">
+                                <span class="tp-meta-label">Name</span>
+                                <span class="tp-meta-value">{{ suite.name }}</span>
+                            </div>
+                            <div class="tp-meta-item">
+                                <span class="tp-meta-label">Active</span>
+                                <span class="tp-meta-value">{% if suite.active %}Yes{% else %}No{% endif %}</span>
+                            </div>
+                            <div class="tp-meta-item">
+                                <span class="tp-meta-label">Product</span>
+                                <span class="tp-meta-value">{% if suite.product %}{{ suite.product }}{% else %}N/A{% endif %}</span>
+                            </div>
+                            <div class="tp-meta-item">
+                                <span class="tp-meta-label">Cases</span>
+                                <span class="tp-meta-value">{{ test_cases|length }}</span>
+                            </div>
+                            <div class="tp-meta-item tp-meta-item-column">
+                                <span class="tp-meta-label">Description</span>
+                                <span class="tp-meta-value">{{ suite.description|default:"No description provided." }}</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="row">
+
+                <div id="suite-data-card" class="card">
+                    <div class="card-header">
+                        <ul class="nav nav-tabs card-header-tabs flex-nowrap overflow-auto">
+                            <li class="nav-item">
+                                <button class="nav-link active" id="suite-data-category-tab" data-bs-toggle="tab" data-bs-target="#suite-data-category-content" type="button" role="tab">Category</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="suite-data-status-tab" data-bs-toggle="tab" data-bs-target="#suite-data-status-content" type="button" role="tab">Status</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="suite-data-result-tab" data-bs-toggle="tab" data-bs-target="#suite-data-result-content" type="button" role="tab">Result</button>
+                            </li>
+                            <li class="nav-item">
+                                <button class="nav-link" id="suite-data-type-tab" data-bs-toggle="tab" data-bs-target="#suite-data-type-content" type="button" role="tab">Type</button>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card-body">
+                        <div class="tp-analytics-header mb-3">
+                            <div class="small text-secondary text-uppercase fw-semibold">Analytics</div>
+                            <div class="text-secondary small">Compact distribution views for the current suite.</div>
+                        </div>
                         <div class="tab-content" id="suite-data-content">
                             <div class="tab-pane fade show active" id="suite-data-category-content" role="tabpanel" aria-labelledby="suite-data-category-tab">
-                                <div id="suite-data-category-display-div" style="width 100%;"></div>
+                                <div id="suite-data-category-display-div" class="tp-compact-plot"></div>
                             </div>
                             <div class="tab-pane fade" id="suite-data-status-content" role="tabpanel" aria-labelledby="suite-data-status-tab">
-                                <div id="suite-data-status-display-div" style="width 100%;"></div>
+                                <div id="suite-data-status-display-div" class="tp-compact-plot"></div>
                             </div>
                             <div class="tab-pane fade" id="suite-data-result-content" role="tabpanel" aria-labelledby="suite-data-result-tab">
-                                <div id="suite-data-result-display-div" style="width 100%;"></div>
+                                <div id="suite-data-result-display-div" class="tp-compact-plot"></div>
                             </div>
-                            <div class="tab-pane fade show" id="suite-data-type-content" role="tabpanel" aria-labelledby="suite-data-type-tab">
-                                <div id="suite-data-type-display-div" style="width 100%;"></div>
+                            <div class="tab-pane fade" id="suite-data-type-content" role="tabpanel" aria-labelledby="suite-data-type-tab">
+                                <div id="suite-data-type-display-div" class="tp-compact-plot"></div>
                             </div>
                         </div>
                     </div>
@@ -64,60 +202,17 @@
             </div>
         </div>
     </div>
-    <hr />        
-    <div class="row">
-        <div class="col">
-            <div class="row">
-                <div class="col col-md-3">
-                    <a href='/test-cases/create' class='btn btn-dark' id='add-test-case-to-test-plan-button'><i class="bi-plus"></i> Add Test Case</a>    
-                </div>
-                <div class="col col-md-6">
-                </div>
-                <div class="col-auto">
-                    <label for="result-date" class="form-lable">Search</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="text" id="test-search-box" name="test-search-box" placeholder="Test Name..">
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <table id="suite-detail-testcase-table" class="table table-hover">
-            <thead>
-                <tr>
-                    <th style="width: 10%;">ID</th>
-                    <th style="width: 30%;">Title</th>
-                    <th style="width: 15%; text-align: center;">Type</th>
-                    <th style="width: 15%; text-align: center;">Status</th>
-                    <th style="width: 15%; text-align: center;">Last Result</th>
-                    <th style="width: 10%; text-align: center;">Duration(Avg)</th>
-                    <th style="width: 10%; text-align: center;"></th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for test_case in test_cases %}
-                <tr class="suite-detail-test-case-row{% if test_case.test_case.status == "under-construction" %} test-case-row-under-construction{% elif test_case.test_case.status == "needs-review" %} test-case-row-needs-review{% endif %}" data-test-case-id="{{ test_case.test_case.id }}" data-test-case-name="{{ test_case.test_case.name }}">
-                    <td>
-                        <a href="/test-cases/{{ test_case.test_case.id }}">{{test_case.test_case.test_case_id }}</a>
-                    </td>
-                    <td>{{ test_case.test_case.name }}</td>
-                    <td style="text-align: center;">{{ test_case.test_case.test_type }}</td>
-                    <td style="text-align: center;">{{ test_case.test_case.status }}</td>
-                    <td style="text-align: center;">{% if test_case.result %}<div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}><span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span></div>{% else %}<div><span class="badge-pill badge rounded-pill bg-skipped">no result</span>{% endif %}</td>
-                    <td style="text-align: center;">{{ test_case.duration|stringformat:"0.2f" }}<td>
-                    <td style="text-align: center;">{% if test_case.test_case.status == "under-construction" %}<i title="Under Construction" class="h4 bi bi-cone-striped"></i>{% endif %}{% if test_case.test_case.status == "needs-review" %}<i title="Needs Review" class="h4 bi bi-exclamation-triangle"></i>{% endif %}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    <div style="display: none;">
-    {{ type_counts.keys }}
-    {{ status_counts.values }}
-    {{ result_counts }}
-    </div>
-</main>
+</section>
+
+{% if user.is_authenticated %}
+{% include 'testportal/modals/update_test_case_modal.html' %}
+{% endif %}
+
+<div style="display: none;">
+{{ type_counts.keys }}
+{{ status_counts.values }}
+{{ result_counts }}
+</div>
 
 {% endblock %}
 
@@ -129,58 +224,201 @@
 var result_plot_div = document.getElementById('suite-data-result-display-div');
 var type_plot_div = document.getElementById('suite-data-type-display-div');
 var status_plot_div = document.getElementById('suite-data-status-display-div');
-var status_plot_div = document.getElementById('suite-data-category-display-div');
+var category_plot_div = document.getElementById('suite-data-category-display-div');
 
-// Plot Layout
-var layout = {
-    height: 300,
-    margin: {"t": 0, "b": 0, "l": 0, "r": 0},
-    texttemplate: '%{label}: %{value}',
+var plotConfig = {
+    displayModeBar: false,
+    responsive: true,
+};
+
+var plotLayout = {
+    height: 260,
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { t: 4, b: 36, l: 4, r: 4 },
+    legend: {
+        orientation: 'h',
+        x: 0,
+        y: -0.12,
+        font: { size: 11 },
+    },
+    font: {
+        family: 'Inter, system-ui, sans-serif',
+        size: 12,
+        color: '#111827',
+    },
+};
+
+function buildDonut(values, labels, colors) {
+    return {
+        values: values,
+        labels: labels,
+        type: 'pie',
+        hole: 0.55,
+        sort: false,
+        direction: 'clockwise',
+        marker: {
+            colors: colors,
+            line: {
+                color: '#ffffff',
+                width: 2,
+            },
+        },
+        textinfo: 'label+percent',
+        textposition: 'outside',
+        hovertemplate: '<b>%{label}</b><br>Count: %{value}<br>Share: %{percent}<extra></extra>',
+        automargin: true,
+    };
 }
 
-// Type Plot
-var type_layout = Object.create(layout);
-type_layout.values = [{% for v in type_counts_values %}{{ v }},{% endfor %}];
-type_layout.labels = [{% for k in type_counts_keys %}"{{ k }}",{% endfor %}];
-type_layout.type = 'pie';
-Plotly.newPlot('suite-data-type-display-div', [type_layout]);
+var typeValues = [{% for v in type_counts_values %}{{ v }},{% endfor %}];
+var typeLabels = [{% for k in type_counts_keys %}"{{ k }}",{% endfor %}];
+var typeTrace = buildDonut(typeValues, typeLabels, ['#4f46e5', '#06b6d4', '#10b981', '#64748b']);
+Plotly.newPlot('suite-data-type-display-div', [typeTrace], plotLayout, plotConfig);
 
-// Status Plot
-var status_layout = Object.create(layout);
-status_layout.values = [{% for v in status_counts_values %}{{ v }},{% endfor %}];
-status_layout.labels = [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}];
-status_layout.type = 'pie';
-Plotly.newPlot('suite-data-status-display-div', [status_layout]);
+var statusValues = [{% for v in status_counts_values %}{{ v }},{% endfor %}];
+var statusLabels = [{% for k in status_counts_keys %}"{{ k }}",{% endfor %}];
+var statusTrace = buildDonut(statusValues, statusLabels, ['#22c55e', '#f59e0b', '#ef4444', '#f97316', '#0ea5e9', '#8b5cf6']);
+Plotly.newPlot('suite-data-status-display-div', [statusTrace], plotLayout, plotConfig);
 
-// Result Plot
-var result_layout = Object.create(layout);
-result_layout.values = [{% for v in result_counts_values %}{{ v }},{% endfor %}];
-result_layout.labels = [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}];
-result_layout.type = 'pie';
-Plotly.newPlot('suite-data-result-display-div', [result_layout]);
+var resultValues = [{% for v in result_counts_values %}{{ v }},{% endfor %}];
+var resultLabels = [{% for k in result_counts_keys %}"{{ k }}",{% endfor %}];
+var resultTrace = buildDonut(resultValues, resultLabels, ['#22c55e', '#ef4444', '#facc15', '#a855f7', '#64748b', '#f59e0b', '#a8a29e']);
+Plotly.newPlot('suite-data-result-display-div', [resultTrace], plotLayout, plotConfig);
 
-// Category Plot
-var category_layout = Object.create(layout);
-category_layout.values = [{% for v in category_counts_values %}{{ v }},{% endfor %}];
-category_layout.labels = [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}];
-category_layout.type = 'pie';
-Plotly.newPlot('suite-data-category-display-div', [category_layout]);
+var categoryValues = [{% for v in category_counts_values %}{{ v }},{% endfor %}];
+var categoryLabels = [{% for k in category_counts_keys %}"{{ k }}",{% endfor %}];
+var categoryTrace = buildDonut(categoryValues, categoryLabels, ['#6366f1', '#0891b2', '#0ea5e9', '#10b981', '#f59e0b', '#f97316', '#64748b']);
+Plotly.newPlot('suite-data-category-display-div', [categoryTrace], plotLayout, plotConfig);
 
-
-$("#test-search-box").on("keyup", function() {
-    var value = $(this).val().toLowerCase();
-    $("#suite-detail-testcase-table tr.suite-detail-test-case-row").filter(function() {
-        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+document.querySelectorAll('[data-bs-toggle="tab"]').forEach(function (tabTrigger) {
+    tabTrigger.addEventListener('shown.bs.tab', function () {
+        Plotly.Plots.resize(type_plot_div);
+        Plotly.Plots.resize(status_plot_div);
+        Plotly.Plots.resize(result_plot_div);
+        Plotly.Plots.resize(category_plot_div);
     });
-    localStorage.setItem('suite-detail-search-value', value);
+});
+
+window.addEventListener('resize', function () {
+    Plotly.Plots.resize(type_plot_div);
+    Plotly.Plots.resize(status_plot_div);
+    Plotly.Plots.resize(result_plot_div);
+    Plotly.Plots.resize(category_plot_div);
+});
+
+
+function applySuiteDetailFilters() {
+    var searchValue = $('#test-search-box').val().toLowerCase();
+    var statusValue = $('#status-filter').val();
+    var typeValue = $('#type-filter').val();
+
+    $('#suite-detail-testcase-table tr.suite-detail-test-case-row').each(function() {
+        var rowText = $(this).text().toLowerCase();
+        var rowStatus = (this.dataset.testStatus || '').toLowerCase();
+        var rowType = (this.dataset.testType || '').toLowerCase();
+
+        var matchesSearch = rowText.indexOf(searchValue) > -1;
+        var matchesStatus = statusValue === 'all' || rowStatus === statusValue;
+        var matchesType = typeValue === 'all' || rowType === typeValue;
+
+        $(this).toggle(matchesSearch && matchesStatus && matchesType);
+    });
+
+    localStorage.setItem('suite-detail-search-value', searchValue);
+    localStorage.setItem('suite-detail-status-filter', statusValue);
+    localStorage.setItem('suite-detail-type-filter', typeValue);
+}
+
+function updateSortIndicators(activeHeader, direction) {
+    $('.tp-sortable-col').removeClass('tp-sort-active tp-sort-asc tp-sort-desc');
+    $('.tp-sortable-col .tp-sort-icon').attr('class', 'bi bi-arrow-down-up tp-sort-icon');
+
+    if (!activeHeader) {
+        return;
+    }
+
+    $(activeHeader).addClass(direction === 'asc' ? 'tp-sort-active tp-sort-asc' : 'tp-sort-active tp-sort-desc');
+    $(activeHeader).find('.tp-sort-icon').attr('class', direction === 'asc' ? 'bi bi-sort-down-alt tp-sort-icon' : 'bi bi-sort-up tp-sort-icon');
+}
+
+function sortSuiteDetailTable(sortKey, sortType, direction) {
+    var tbody = document.querySelector('#suite-detail-testcase-table tbody');
+    var rows = Array.from(tbody.querySelectorAll('tr.suite-detail-test-case-row'));
+
+    rows.sort(function(a, b) {
+        var aValue = a.dataset['sort' + sortKey.charAt(0).toUpperCase() + sortKey.slice(1)] || '';
+        var bValue = b.dataset['sort' + sortKey.charAt(0).toUpperCase() + sortKey.slice(1)] || '';
+
+        if (sortType === 'number') {
+            aValue = parseFloat(aValue || '0');
+            bValue = parseFloat(bValue || '0');
+        } else {
+            aValue = aValue.toString().toLowerCase();
+            bValue = bValue.toString().toLowerCase();
+        }
+
+        if (aValue < bValue) {
+            return direction === 'asc' ? -1 : 1;
+        }
+        if (aValue > bValue) {
+            return direction === 'asc' ? 1 : -1;
+        }
+        return 0;
+    });
+
+    rows.forEach(function(row) {
+        tbody.appendChild(row);
+    });
+
+    localStorage.setItem('suite-detail-sort-key', sortKey);
+    localStorage.setItem('suite-detail-sort-direction', direction);
+}
+
+$('#test-search-box').on('keyup', applySuiteDetailFilters);
+$('#status-filter').on('change', applySuiteDetailFilters);
+$('#type-filter').on('change', applySuiteDetailFilters);
+
+$('.tp-sortable-col').on('click', function() {
+    var sortKey = this.dataset.sortKey;
+    var sortType = this.dataset.sortType;
+    var currentKey = localStorage.getItem('suite-detail-sort-key');
+    var currentDirection = localStorage.getItem('suite-detail-sort-direction') || 'asc';
+    var nextDirection = currentKey === sortKey && currentDirection === 'asc' ? 'desc' : 'asc';
+
+    sortSuiteDetailTable(sortKey, sortType, nextDirection);
+    updateSortIndicators(this, nextDirection);
+    applySuiteDetailFilters();
 });
 
 $(document).ready(function() {
     suite_detail_search_value = localStorage.getItem('suite-detail-search-value');
+    suite_detail_status_filter = localStorage.getItem('suite-detail-status-filter');
+    suite_detail_type_filter = localStorage.getItem('suite-detail-type-filter');
+    suite_detail_sort_key = localStorage.getItem('suite-detail-sort-key');
+    suite_detail_sort_direction = localStorage.getItem('suite-detail-sort-direction') || 'asc';
+
     if (suite_detail_search_value != undefined) {
         $('#test-search-box').val(suite_detail_search_value);
-        $('#test-search-box').trigger('keyup');
     }
+
+    if (suite_detail_status_filter != undefined) {
+        $('#status-filter').val(suite_detail_status_filter);
+    }
+
+    if (suite_detail_type_filter != undefined) {
+        $('#type-filter').val(suite_detail_type_filter);
+    }
+
+    if (suite_detail_sort_key != undefined) {
+        var activeHeader = document.querySelector('.tp-sortable-col[data-sort-key="' + suite_detail_sort_key + '"]');
+        if (activeHeader) {
+            sortSuiteDetailTable(suite_detail_sort_key, activeHeader.dataset.sortType, suite_detail_sort_direction);
+            updateSortIndicators(activeHeader, suite_detail_sort_direction);
+        }
+    }
+
+    applySuiteDetailFilters();
 });
 
     </script>

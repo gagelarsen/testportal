@@ -3,7 +3,7 @@ from datetime import date
 
 from django.shortcuts import render, get_object_or_404
 
-from testportal.models import Suite, TestResult
+from testportal.models import Suite, Tag, TestCategory, TestPlan, TestResult, TestSubcategory
 
 
 def suite_detail_view(request, name):
@@ -56,6 +56,10 @@ def suite_detail_view(request, name):
         'suites': Suite.objects.filter(active=True),
         'suite': suite,
         'test_cases': test_cases,
+        'tags': Tag.objects.all(),
+        'categories': TestCategory.objects.all(),
+        'subcategories': TestSubcategory.objects.all(),
+        'test_plans': TestPlan.objects.filter(suite=suite),
         'today': date.today(),
         'total_cases': len(test_cases),
         'type_counts_keys': type_counts.keys(),

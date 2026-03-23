@@ -240,7 +240,11 @@ $(document).ready(function() {
                 } else if (key == 'view-test-case') {
                     window.location = `/test-cases/${case_id}`;
                 } else if (key == 'edit-test-case') {
-                    window.location = `/test-cases/${case_id}/update`;
+                    if (typeof window.openTestCaseModal === 'function') {
+                        window.openTestCaseModal(case_id);
+                    } else {
+                        window.location = `/test-cases/${case_id}/update`;
+                    }
                 }
             },
             items: {

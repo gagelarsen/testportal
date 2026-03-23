@@ -1,29 +1,26 @@
-
 <div class="modal fade" id="upload-result-modal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="upload-result-modal-title">Upload Results</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="upload-result-form" enctype="multipart/form-data" method="post" name="upload-result-form">
-            <div class="row g-3 align-items-center">
-                <div class="col-auto">
-                    <label for="upload-results-date" class="form-lable">Date</label>
-                </div>
-                <div class="col-auto">
-                    <input class="form-control" type="date" id="upload-results-date" name="upload-results-date"
-                        value={% now "Y-m-d" %} min="2022-01-01" max="2122-12-31"{% if not user.is_authenticated %} disabled{% endif %}>
-                </div>
-            </div>
-            <br />
-            <div class="input-group mb-3">
-                <input type="file" class="form-control" id="result-file-to-upload" name='result-file-to-upload'
-                {% if not user.is_authenticated %} disabled{% endif %}>
-            </div>
+        <form id="upload-result-form" enctype="multipart/form-data" method="post" name="upload-result-form" class="tp-modal-form">
+          <div class="mb-3">
+            <label for="upload-results-date" class="form-label">Date</label>
+            <input class="form-control" type="date" id="upload-results-date" name="upload-results-date" value={% now "Y-m-d" %} min="2022-01-01" max="2122-12-31"{% if not user.is_authenticated %} disabled{% endif %}>
+          </div>
+
+          <div class="mb-3">
+            <label for="result-file-to-upload" class="form-label">Result file</label>
+            <input type="file" class="form-control" id="result-file-to-upload" name="result-file-to-upload"{% if not user.is_authenticated %} disabled{% endif %}>
+          </div>
+
+          <div class="tp-modal-help-text">Supports the same result upload format used by your existing API workflow.</div>
         </form>
-        <div id="upload-error" style="display: none;" class="alert alert-danger" role="alert"></div>
+
+        <div id="upload-error" style="display: none;" class="alert alert-danger py-2 mb-0" role="alert"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

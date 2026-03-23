@@ -4,7 +4,8 @@ Bug Verification Django Model
 Notes:
   When adding fields you need to update the following locations:
       - testportal_api/serializers/bug_verification_serializers.py
-      - testportal/views/bug_verification_update_view.py
+    - templates/testportal/bug_verifications_general_view.html (modal fields)
+    - static/testportal/js/bug_verifications_general_view.js (modal payload)
 """
 from datetime import datetime
 

@@ -87,6 +87,7 @@ def upload_test_results(request, pk):
         return JsonResponse({"error": "Unable to find suite for uploaded results."}, status=404)
 
     suite_cases = {x.name: x for x in TestCase.objects.filter(suite=suite)}
+    deprecated_names = {name for name, tc in suite_cases.items() if tc.status == 'depricated'}
     missing_cases = []
     test_results = {}
 
@@ -100,7 +101,12 @@ def upload_test_results(request, pk):
 
         test_case = suite_cases.get(name, None)
         if test_case is None:
+            # If it's not in our suite at all, report it as unrecognised
             missing_cases.append(f'{name}')
+            continue
+
+        # Silently skip deprecated cases — no result created, not flagged as missing
+        if test_case.status == 'depricated':
             continue
 
         test_results[name] = TestResult(
@@ -111,7 +117,8 @@ def upload_test_results(request, pk):
             result=results.get(status, 'fail')
         )
 
-    missing_results = list(set(suite_cases.keys()) - set(test_results.keys()))
+    # Exclude deprecated cases from the missing-results warning
+    missing_results = list(set(suite_cases.keys()) - set(test_results.keys()) - deprecated_names)
 
     try:
         TestResult.objects.bulk_create(test_results.values())

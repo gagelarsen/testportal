@@ -194,6 +194,31 @@ class UploadResultsExtendedTests(APITestCase):
         data = response.json()
         self.assertIn('Unknown Case That Does Not Exist', data['missing_cases'])
 
+    def test_deprecated_test_case_is_skipped(self):
+        self.client.login(username='upload-ext-user', password='password123')
+        deprecated_case = TestCase.objects.create(
+            name='Deprecated Upload Case',
+            test_case_id='UE-2',
+            steps='Steps',
+            suite=self.suite,
+            category=self.category,
+            subcategory=self.subcategory,
+            status='depricated',
+            test_type='manual',
+        )
+
+        xml = _xml(_tests_node(_case_node(name='Deprecated Upload Case')))
+        response = self.client.post(self._upload_url(), {
+            'upload-results-date': '2026-03-20',
+            'results_file': SimpleUploadedFile('r.xml', xml, content_type='text/xml'),
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = response.json()
+        self.assertNotIn('Deprecated Upload Case', data['missing_cases'])
+        self.assertNotIn('Deprecated Upload Case', data['missing_results'])
+        self.assertFalse(TestResult.objects.filter(test_case=deprecated_case).exists())
+
     def test_bulk_create_database_error_returns_400(self):
         """Lines 122-123: DatabaseError during bulk_create → 400."""
         self.client.login(username='upload-ext-user', password='password123')

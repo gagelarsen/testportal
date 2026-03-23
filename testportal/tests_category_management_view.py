@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from testportal.access import CATEGORY_MANAGER_GROUP_NAME
-from testportal.models import Suite, TestCategory, TestSubcategory
+from testportal.models import Suite, TestCategory, TestSubcategory, TestCase as PortalTestCase
 
 
 class CategoryManagementViewTests(TestCase):
@@ -103,3 +103,63 @@ class CategoryManagementViewTests(TestCase):
 
         self.assertTrue(TestCategory.objects.filter(category='Manager Category').exists())
         self.assertTrue(TestSubcategory.objects.filter(subcategory='Manager Subcategory').exists())
+
+    def test_delete_missing_category_is_noop(self):
+        self.client.login(username='cat-admin', password='password123')
+
+        response = self.client.post(reverse('testportal:category_management_view'), {
+            'action': 'delete-category',
+            'category_id': 999999,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(TestCategory.objects.filter(id=self.category.id).exists())
+
+    def test_delete_missing_subcategory_is_noop(self):
+        self.client.login(username='cat-admin', password='password123')
+
+        response = self.client.post(reverse('testportal:category_management_view'), {
+            'action': 'delete-subcategory',
+            'subcategory_id': 999999,
+        })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(TestSubcategory.objects.filter(id=self.subcategory.id).exists())
+
+    def test_delete_in_use_category_shows_error(self):
+        self.client.login(username='cat-admin', password='password123')
+        PortalTestCase.objects.create(
+            name='Cat Protected TC',
+            test_case_id='CAT-PROT-1',
+            steps='Steps',
+            suite=self.suite,
+            category=self.category,
+            subcategory=self.subcategory,
+        )
+
+        response = self.client.post(reverse('testportal:category_management_view'), {
+            'action': 'delete-category',
+            'category_id': self.category.id,
+        })
+
+        self.assertContains(response, 'Cannot remove category because test cases still reference it.')
+        self.assertTrue(TestCategory.objects.filter(id=self.category.id).exists())
+
+    def test_delete_in_use_subcategory_shows_error(self):
+        self.client.login(username='cat-admin', password='password123')
+        PortalTestCase.objects.create(
+            name='Subcat Protected TC',
+            test_case_id='CAT-PROT-2',
+            steps='Steps',
+            suite=self.suite,
+            category=self.category,
+            subcategory=self.subcategory,
+        )
+
+        response = self.client.post(reverse('testportal:category_management_view'), {
+            'action': 'delete-subcategory',
+            'subcategory_id': self.subcategory.id,
+        })
+
+        self.assertContains(response, 'Cannot remove subcategory because test cases still reference it.')
+        self.assertTrue(TestSubcategory.objects.filter(id=self.subcategory.id).exists())

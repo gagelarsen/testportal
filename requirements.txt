@@ -7,3 +7,4 @@ djangorestframework
 python-decouple
 psycopg2
 markdown
+whitenoise

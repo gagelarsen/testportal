@@ -52,17 +52,17 @@
                         </td>
                         <td>
                             <div class="d-flex flex-wrap gap-2">
-                                <a class="btn btn-primary btn-sm" href="/suites/{{ suite.name }}/dashboard/" title="Dashboard">
+                                <a class="btn btn-primary btn-sm" href="/suites/{{ suite.name }}/dashboard/" data-bs-toggle="tooltip" data-bs-title="Dashboard">
                                     <i class="bi bi-table me-1"></i><span class="d-none d-lg-inline">Dashboard</span>
                                 </a>
-                                <a class="btn btn-success btn-sm" href="/suites/{{ suite.name }}/" title="View suite">
+                                <a class="btn btn-success btn-sm" href="/suites/{{ suite.name }}/" data-bs-toggle="tooltip" data-bs-title="View suite">
                                     <i class="bi bi-list-ul me-1"></i><span class="d-none d-lg-inline">Open</span>
                                 </a>
                                 {% if user.is_superuser %}
-                                <button type="button" data-suite-id="{{ suite.id }}" class="btn btn-secondary btn-sm btn-duplicate-suite" title="Duplicate">
+                                <button type="button" data-suite-id="{{ suite.id }}" class="btn btn-secondary btn-sm btn-duplicate-suite" data-bs-toggle="tooltip" data-bs-title="Duplicate">
                                     <i class="bi bi-intersect me-1"></i><span class="d-none d-lg-inline">Duplicate</span>
                                 </button>
-                                <button type="button" data-suite-id="{{ suite.id }}" class="btn btn-danger btn-sm btn-delete-suite" title="Delete">
+                                <button type="button" data-suite-id="{{ suite.id }}" class="btn btn-danger btn-sm btn-delete-suite" data-bs-toggle="tooltip" data-bs-title="Delete">
                                     <i class="bi bi-trash me-1"></i><span class="d-none d-lg-inline">Delete</span>
                                 </button>
                                 {% endif %}

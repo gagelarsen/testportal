@@ -66,7 +66,7 @@
                                             <td class="text-center text-capitalize">{{ test_case.test_case.test_type }}</td>
                                             <td class="text-center">
                                                 {% if test_case.result %}
-                                                <div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}>
+                                                <div {% if test_case.result.note %}data-bs-toggle="tooltip" data-bs-title="{{ test_case.result.note }}"{% else %}data-bs-toggle="tooltip" data-bs-title="no details provided..."{% endif %}>
                                                     <span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span>
                                                 </div>
                                                 {% else %}

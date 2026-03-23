@@ -93,7 +93,7 @@
                     <div class="card-header">Recent Results</div>
                     <div class="card-body">
                         {% for result in recent_results %}
-                        <div class="mb-2" {% if result.note %}title="{{ result.note }}"{% endif %}>
+                        <div class="mb-2" {% if result.note %}data-bs-toggle="tooltip" data-bs-title="{{ result.note }}"{% endif %}>
                             <a href="/test-results/{{ result.id }}">
                                 <span class="badge-pill-small badge rounded-pill bg-{{ result.result|lower }}">{{ result.result }}</span>
                             </a>

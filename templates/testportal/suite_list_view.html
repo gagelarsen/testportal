@@ -20,6 +20,12 @@
 </div>
 
 <div class="card">
+    <div class="card-body border-bottom py-2">
+        <div class="form-check form-switch mb-0">
+            <input class="form-check-input" type="checkbox" role="switch" id="show-inactive-suites-toggle">
+            <label class="form-check-label" for="show-inactive-suites-toggle">Show inactive suites</label>
+        </div>
+    </div>
     <div class="card-body p-0">
         <div class="table-responsive">
             <table class="table table-hover align-middle mb-0">
@@ -32,7 +38,7 @@
                 </thead>
                 <tbody>
                     {% for suite in suites %}
-                    <tr id="suite-row-{{ suite.id }}" class="suite-row" data-suite-id="{{ suite.id }}">
+                    <tr id="suite-row-{{ suite.id }}" class="suite-row" data-suite-id="{{ suite.id }}" data-suite-active="{% if suite.active %}true{% else %}false{% endif %}">
                         <td>
                             <div class="form-check form-switch mb-0">
                                 <input
@@ -141,6 +147,27 @@
 {% endblock %}
 
 {% block page_javascript %}
+    <script>
+    $(document).ready(function() {
+        function applySuiteListVisibility() {
+            var showInactiveSuites = $('#show-inactive-suites-toggle').is(':checked');
+
+            $('.suite-row').each(function() {
+                var isActive = String($(this).data('suite-active')) === 'true';
+                $(this).toggle(showInactiveSuites || isActive);
+            });
+
+            localStorage.setItem('suite-list-show-inactive', showInactiveSuites ? '1' : '0');
+        }
+
+        var savedShowInactive = localStorage.getItem('suite-list-show-inactive') === '1';
+        $('#show-inactive-suites-toggle').prop('checked', savedShowInactive);
+        $('#show-inactive-suites-toggle').on('change', applySuiteListVisibility);
+
+        applySuiteListVisibility();
+    });
+    </script>
+
     {% if user.is_authenticated %}
         <script>
         $(document).ready(function() {
@@ -181,6 +208,13 @@
                     headers:{"X-CSRFToken": csrftoken},
                     dataType:'json',
                     success: function (response) {
+                        $('#suite-row-' + suite_id).data('suite-active', is_active ? 'true' : 'false');
+                        var showInactiveSuites = $('#show-inactive-suites-toggle').is(':checked');
+                        if (!showInactiveSuites && !is_active) {
+                            $('#suite-row-' + suite_id).hide();
+                        } else {
+                            $('#suite-row-' + suite_id).show();
+                        }
                         console.log(response);
                     },
                     error: function(error){

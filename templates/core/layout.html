@@ -42,7 +42,9 @@
             {% if suites %}
             <ul class="tp-subnav">
                 {% for suite in suites %}
+                {% if suite.active %}
                 <li><a href="/suites/{{ suite.name }}/dashboard/" class="tp-subnav-link"><span class="tp-subnav-text">{{ suite.name }}</span></a></li>
+                {% endif %}
                 {% endfor %}
             </ul>
             {% endif %}

@@ -50,6 +50,9 @@
             {% endif %}
         </li>
         <li><a href="/test-plans/" class="tp-nav-link"><i class="bi bi-list-check"></i> <span class="tp-nav-text">Test Plans</span></a></li>
+        {% if user.is_superuser %}
+        <li><a href="/categories/" class="tp-nav-link"><i class="bi bi-diagram-3"></i> <span class="tp-nav-text">Categories</span></a></li>
+        {% endif %}
         <li><a href="/bug-verifications" class="tp-nav-link"><i class="bi bi-bug"></i> <span class="tp-nav-text">Bug Verifications</span></a></li>
     </ul>
 

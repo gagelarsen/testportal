@@ -1,0 +1,116 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+<section class="mb-4">
+    <div class="mb-4">
+        <h1 class="mb-1">Categories</h1>
+        <p class="text-secondary mb-0">Add and remove categories and subcategories used by test cases.</p>
+    </div>
+
+    {% if error_message %}
+    <div class="alert alert-danger" role="alert">{{ error_message }}</div>
+    {% endif %}
+
+    {% if success_message %}
+    <div class="alert alert-success" role="alert">{{ success_message }}</div>
+    {% endif %}
+
+    <div class="row g-4 align-items-start">
+        <div class="col-12 col-xl-6">
+            <div class="card">
+                <div class="card-header">Categories</div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <form method="post" class="d-flex gap-2 mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add-category">
+                        <input type="text" name="category" class="form-control" placeholder="New category name" required>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                    {% endif %}
+
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th class="text-end" style="width: 90px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for category in categories %}
+                                <tr>
+                                    <td>{{ category.category }}</td>
+                                    <td class="text-end">
+                                        {% if user.is_authenticated %}
+                                        <form method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete-category">
+                                            <input type="hidden" name="category_id" value="{{ category.id }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-secondary text-center py-3">No categories yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-xl-6">
+            <div class="card">
+                <div class="card-header">Subcategories</div>
+                <div class="card-body">
+                    {% if user.is_authenticated %}
+                    <form method="post" class="d-flex gap-2 mb-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="add-subcategory">
+                        <input type="text" name="subcategory" class="form-control" placeholder="New subcategory name" required>
+                        <button type="submit" class="btn btn-primary">Add</button>
+                    </form>
+                    {% endif %}
+
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th class="text-end" style="width: 90px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for subcategory in subcategories %}
+                                <tr>
+                                    <td>{{ subcategory.subcategory }}</td>
+                                    <td class="text-end">
+                                        {% if user.is_authenticated %}
+                                        <form method="post" class="d-inline">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="action" value="delete-subcategory">
+                                            <input type="hidden" name="subcategory_id" value="{{ subcategory.id }}">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="2" class="text-secondary text-center py-3">No subcategories yet.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

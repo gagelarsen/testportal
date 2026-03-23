@@ -5,3 +5,4 @@ from .suite_list_view import suite_list_view  # NOQA: F401
 from .test_plan_detail_view import test_plan_detail_view  # NOQA: F401
 from .test_plan_list_view import test_plan_list_view  # NOQA: F401
 from .test_case_detail_view import test_case_detail_view  # NOQA: F401
+from .category_management_view import category_management_view  # NOQA: F401

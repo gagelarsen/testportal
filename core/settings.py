@@ -14,6 +14,12 @@ import sys
 
 from decouple import config, Csv
 
+try:
+    import whitenoise  # noqa: F401
+    HAS_WHITENOISE = True
+except ModuleNotFoundError:
+    HAS_WHITENOISE = False
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,7 +54,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -57,6 +62,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if HAS_WHITENOISE:
+    MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 
 ROOT_URLCONF = 'core.urls'
 
@@ -101,6 +109,9 @@ if config('USE_SQLITE_FOR_TESTS', default=False, cast=bool) and 'test' in sys.ar
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'test_db.sqlite3',
     }
+
+IS_TESTING = 'test' in sys.argv
+USE_MANIFEST_STATIC_IN_TESTS = config('USE_MANIFEST_STATIC_IN_TESTS', default=False, cast=bool)
 
 # Local dev without PostgreSQL: USE_SQLITE=true python manage.py runserver
 if config('USE_SQLITE', default=False, cast=bool):
@@ -155,7 +166,11 @@ STORAGES = {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
     },
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': (
+            'django.contrib.staticfiles.storage.StaticFilesStorage'
+            if (not HAS_WHITENOISE or (IS_TESTING and not USE_MANIFEST_STATIC_IN_TESTS)) else
+            'whitenoise.storage.CompressedManifestStaticFilesStorage'
+        ),
     },
 }
 

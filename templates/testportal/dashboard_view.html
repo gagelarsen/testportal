@@ -79,7 +79,7 @@
     <div class="card tp-dashboard-card">
         <div class="card-body p-0">
             <div class="tp-dashboard-table-wrap">
-                <table class="table table-bordered mb-0" id="dashboard-table" data-suite-name="{{ suite.name }}" data-current-user-id="{{ user.id }}" data-current-user="{% if user %}{{ user.id }}{% else %}anonymous{% endif %}">
+                <table class="table table-bordered mb-0" id="dashboard-table" data-suite-name="{{ suite.name }}" data-current-user-id="{{ user.id }}" data-current-user="{% if user %}{{ user.id }}{% else %}anonymous{% endif %}" data-current-user-name="{% if user.is_authenticated %}{{ user.username }}{% else %}anonymous{% endif %}">
                     <thead>
                         <tr>
                             <th class="tp-dashboard-sticky-col tp-sortable-col" data-sort-key="name" style="min-width: 240px; max-width: 320px; width: 28%;">

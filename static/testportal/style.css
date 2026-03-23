@@ -63,6 +63,10 @@ html, body {
     padding: 20px 16px 16px;
     border-bottom: 1px solid var(--tp-sidebar-border);
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
 }
 .tp-brand a {
     color: var(--tp-sidebar-brand);
@@ -75,6 +79,24 @@ html, body {
     letter-spacing: -.3px;
 }
 .tp-brand a:hover { opacity: .85; }
+
+#tp-desktop-sidebar-toggle {
+    border: none;
+    background: transparent;
+    color: var(--tp-sidebar-text);
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background .15s, color .15s;
+}
+#tp-desktop-sidebar-toggle:hover {
+    background: var(--tp-sidebar-active-bg);
+    color: var(--tp-sidebar-active-text);
+}
 
 /* Section label */
 .tp-nav-label {
@@ -229,6 +251,43 @@ html, body {
     max-width: 1400px;
 }
 
+body.tp-sidebar-collapsed #tp-sidebar {
+    width: 68px;
+}
+body.tp-sidebar-collapsed #tp-main {
+    margin-left: 68px;
+}
+body.tp-sidebar-collapsed .tp-brand {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+body.tp-sidebar-collapsed .tp-brand a {
+    justify-content: center;
+}
+body.tp-sidebar-collapsed .tp-brand-text,
+body.tp-sidebar-collapsed .tp-nav-label,
+body.tp-sidebar-collapsed .tp-nav-text,
+body.tp-sidebar-collapsed .tp-subnav,
+body.tp-sidebar-collapsed .tp-user-text {
+    display: none;
+}
+body.tp-sidebar-collapsed .tp-nav,
+body.tp-sidebar-collapsed .tp-sidebar-footer {
+    padding-left: 6px;
+    padding-right: 6px;
+}
+body.tp-sidebar-collapsed .tp-nav-link,
+body.tp-sidebar-collapsed .tp-user-pill {
+    justify-content: center;
+    gap: 0;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+body.tp-sidebar-collapsed .tp-nav-link i,
+body.tp-sidebar-collapsed .tp-user-pill i {
+    margin: 0;
+}
+
 /* ─────────────────────────────────────────────────────
    RESPONSIVE – collapse sidebar on mobile
 ───────────────────────────────────────────────────── */
@@ -243,6 +302,7 @@ html, body {
     #tp-mobile-header { display: flex; }
     #tp-main { margin-left: 0; padding-top: 52px; }
     .tp-content { padding: 20px 16px; }
+    #tp-desktop-sidebar-toggle { display: none; }
 }
 
 /* ─────────────────────────────────────────────────────
@@ -638,6 +698,169 @@ td.bg-in-documentation  { background: #d6c9b8 !important; color: #1c1917 !import
     text-align: center;
     padding: 16px 0;
 }
+
+/* ─────────────────────────────────────────────────────
+   MARKDOWN EDITOR (toolbar + preview)
+───────────────────────────────────────────────────── */
+.tp-md-editor {
+    border: 1px solid var(--tp-border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.tp-md-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 5px 8px;
+    background: var(--tp-bg);
+    border-bottom: 1px solid var(--tp-border);
+    flex-wrap: wrap;
+    row-gap: 3px;
+}
+
+.tp-md-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 5px;
+    border-radius: 5px;
+    font-size: 13px;
+    font-weight: 600;
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--tp-text-muted);
+    transition: background 0.12s, color 0.12s;
+    line-height: 1;
+}
+.tp-md-btn i { font-size: 15px; }
+.tp-md-btn:hover {
+    background: var(--tp-border);
+    color: var(--tp-text);
+}
+
+/* Heading label buttons — compact, styled like Notion's H1/H2 */
+.tp-md-btn[data-md-action="h1"],
+.tp-md-btn[data-md-action="h2"],
+.tp-md-btn[data-md-action="h3"] {
+    font-size: 11px;
+    font-weight: 700;
+    min-width: 24px;
+    padding: 0 5px;
+    color: var(--tp-text-muted);
+}
+
+.tp-md-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--tp-border);
+    margin: 0 3px;
+    flex-shrink: 0;
+}
+
+.tp-md-tabs {
+    display: flex;
+    gap: 2px;
+    margin-left: auto;
+}
+
+.tp-md-tab-btn {
+    all: unset;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 3px 11px;
+    border-radius: 5px;
+    color: var(--tp-text-muted);
+    transition: background 0.12s, color 0.12s;
+    line-height: 1.5;
+}
+.tp-md-tab-btn:hover {
+    background: var(--tp-border);
+    color: var(--tp-text);
+}
+.tp-md-tab-btn.active {
+    background: var(--tp-accent);
+    color: #fff;
+}
+
+.tp-md-textarea {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    resize: vertical;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', ui-monospace, monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 12px 14px;
+    background: var(--tp-surface);
+    color: var(--tp-text);
+}
+
+.tp-md-preview {
+    padding: 14px 16px;
+    min-height: 200px;
+    background: var(--tp-surface);
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* Prose styles for rendered markdown output (Steps, Plans, etc.) */
+.tp-prose h1, .tp-prose h2, .tp-prose h3,
+.tp-prose h4, .tp-prose h5, .tp-prose h6 {
+    font-weight: 600;
+    margin-top: 1.1em;
+    margin-bottom: 0.4em;
+    line-height: 1.3;
+}
+.tp-prose h1 { font-size: 1.3em; }
+.tp-prose h2 { font-size: 1.15em; }
+.tp-prose h3 { font-size: 1.05em; }
+.tp-prose p  { margin-bottom: 0.7em; }
+.tp-prose ul, .tp-prose ol {
+    padding-left: 1.4em;
+    margin-bottom: 0.7em;
+}
+.tp-prose li { margin-bottom: 0.25em; }
+.tp-prose code {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.85em;
+    background: var(--tp-bg);
+    border: 1px solid var(--tp-border);
+    border-radius: 4px;
+    padding: 1px 5px;
+}
+.tp-prose pre {
+    background: var(--tp-bg);
+    border: 1px solid var(--tp-border);
+    border-radius: 8px;
+    padding: 12px 14px;
+    overflow-x: auto;
+    margin-bottom: 0.8em;
+}
+.tp-prose pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.85em;
+}
+.tp-prose blockquote {
+    border-left: 3px solid var(--tp-accent);
+    padding-left: 12px;
+    margin: 0.8em 0;
+    color: var(--tp-text-muted);
+}
+.tp-prose hr {
+    border-color: var(--tp-border);
+    margin: 1em 0;
+}
+.tp-prose a { color: var(--tp-accent); }
+.tp-prose strong { font-weight: 600; }
+.tp-prose em { font-style: italic; }
 
 /* ─────────────────────────────────────────────────────
    MISC UTILITIES

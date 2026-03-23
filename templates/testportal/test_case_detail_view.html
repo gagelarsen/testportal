@@ -68,7 +68,7 @@
             <div id="test-notes-card" class="card mb-4">
                 <div class="card-header">Notes</div>
                 <div class="card-body">
-                    <div>{{ test_case.notes | markdown | safe }}</div>
+                    <div class="tp-prose">{{ test_case.notes | markdown | safe }}</div>
                 </div>
             </div>
             {% endif %}
@@ -76,7 +76,7 @@
             <div id="test-step-card" class="card">
                 <div class="card-header">Steps</div>
                 <div class="card-body">
-                    <div>{{ test_case.steps | markdown | safe }}</div>
+                    <div class="tp-prose">{{ test_case.steps | markdown | safe }}</div>
                 </div>
             </div>
         </div>

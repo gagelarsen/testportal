@@ -2,13 +2,12 @@ from django.db.models.deletion import ProtectedError
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 
+from testportal.access import can_manage_categories
 from testportal.models import Suite, TestCategory, TestSubcategory
 
 
 def category_management_view(request):
-    if not request.user.is_authenticated:
-        raise PermissionDenied
-    if not request.user.is_superuser:
+    if not can_manage_categories(request.user):
         raise PermissionDenied
 
     error_message = ''

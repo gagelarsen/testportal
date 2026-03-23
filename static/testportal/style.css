@@ -405,30 +405,30 @@ h3 { font-size: 15px; font-weight: 600; }
 /* ─────────────────────────────────────────────────────
    STATUS COLOURS  (kept semantically identical)
 ───────────────────────────────────────────────────── */
-.bg-pass         { background-color: #dcfce7 !important; color: #166534 !important; }
-td.bg-pass       { background: #dcfce7 !important; color: #166534 !important; }
+.bg-pass         { background-color: #22c55e !important; color: #fff !important; }
+td.bg-pass       { background: #22c55e !important; color: #fff !important; }
 
-.bg-fail         { background-color: #fee2e2 !important; color: #991b1b !important; }
-td.bg-fail       { background: #fee2e2 !important; color: #991b1b !important; }
+.bg-fail         { background-color: #ef4444 !important; color: #fff !important; }
+td.bg-fail       { background: #ef4444 !important; color: #fff !important; }
 
-.bg-skipped      { background-color: #f3f4f6 !important; color: #6b7280 !important; }
-td.bg-skipped    { background: #f3f4f6 !important; color: #6b7280 !important; }
+.bg-skipped      { background-color: #94a3b8 !important; color: #0f172a !important; }
+td.bg-skipped    { background: #94a3b8 !important; color: #0f172a !important; }
 
-.bg-bug          { background-color: #1e1e2e !important; color: #e2e8f0 !important; }
-td.bg-bug        { background: #1e1e2e !important; color: #e2e8f0 !important; }
-a.bug-link       { color: #a5b4fc !important; }
+.bg-bug          { background-color: #1e1e2e !important; color: #fff !important; }
+td.bg-bug        { background: #1e1e2e !important; color: #fff !important; }
+a.bug-link, a.bug-link:visited, a.bug-link:hover, a.bug-link:active { color: #fff !important; text-decoration: none !important; }
 
-.bg-issue        { background-color: #f0abfc !important; color: #701a75 !important; }
-td.bg-issue      { background: #f0abfc !important; color: #701a75 !important; }
+.bg-issue        { background-color: #d946ef !important; color: #fff !important; }
+td.bg-issue      { background: #d946ef !important; color: #fff !important; }
 
-.bg-false-negative    { background-color: #fef9c3 !important; color: #713f12 !important; }
-td.bg-false-negative  { background: #fef9c3 !important; color: #713f12 !important; }
+.bg-false-negative    { background-color: #fde047 !important; color: #713f12 !important; }
+td.bg-false-negative  { background: #fde047 !important; color: #713f12 !important; }
 
-.bg-under-construction    { background-color: #fef3c7 !important; color: #92400e !important; }
-td.bg-under-construction  { background: #fef3c7 !important; color: #92400e !important; }
+.bg-under-construction    { background-color: #f97316 !important; color: #fef08a !important; }
+td.bg-under-construction  { background: #f97316 !important; color: #fef08a !important; }
 
-.bg-in-documentation    { background-color: #d6c9b8 !important; color: #1c1917 !important; }
-td.bg-in-documentation  { background: #d6c9b8 !important; color: #1c1917 !important; }
+.bg-in-documentation    { background-color: #7c2d12 !important; color: #fef3c7 !important; }
+td.bg-in-documentation  { background: #7c2d12 !important; color: #fef3c7 !important; }
 
 /* Row highlights for tables */
 .test-case-row-under-construction { background-color: #fef9c3 !important; }

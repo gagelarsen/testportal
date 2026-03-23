@@ -16,6 +16,19 @@ $(document).ready(function() {
     }
     const csrftoken = getCookie('csrftoken');
 
+    function setSelectedProductCheckboxes(productIds) {
+        var selected = new Set((productIds || []).map(String));
+        $('.bug-verification-product-checkbox').each(function() {
+            this.checked = selected.has(String(this.value));
+        });
+    }
+
+    function getSelectedProductIds() {
+        return $('.bug-verification-product-checkbox:checked').map(function() {
+            return Number(this.value);
+        }).get();
+    }
+
     function toDateInputValue(value) {
         if (!value) {
             return '';
@@ -42,7 +55,7 @@ $(document).ready(function() {
         $('#bug-verification-fixed').val(today);
         $('#bug-verification-verified').val(today);
         $('#bug-verification-category').prop('selectedIndex', 0);
-        $('#bug-verification-products').val([]);
+        setSelectedProductCheckboxes([]);
         $('#bug-verification-modal-error').hide().text('');
     }
 
@@ -68,7 +81,7 @@ $(document).ready(function() {
             }
             return String(item);
         });
-        $('#bug-verification-products').val(productIds);
+        setSelectedProductCheckboxes(productIds);
         $('#bug-verification-modal-error').hide().text('');
     }
 
@@ -108,7 +121,7 @@ $(document).ready(function() {
         const payload = {
             bug_id: Number($('#bug-verification-bug-id').val()),
             summary: $('#bug-verification-summary').val(),
-            products: ($('#bug-verification-products').val() || []).map(Number),
+            products: getSelectedProductIds(),
             reported_date: $('#bug-verification-reported').val(),
             fixed_date: $('#bug-verification-fixed').val(),
             verified_date: $('#bug-verification-verified').val(),

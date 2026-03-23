@@ -175,12 +175,15 @@
                         </select>
                     </div>
                     <div class="col-12 col-md-6">
-                        <label for="bug-verification-products" class="form-label">Products</label>
-                        <select id="bug-verification-products" class="form-select" multiple>
+                        <label class="form-label">Products</label>
+                        <div id="bug-verification-products" class="tp-checkbox-list border rounded p-2">
                             {% for product in products %}
-                            <option value="{{ product.id }}">{{ product }}</option>
+                            <div class="form-check">
+                                <input class="form-check-input bug-verification-product-checkbox" type="checkbox" value="{{ product.id }}" id="bug-verification-product-{{ product.id }}">
+                                <label class="form-check-label" for="bug-verification-product-{{ product.id }}">{{ product }}</label>
+                            </div>
                             {% endfor %}
-                        </select>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -18,6 +18,19 @@ $(document).ready(function() {
     }
     const csrftoken = getCookie('csrftoken');
 
+    function setSelectedTagCheckboxes(tagIds) {
+        var selected = new Set((tagIds || []).map(String));
+        $('.test-case-tag-checkbox').each(function() {
+            this.checked = selected.has(String(this.value));
+        });
+    }
+
+    function getSelectedTagIds() {
+        return $('.test-case-tag-checkbox:checked').map(function() {
+            return Number(this.value);
+        }).get();
+    }
+
     function openTestCaseModal(caseId) {
         if ($('#update-test-case-modal').length === 0) {
             window.location = `/test-cases/${caseId}/update`;
@@ -41,7 +54,7 @@ $(document).ready(function() {
                 $('#test-case-suite').val(response.suite);
                 $('#test-case-status').val(response.status || 'active');
                 $('#test-case-type').val(response.test_type || 'automated');
-                $('#test-case-tags').val((response.tags || []).map(String));
+                setSelectedTagCheckboxes(response.tags || []);
                 $('#test-case-categories').val(String(response.category));
                 $('#test-case-subcategories').val(String(response.subcategory));
                 $('#test-case-steps').val(response.steps || '');
@@ -72,7 +85,7 @@ $(document).ready(function() {
             suite: Number($('#test-case-suite').val()),
             status: $('#test-case-status').val(),
             test_type: $('#test-case-type').val(),
-            tags: ($('#test-case-tags').val() || []).map(Number),
+            tags: getSelectedTagIds(),
             category: Number($('#test-case-categories').val()),
             subcategory: Number($('#test-case-subcategories').val()),
             steps: $('#test-case-steps').val(),

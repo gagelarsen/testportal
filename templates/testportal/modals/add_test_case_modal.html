@@ -55,10 +55,15 @@
 
           <div class="row g-3 mt-0">
             <div class="col-12 col-md-6">
-              <label for="test-case-tags" class="form-label">Tags</label>
-              <select id="test-case-tags" multiple class="form-select">
-                {% for tag in tags %}<option value="{{ tag.id }}">{{ tag.tag }}</option>{% endfor %}
-              </select>
+              <label class="form-label">Tags</label>
+              <div id="test-case-tags" class="tp-checkbox-list border rounded p-2">
+                {% for tag in tags %}
+                <div class="form-check">
+                  <input class="form-check-input test-case-tag-checkbox" type="checkbox" value="{{ tag.id }}" id="test-case-tag-{{ tag.id }}">
+                  <label class="form-check-label" for="test-case-tag-{{ tag.id }}">{{ tag.tag }}</label>
+                </div>
+                {% endfor %}
+              </div>
             </div>
             <div class="col-12 col-md-6">
               <label for="test-plans" class="form-label">Test Plan</label>

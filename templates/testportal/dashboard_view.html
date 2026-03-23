@@ -67,6 +67,10 @@
                         <input class="form-check-input" type="checkbox" role="switch" id="show-categories-switch">
                         <label class="form-check-label" for="show-categories-switch">Show categories</label>
                     </div>
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input" type="checkbox" role="switch" id="show-deprecated-toggle">
+                        <label class="form-check-label" for="show-deprecated-toggle">Show deprecated</label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -152,6 +156,7 @@
         var searchValue = $('#test-search-box').val().toLowerCase();
         var statusValue = $('#dashboard-status-filter').val();
         var typeValue = $('#dashboard-type-filter').val();
+        var showDeprecated = $('#show-deprecated-toggle').prop('checked');
 
         $('#dashboard-table tr.test-case-row').each(function() {
             var rowText = $(this).text().toLowerCase();
@@ -161,18 +166,21 @@
             var matchesSearch = rowText.indexOf(searchValue) > -1;
             var matchesStatus = statusValue === 'all' || rowStatus === statusValue;
             var matchesType = typeValue === 'all' || rowType === typeValue;
+            var matchesDeprecated = showDeprecated || rowStatus !== 'depricated' || statusValue === 'depricated';
 
-            $(this).toggle(matchesSearch && matchesStatus && matchesType);
+            $(this).toggle(matchesSearch && matchesStatus && matchesType && matchesDeprecated);
         });
 
         localStorage.setItem('dashboard-search-value', searchValue);
         localStorage.setItem('dashboard-status-filter', statusValue);
         localStorage.setItem('dashboard-type-filter', typeValue);
+        localStorage.setItem('dashboard-show-deprecated', showDeprecated ? '1' : '0');
     }
 
     $('#test-search-box').on('keyup', applyDashboardFilters);
     $('#dashboard-status-filter').on('change', applyDashboardFilters);
     $('#dashboard-type-filter').on('change', applyDashboardFilters);
+    $('#show-deprecated-toggle').on('change', applyDashboardFilters);
     
     $('.test-case-name-dashboard-cell').dblclick(function() {
         var test_case_id = this.dataset.testCaseId;
@@ -213,8 +221,11 @@
             $('#dashboard-type-filter').val(dashboard_type_filter);
         }
 
-        $('#show-categories-switch').prop("checked", localStorage.getItem('dashboard-show-categories') =='true');
+        $('#show-categories-switch').prop('checked', localStorage.getItem('dashboard-show-categories') === 'true');
         $('#show-categories-switch').trigger('change');
+
+        // Default: hide deprecated (only show if explicitly saved as '1')
+        $('#show-deprecated-toggle').prop('checked', localStorage.getItem('dashboard-show-deprecated') === '1');
 
         applyDashboardFilters();
     });

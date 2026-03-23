@@ -186,6 +186,14 @@
 })();
 </script>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+        bootstrap.Tooltip.getOrCreateInstance(el, { delay: { show: 150, hide: 75 } });
+    });
+});
+</script>
+
 {% block page_javascript %}{% endblock %}
 </body>
 </html>

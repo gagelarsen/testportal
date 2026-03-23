@@ -100,7 +100,7 @@
                                 <div class="d-inline-flex align-items-center gap-2">
                                     <a href="/test-cases/{{ test_case.test_case.id }}">{{ test_case.test_case.test_case_id }}</a>
                                     {% if test_case.test_case.test_type == "manual" %}
-                                    <i title="Manual test" class="bi bi-hand-index-thumb tp-manual-test-icon"></i>
+                                    <i data-bs-toggle="tooltip" data-bs-title="Manual test" class="bi bi-hand-index-thumb tp-manual-test-icon"></i>
                                     {% endif %}
                                 </div>
                             </td>
@@ -108,21 +108,21 @@
                                 <div class="d-flex align-items-center gap-2 flex-wrap">
                                     <span>{{ test_case.test_case.name }}</span>
                                     {% if test_case.test_case.status == "under-construction" %}
-                                    <i title="Under Construction" class="bi bi-cone-striped text-warning"></i>
+                                    <i data-bs-toggle="tooltip" data-bs-title="Under Construction" class="bi bi-cone-striped text-warning"></i>
                                     {% elif test_case.test_case.status == "needs-review" %}
-                                    <i title="Needs Review" class="bi bi-exclamation-triangle text-info"></i>
+                                    <i data-bs-toggle="tooltip" data-bs-title="Needs Review" class="bi bi-exclamation-triangle text-info"></i>
                                     {% elif test_case.test_case.status == "broken" %}
-                                    <i title="Broken" class="bi bi-x-octagon text-danger"></i>
+                                    <i data-bs-toggle="tooltip" data-bs-title="Broken" class="bi bi-x-octagon text-danger"></i>
                                     {% elif test_case.test_case.status == "design" %}
-                                    <i title="In Design" class="bi bi-pencil-square text-primary"></i>
+                                    <i data-bs-toggle="tooltip" data-bs-title="In Design" class="bi bi-pencil-square text-primary"></i>
                                     {% elif test_case.test_case.status == "depricated" %}
-                                    <i title="Deprecated" class="bi bi-archive text-secondary"></i>
+                                    <i data-bs-toggle="tooltip" data-bs-title="Deprecated" class="bi bi-archive text-secondary"></i>
                                     {% endif %}
                                 </div>
                             </td>
                             <td class="text-center">
                                 {% if test_case.result %}
-                                <div {% if test_case.result.note %}title="{{ test_case.result.note }}"{% else %}title="no details provided..."{% endif %}>
+                                <div {% if test_case.result.note %}data-bs-toggle="tooltip" data-bs-title="{{ test_case.result.note }}"{% else %}data-bs-toggle="tooltip" data-bs-title="no details provided..."{% endif %}>
                                     <span class="badge-pill badge rounded-pill bg-{{ test_case.result.result|lower }}">{{ test_case.result.result }}</span>
                                 </div>
                                 {% else %}
